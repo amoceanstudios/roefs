@@ -1,0 +1,19 @@
+{
+  "health": {
+    "ok": true,
+    "database": "connected",
+    "modules": 21
+  },
+  "static_paths_verified": [
+    "/",
+    "/app.js",
+    "/ui.js",
+    "/styles.css",
+    "/ui.css",
+    "/assets/amocean-mark.png"
+  ],
+  "login": "passed",
+  "bind": "0.0.0.0:8080 in container; bereikbaar via hostpoort",
+  "container": "gestart en verwijderd na controle",
+  "user": "appuser (10001)"
+}

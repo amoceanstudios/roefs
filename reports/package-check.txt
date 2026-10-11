@@ -1,0 +1,6 @@
+ZIP-integriteit: geslaagd.
+Alle manifestcontroles: geslaagd.
+Geen database, accountbestand, toegangswachtwoord of Python-cache meegeleverd.
+Uitgepakte ZIP: python start.py --check --quiet geslaagd.
+ROEFS ONE: http://localhost:19774
+Gereed: Python-server, database en startpagina gecontroleerd.

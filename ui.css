@@ -1,0 +1,29 @@
+/* Toegankelijke aanvullingen op het oorspronkelijke Amocean-dashboard. */
+body{touch-action:pan-x pan-y}.drawer-locked .side{touch-action:pan-y}
+.login-logo,.side-logo,.amocean-logo{object-fit:contain}
+button:disabled{opacity:.5;cursor:default}.actions{gap:10px}.btn,.logout{min-height:44px}
+.formgrid label{display:block;font-size:13px;color:#405771;margin-bottom:6px}
+.formgrid input,.formgrid select,.formgrid textarea{width:100%;padding:11px;border:1px solid #ccd8e4;border-radius:10px;background:white}
+.form-error{padding:12px;color:#a22323;background:#fff1ef;border-radius:10px;white-space:pre-wrap}
+.form-error:empty{display:none}.toast{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);padding:14px 20px;background:#123557;color:#fff;border-radius:12px;z-index:130;max-width:90vw;box-shadow:0 5px 30px #1234}
+.tour-banner{position:sticky;top:6px;z-index:4;background:#fff9e6;border:1px solid #dec46f;border-radius:15px;padding:14px 18px;margin:12px 0;box-shadow:0 8px 20px #1231}.tour-banner p{margin:5px 0 12px;font-size:13px}.tour-banner .actions{margin:0;justify-content:flex-start}.tour-progress{width:100%;accent-color:#b58b1b}
+.plan-alerts{margin:12px 0;padding:14px;background:#fff2e7;border:1px solid #f1ceaa;border-radius:12px}.plan-alerts li{margin:7px 0}
+.plan-candidate{flex-wrap:wrap}.plan-candidate small{max-width:420px}.plan-week{font-size:14px;color:#526b83;margin:10px 0}.plan-hours b{overflow-wrap:anywhere}
+.permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.permission-grid label{display:flex;gap:8px;align-items:center;font-size:13px}.permission-grid input{width:20px;height:20px}
+.tablewrap td{white-space:normal;min-width:100px}.tablewrap th{white-space:nowrap}.tablewrap td:last-child{min-width:150px}
+@media(max-width:800px){
+ input,select,textarea,.top .search{font-size:16px!important} /* Voorkom ongewenst zoomen op iOS. */
+ .main{padding-bottom:max(16px,env(safe-area-inset-bottom))!important}
+ .side{padding-top:max(18px,env(safe-area-inset-top))!important}
+ .plan-board{touch-action:pan-x pan-y;overscroll-behavior-x:contain}
+ .back-button{font-size:12px;padding:8px}.top .role{max-width:26%!important}
+ .tour-banner{position:relative;top:0}.permission-grid{grid-template-columns:1fr}
+ .daily-foot{padding-top:24px}.smart-count{flex-wrap:wrap}.sos-fields label{min-width:0;width:100%}
+ .modal{max-height:calc(100dvh - 30px);padding-bottom:max(18px,env(safe-area-inset-bottom))}
+ .plan-day-head{position:static}.tablewrap{scrollbar-width:thin}
+}
+@media(min-width:801px){.plan-board{grid-template-columns:repeat(7,minmax(130px,1fr));overflow-x:auto}.plan-day{border-top:0!important;border-right:1px solid #e7edf3!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.card form>label{display:block;margin:14px 0 6px;font-size:13px}.card form>input,.card form>select{width:100%;padding:12px;border:1px solid #ccd8e4;border-radius:10px}.card ol li{line-height:1.6;margin:12px 0}
+/* Maak het geopende menu onmiddellijk focusbaar; animeer alleen de positie. */
+@media(max-width:800px){.side.mobile-open{visibility:visible!important;transition:transform .23s ease!important}}

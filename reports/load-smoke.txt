@@ -1,0 +1,14 @@
+{
+  "employees": 250,
+  "customers": 800,
+  "shifts": 1250,
+  "requests": 24,
+  "concurrency": 4,
+  "passed": 24,
+  "failed": 0,
+  "median_ms": 386.8,
+  "max_ms": 1484.6,
+  "elapsed_seconds": 2.93,
+  "sqlite_integrity": "ok",
+  "limitations": "Korte lokale leesproef. Geen duurtest, 250 gelijktijdige gebruikers, productie-infrastructuur of extern tunnelverkeer."
+}
