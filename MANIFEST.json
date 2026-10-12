@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "product": "ROEFS ONE V5 + synchronisatie",
+  "product": "ROEFS ONE V6 — tussenstand, geen eindacceptatie",
   "files": [
     {
       "path": ".dockerignore",
@@ -39,8 +39,8 @@
     },
     {
       "path": "Dockerfile",
-      "sha256": "7b0df504e87682dab60410a22de38e2608507ee948a0beaae76a2e498c255399",
-      "bytes": 507
+      "sha256": "4236744154ca25d91bdb4ccdb6a1926d58e87b2d78ba068bb35f839fbc7db3f7",
+      "bytes": 691
     },
     {
       "path": "FUNCTIEMATRIX.md",
@@ -59,8 +59,8 @@
     },
     {
       "path": "INTEGRATIES.md",
-      "sha256": "38b5d931fbb00f27d3b86c9377ec4d01e10f7f399d669b21976021c68b6ab8a6",
-      "bytes": 7812
+      "sha256": "2d1d26924cc87bbf9dfe21b7ef7ab27504f83092cc55a4517183b7f0ef7cc81d",
+      "bytes": 8882
     },
     {
       "path": "MOBIEL-TESTPLAN.md",
@@ -79,8 +79,13 @@
     },
     {
       "path": "README.md",
-      "sha256": "4768f820d29684741cbe4889ad370a05b29df0d3baa3c1e1e56a69fdfa3a2ffa",
-      "bytes": 2667
+      "sha256": "38da6e5c0bbd70d7c78d00b1d4e808cc7638601f8b370fb74534c854ed8f9a79",
+      "bytes": 2922
+    },
+    {
+      "path": "ROEFS-NODIG.md",
+      "sha256": "a344847bec46bc2b8a95dc5c434df088ebed6294fa82e3affb7a562b01ecdca5",
+      "bytes": 3585
     },
     {
       "path": "START-GRATIS-24U.command",
@@ -108,9 +113,59 @@
       "bytes": 3382
     },
     {
+      "path": "V6-ACCEPTATIECHECKLIST.md",
+      "sha256": "2e76fae70103c3e6d9fb93cbf9b03e1746b82ded61febf2665b714e5e7f92c78",
+      "bytes": 1998
+    },
+    {
+      "path": "V6-CHANGELOG.md",
+      "sha256": "9f3007b97e89390cec7c75dba2b2b63a72337999015857da767d9ecb3f49b8bf",
+      "bytes": 1745
+    },
+    {
+      "path": "V6-CONTINUATION.md",
+      "sha256": "ed2b46badfe137d7eaacb97430bdfe0a01adc9355299fcaafb412df3673b404b",
+      "bytes": 5294
+    },
+    {
+      "path": "V6-FUNCTIEMATRIX.md",
+      "sha256": "1da15b1a4e960f04e33a262ff3cf17bddd53efb2cbf9c0e814d71ef970cb0b47",
+      "bytes": 3378
+    },
+    {
+      "path": "V6-INSTALLATIE.md",
+      "sha256": "dc62481b9e1ce3c3088af2681031fb03d76a2ed1a5d0493db421a164b40dce6d",
+      "bytes": 3661
+    },
+    {
+      "path": "V6-ISSUEREGISTER.md",
+      "sha256": "166efee978614fb8260354d4c20c71efd47832e03550e4b11c05ede4b660d8b4",
+      "bytes": 8132
+    },
+    {
+      "path": "V6-PERFORMANCE-REPORT.md",
+      "sha256": "6205b441beb8b6512791811761b648a3b468353198dd5a519eae33e10c080236",
+      "bytes": 2043
+    },
+    {
+      "path": "V6-SECURITY-REPORT.md",
+      "sha256": "1c55ea7d6db7eb7e4a757a2ff194f0aa0f0813739d3fd3cb576656d57eb10705",
+      "bytes": 4729
+    },
+    {
+      "path": "V6-TESTRAPPORT.md",
+      "sha256": "fc503f90eaab20626764a605edc837a22deff8be03e35a1f5beb66da98f69194",
+      "bytes": 5953
+    },
+    {
+      "path": "V6-VOORTGANG.md",
+      "sha256": "ff63b25c5254bdfa299dba05769b9cfffcbfa9b3a333c851850b39866bb725c9",
+      "bytes": 6506
+    },
+    {
       "path": "app.js",
-      "sha256": "dcf8af8fd0220f40f5df73ceaebd3843747d1215d4b8df5e432a5b173126aef1",
-      "bytes": 42697
+      "sha256": "2fee99e01f3de9c38e7e856835eb855fe638324f8740b253ed3b2e634d5f4c65",
+      "bytes": 43221
     },
     {
       "path": "assets/amocean-mark.png",
@@ -119,13 +174,13 @@
     },
     {
       "path": "build_package.py",
-      "sha256": "d936180c5b7dc0deb2cf81808627567969b8b1f7336691d45f3574d9bb6df2cc",
-      "bytes": 1735
+      "sha256": "c1c65c122056717ba1034e7e9314f2618cda0436a95eaf58a2ea9aa51b1a228b",
+      "bytes": 1773
     },
     {
       "path": "domain.py",
-      "sha256": "920812e86c2a766f4d5c9c29b1b4cafe8ac12e30800a8868af5ed25721b44393",
-      "bytes": 13049
+      "sha256": "009cc998fc6641bd31490fef5ca6cfded210dcbfc81caa657c35564c05dc4977",
+      "bytes": 13741
     },
     {
       "path": "enterprise.css",
@@ -134,23 +189,28 @@
     },
     {
       "path": "enterprise.js",
-      "sha256": "e79cfff648b21fa3c3b3f25c2fb135cb3d65189401303d2dadf2ff073c30830a",
-      "bytes": 43222
+      "sha256": "35ae6ae54972a50637bf676c06d19aad46c84990e4583f6ed1f5dab3e48fd841",
+      "bytes": 61673
+    },
+    {
+      "path": "events.js",
+      "sha256": "a3e484bfb07f31aac385e412eac0ba5d4ff34a8a2458a20881c17f02744c7049",
+      "bytes": 5678
     },
     {
       "path": "index.html",
-      "sha256": "1238476fba3e6aaf86ddfe12082f81d5a10cb14407c9a4d531c81980f0ff8602",
-      "bytes": 815
+      "sha256": "391ca2b1d0c692a0fa5b97139a0f4926b8e9b52ae23e2bb16a61594705b30e7e",
+      "bytes": 849
     },
     {
       "path": "integrations.js",
-      "sha256": "86f17a73b738ea8d2965a5347c88e6f34dc79d106cfc50db74741dad2fb61653",
-      "bytes": 8970
+      "sha256": "6aaa7d778b4c47418a14fca6b3945635b7e082d6d67767653ebad327d3a70194",
+      "bytes": 10196
     },
     {
       "path": "manage.py",
-      "sha256": "ee15677d42c0e67438f69d1bd10aad0b275bfcb1fd6ea43919e7845a99982433",
-      "bytes": 4926
+      "sha256": "372a978775701a41c85bf364a3b7ea77b7fdce6226494a8059b2b0aae638c1a0",
+      "bytes": 5992
     },
     {
       "path": "nl.js",
@@ -164,8 +224,8 @@
     },
     {
       "path": "reports/all-tests.txt",
-      "sha256": "9e2040e62849a0f49d230b6fe9bb6000213ccea7f55e01ed501cb7fa3d3ac3d5",
-      "bytes": 9522
+      "sha256": "9c2be33dda939233b6cc7203a372ecf606485ecda181d7df7cde6c2630f61c70",
+      "bytes": 15289
     },
     {
       "path": "reports/desktop.png",
@@ -193,28 +253,48 @@
       "bytes": 37
     },
     {
+      "path": "reports/load-enterprise-1.json",
+      "sha256": "dad5a168ecb57dd3de7f3353edea856e893ecdd89ad9ed4254a05d969e61abf2",
+      "bytes": 1249
+    },
+    {
+      "path": "reports/load-enterprise-16.json",
+      "sha256": "8b6c44cc9f70c5ec60b8ff477e72c4a0d74b35d31e9cebf77452831bab7f6518",
+      "bytes": 1256
+    },
+    {
+      "path": "reports/load-enterprise-32.json",
+      "sha256": "43e39426663bda2d9bdc414adb30ea1023d9adea294bd041f12e5d926e14d8ca",
+      "bytes": 1256
+    },
+    {
+      "path": "reports/load-enterprise-8.json",
+      "sha256": "d9b9e7bedaf9dd66392481175a3d3891161f0c934abb0d80ed65839b31001867",
+      "bytes": 1254
+    },
+    {
       "path": "reports/load-enterprise-before-optimization.json",
       "sha256": "9aee837f9196aea87d6614c18b5e5cd63834990b1be0d6170b19a4ffe7ddcffb",
       "bytes": 1233
     },
     {
       "path": "reports/load-enterprise.json",
-      "sha256": "3acbf48e75cb3a43803680d1dd64c0b7166e1bbe9f8c34374fc102d6e6a7e602",
-      "bytes": 1232
+      "sha256": "d9b9e7bedaf9dd66392481175a3d3891161f0c934abb0d80ed65839b31001867",
+      "bytes": 1254
     },
     {
       "path": "reports/load-enterprise.txt",
-      "sha256": "7284b2f93a6bafe5d1f59420d5a5c8726b663f52806b2c8be0bc23392a88749e",
-      "bytes": 1233
+      "sha256": "14421b386844e92def1a282c501fcf98e93d74e97add9533c786868a4166c525",
+      "bytes": 1255
     },
     {
       "path": "reports/load-smoke.json",
-      "sha256": "86b69995e1325549c1548321a02c2652f41c510c8f9f688bd2b318d66a4f6e8a",
+      "sha256": "b2fb52efafac2d17a448629458a838fe42edf1ad23689fd5e0bc8c647f388b8e",
       "bytes": 365
     },
     {
       "path": "reports/load-smoke.txt",
-      "sha256": "5c074256c202176e2d30ed2a73d6a1f267850ece1277c6fbb0bf7d382f57ff65",
+      "sha256": "f0fd59b166e8adb48a0ebbd309ff3130e6544886e18d8003c97302b41af9c202",
       "bytes": 366
     },
     {
@@ -238,14 +318,29 @@
       "bytes": 2064
     },
     {
+      "path": "reports/test_enterprise.txt",
+      "sha256": "fc043f96145e2e28e1a14ebab09aaae9dba35dd2af7e81b7dea9bdb9eabc01e9",
+      "bytes": 1636
+    },
+    {
       "path": "reports/test_regression.txt",
-      "sha256": "2a3a8e97cd53ec59b883cad58edf340832d42f4bcd8743b385e5f8caea040c52",
+      "sha256": "dec683eb4ed035d59f8e86c77094c4e536e4c14a11619dc37526945f39fd8840",
       "bytes": 3948
     },
     {
+      "path": "reports/test_security_recovery.txt",
+      "sha256": "0eae5e2ed1abd84f3a620dc67a372afe43345cb4d5f5889d557ba32ce5ceeb91",
+      "bytes": 700
+    },
+    {
       "path": "reports/test_startup.txt",
-      "sha256": "bc6d8b4d78b5e871af0109d0a816d93aca1445e3e10c0bee79c37d6954bb503c",
+      "sha256": "e5bb2df05bad331c71675b1f5c3e016c1614fe7dabcf4ac265e2421a60b6703e",
       "bytes": 556
+    },
+    {
+      "path": "reports/test_sync.txt",
+      "sha256": "a18064c43dccd97b3a60f69849ffe27a1a44c50df27fdd5e0e8db1dd4cc39ae6",
+      "bytes": 1370
     },
     {
       "path": "reports/tunnel.txt",
@@ -254,13 +349,93 @@
     },
     {
       "path": "reports/v5-mobile-planning.png",
-      "sha256": "daa93932c1fda72c93596579a71111cac9d1c69c31c4ecab95e61e55aaedb903",
-      "bytes": 113569
+      "sha256": "a9679714085d727736e435d3ae81c4e3d36307f6970f32a73ac14354f5b1f142",
+      "bytes": 118142
+    },
+    {
+      "path": "reports/v6-browser.txt",
+      "sha256": "0ff5f1106dfccd972b825b56edaccde55fe383e35ff031fc9dda58637b5c4de8",
+      "bytes": 941
+    },
+    {
+      "path": "reports/v6-dependency-audit.json",
+      "sha256": "a1847af4dea5864cf69b3f360f518dc42d6a13945dec9854814ec78efa0e6970",
+      "bytes": 428
+    },
+    {
+      "path": "reports/v6-docker-encrypted-restore.txt",
+      "sha256": "4cda6ae84c4d8391d2abd1cfa909a9e505b1e175bd18cf07f2ed51b4a6dc3e04",
+      "bytes": 61
+    },
+    {
+      "path": "reports/v6-docker-runtime.json",
+      "sha256": "70c4b3f4c01b72006e15d7a5f0230962913691262453b5d781a4eaede0450540",
+      "bytes": 925
+    },
+    {
+      "path": "reports/v6-migration.json",
+      "sha256": "e7e96f92b9c142fccce4b00b41bd366cef4099d50148a641684c431f92d41ebd",
+      "bytes": 4204
+    },
+    {
+      "path": "reports/v6-operations.txt",
+      "sha256": "c958b923de9b55a883bb9edf3562c577ba41b47c2efaa74bbad43f8f57986493",
+      "bytes": 915
+    },
+    {
+      "path": "reports/v6-package-validation-install.txt",
+      "sha256": "1ab3a530aef40914e80b089113bb9c5b3f03113f53746e357dd8839ace8b262e",
+      "bytes": 3097
+    },
+    {
+      "path": "reports/v6-package-validation-tests.txt",
+      "sha256": "557f387ab0ad1c52eb9a647e5c1d85cc56b6e52c38429c21e549bb6a44dd5d29",
+      "bytes": 17241
+    },
+    {
+      "path": "reports/v6-package-validation.json",
+      "sha256": "a895515645491ddef39a5f74b334c17a8de077d5dcf5553c2e48ca495aa2167a",
+      "bytes": 449
+    },
+    {
+      "path": "reports/v6-resumed-full.txt",
+      "sha256": "c2372defcc646f376a58e30b1e531e3fe9d627d125cd2b6dd1391380e913fbd8",
+      "bytes": 17243
+    },
+    {
+      "path": "reports/v6-retention.txt",
+      "sha256": "882f31fbe1b5e933864abc0f11e0d52a4be02b56ba287a8e40c754254d8d72a6",
+      "bytes": 702
+    },
+    {
+      "path": "reports/v6-scopes.txt",
+      "sha256": "a8d932100305627581002abff1bcc5de4e47ef5c3c3c624053a91465b6a6a891",
+      "bytes": 1401
+    },
+    {
+      "path": "reports/v6-security.txt",
+      "sha256": "196e2ed16d29ea02b7fff57e8e206bbad4b5dc0c0686c0268d8891216eb08db0",
+      "bytes": 831
+    },
+    {
+      "path": "reports/v6-sync-incremental.txt",
+      "sha256": "4b44f81def3694f23b3f1dc758bc498e700ff3eb4a7e9f8d1791fb6e4dad817b",
+      "bytes": 1744
+    },
+    {
+      "path": "reports/v6-webkit-install.txt",
+      "sha256": "8588bf181212eed9c847820bbe905993d8a7fbed27993ffaca630173b4d3716c",
+      "bytes": 3994
     },
     {
       "path": "requirements-dev.txt",
-      "sha256": "b309e732bc82863242e0c6381832bafb40cd470ec2620b2340bd6704e46efb3e",
-      "bytes": 108
+      "sha256": "96ee1d4bf197e3fa052d8e84c10bac6318bb48bc1fed2cbf878d8a033087569c",
+      "bytes": 206
+    },
+    {
+      "path": "requirements-security.txt",
+      "sha256": "61f17bbd6e5093047adeba7665669c5f93700fa017af3fd3f613a463a486f1f1",
+      "bytes": 96
     },
     {
       "path": "requirements.txt",
@@ -269,13 +444,13 @@
     },
     {
       "path": "run_tests.py",
-      "sha256": "c1fc666ee3ea64cbb641674dfd5e60fbc5711a77e5cb8d2819e1879b934b569b",
-      "bytes": 1561
+      "sha256": "345a256044f28bab00cf3acacfa077f808cbdbd2c23aa6b02778f472b192ddbf",
+      "bytes": 1672
     },
     {
       "path": "server.py",
-      "sha256": "a85f2655c02397ff992803338467d8b24b01bb3b4dfd13fe5569c41e45d6384d",
-      "bytes": 66823
+      "sha256": "b3301f11ad637226ee26c7507489be349797cb12e637b281006747fdb332457c",
+      "bytes": 68414
     },
     {
       "path": "services/__init__.py",
@@ -288,14 +463,19 @@
       "bytes": 2230
     },
     {
+      "path": "services/audit_integrity.py",
+      "sha256": "433b2c3eeda106239eaeac7d65e2bd0328915f56e1df532cf49b5d96c79b1eda",
+      "bytes": 2051
+    },
+    {
       "path": "services/authentication.py",
       "sha256": "0968cd3d8190c22aaffe230654a9b79959a487c0ec465599251703008e3f0692",
       "bytes": 1205
     },
     {
       "path": "services/common.py",
-      "sha256": "542fe51d4ed308c8fc2b14bfe7d258b0cadf7c147eae2e82dd1f4c541d0820c8",
-      "bytes": 2500
+      "sha256": "af249de6c8021b932dd445896d732b970e53fc6850f310281b0af0fd1db723f6",
+      "bytes": 2456
     },
     {
       "path": "services/connectors/__init__.py",
@@ -304,8 +484,13 @@
     },
     {
       "path": "services/connectors/generic.py",
-      "sha256": "d296d4fe7fd38f71d5f6be6c3ee81a4635a03703d31afcd4a9d1c18616f6f43f",
-      "bytes": 5359
+      "sha256": "8d16c95211bf8340071a8f109feb62c46b6b53d8d3ac61b2558bb5bd0f0f8554",
+      "bytes": 5773
+    },
+    {
+      "path": "services/contracts.py",
+      "sha256": "8bb78563c7bdeb2e90af2a4f7817e27e1738c29051d8e92bd857d883a1664f6e",
+      "bytes": 3562
     },
     {
       "path": "services/dashboard.py",
@@ -314,18 +499,43 @@
     },
     {
       "path": "services/documents.py",
-      "sha256": "0bf04b8cb1308d5dd57f3e258b98020acbeb7b3904d0f848177d6b2c5628a3b8",
-      "bytes": 4229
+      "sha256": "14fbdf5984d9ecec4b664b22c69e69a7107081354878bf6c0071afd8077bc32b",
+      "bytes": 7569
+    },
+    {
+      "path": "services/encrypted_backup.py",
+      "sha256": "d6464bf64ea169a182b415f466564aa23337c22721a48ffa422de8d6fc39f00c",
+      "bytes": 1648
+    },
+    {
+      "path": "services/file_scanning.py",
+      "sha256": "5dbf88fc670076dd78d2ae2a06e67831526d9c17e4d0580d416639c39c025429",
+      "bytes": 906
     },
     {
       "path": "services/finance.py",
-      "sha256": "351acbc0c37509818c90a7fa78275f7b4cf28c6297ac88bcd9579cd1f688f792",
-      "bytes": 4165
+      "sha256": "7d1f41a740a2d2b5e52c7953fb69db07a117705b87e5df2ea8df41155f7e9b9c",
+      "bytes": 5628
+    },
+    {
+      "path": "services/http_server.py",
+      "sha256": "52332a20ca023aa6d3a838926d1364aa9f0c998f84f0beb56c17439b2a3d67ed",
+      "bytes": 1412
+    },
+    {
+      "path": "services/labor_rules.py",
+      "sha256": "11a3257cbc35bf5b651e957a16602846cf76f83fa9175b00a0d113449de5e5b3",
+      "bytes": 3103
+    },
+    {
+      "path": "services/management_reporting.py",
+      "sha256": "3a34da84b069129e48fc8368d8bc9ed2f580380c80655fb0de0eb9afbe28781a",
+      "bytes": 5177
     },
     {
       "path": "services/mfa.py",
-      "sha256": "cd36fd62e3156e245b0b4b5f71ced712706640d54ec25e305565535d211baf61",
-      "bytes": 3101
+      "sha256": "73a396593cd2332ff75fae7b9ef58b01ad9ba65b41b55baeb0c413af95d01f16",
+      "bytes": 5477
     },
     {
       "path": "services/migrations.py",
@@ -344,18 +554,33 @@
     },
     {
       "path": "services/planning.py",
-      "sha256": "eda5c314c753b43b2278af66c17575696da1af6c4dde98e69e316c3d1d9dcb8b",
-      "bytes": 14150
+      "sha256": "cfa3858ceeb77248f2bfc98d2efde688b09bb61e454160224625efc18aa8e53c",
+      "bytes": 16074
+    },
+    {
+      "path": "services/planning_series.py",
+      "sha256": "1e2d4f1fbffe110d184df09abc574609f47b64b95d6a2866239fd4e3e84e760c",
+      "bytes": 4550
     },
     {
       "path": "services/reporting.py",
-      "sha256": "939ebfa740e8405d6f57ac21803d72d433304df578f78485df00f88a38af3081",
-      "bytes": 4988
+      "sha256": "366b2a3b03d8c70dbf6c77601eef229832a06dc6f0a186d29614508b5ff833ab",
+      "bytes": 5049
     },
     {
       "path": "services/routes.py",
-      "sha256": "6ff7aa9222a0c404f25c0d4ee9a771819cfdafe03c273b7d92693a36bc345865",
-      "bytes": 23719
+      "sha256": "48f86d025038a1b39cab1620e2167297467c3b1703184e5a2cb69d10d3e39310",
+      "bytes": 27182
+    },
+    {
+      "path": "services/scopes.py",
+      "sha256": "6308fd7ae1be93cd8b692339d53815416588329d8eb9ce1374301ad010f26771",
+      "bytes": 10265
+    },
+    {
+      "path": "services/security_v6.py",
+      "sha256": "a7785f1bdc7b4d6ec4daf2aebff00c13773198256fea7deab28181552936e64e",
+      "bytes": 4742
     },
     {
       "path": "services/sync_migrations.py",
@@ -364,8 +589,13 @@
     },
     {
       "path": "services/synchronization.py",
-      "sha256": "badf98866edfa11e9a513a9cb9ede0b10823e2bd81fc64adb8c0db250d369877",
-      "bytes": 27500
+      "sha256": "33d98bf259a39882cb2832325569623b08d12a0ba2400ce4c2394b3927f31a0a",
+      "bytes": 30012
+    },
+    {
+      "path": "services/time_clock.py",
+      "sha256": "74e3535e7449556e247e790d138f9261441c4e340f8e2012d692bc61f724c0c3",
+      "bytes": 2988
     },
     {
       "path": "services/timekeeping.py",
@@ -374,8 +604,8 @@
     },
     {
       "path": "services/workorders.py",
-      "sha256": "72f530eddcdf57117959bd178d4e14e6af61161aacba6496f6d4fb903d63dcc9",
-      "bytes": 6554
+      "sha256": "a969c785f38f01be4bf126316777834b1174ae0e908cff4050d769625ff21400",
+      "bytes": 7347
     },
     {
       "path": "start.py",
@@ -399,8 +629,8 @@
     },
     {
       "path": "tests/load_enterprise.py",
-      "sha256": "586b40882e7bf3ec0ca45eebbf3372ab211afd19a8929f5fe9050fc984ffc8e9",
-      "bytes": 4591
+      "sha256": "acace896e31a387f909851ae5e4c8f59d1abdf7e992359e1cc7a81c54a1d1e67",
+      "bytes": 4903
     },
     {
       "path": "tests/load_smoke.py",
@@ -444,8 +674,53 @@
     },
     {
       "path": "tests/test_sync.py",
-      "sha256": "ebf3e05892435720c21f79f8ded735232a5bab6209c4826eb83b346c0f54fea9",
-      "bytes": 12678
+      "sha256": "004771496d40de96841c74a5f5f9cbfdee47442465b287e652871e742f2faf9e",
+      "bytes": 15216
+    },
+    {
+      "path": "tests/test_v6_browser.py",
+      "sha256": "7c83964dfbf4b6899bb2d277095966dd9adcb68cfc77d004193f1e9dfe0ca630",
+      "bytes": 7767
+    },
+    {
+      "path": "tests/test_v6_http.py",
+      "sha256": "ebcea744a2e3b1d72fe9c0353018ae88ccd856bf43b84bb9d27d647aff6b2fc0",
+      "bytes": 1677
+    },
+    {
+      "path": "tests/test_v6_integrity.py",
+      "sha256": "d81057d6bf0f3c4e355e919f0b1184f7b7fc30c8106633ca0232cf7bcc539c2d",
+      "bytes": 4540
+    },
+    {
+      "path": "tests/test_v6_operations.py",
+      "sha256": "98b413fb8ca8a62258edb9cce05e6a9d926d661ad700cc4dd14a9ec96ec23308",
+      "bytes": 7060
+    },
+    {
+      "path": "tests/test_v6_planning.py",
+      "sha256": "f7019fc14033a049e79ece4d1141f4117d46feecef3b88cdbb9ad3fae1b9ccbd",
+      "bytes": 4571
+    },
+    {
+      "path": "tests/test_v6_scopes.py",
+      "sha256": "9cdbb77da4d0f3aa09ee09eb02ed3b209cf51aff10887b6350ec25ba6bf0cbf3",
+      "bytes": 3871
+    },
+    {
+      "path": "tests/test_v6_security.py",
+      "sha256": "d110ad21b67f8a5684a0346348bf2ede0a83c9e671f0bf3f0342c75306bf1f84",
+      "bytes": 4543
+    },
+    {
+      "path": "tools/verify_package.py",
+      "sha256": "583065e87a4745647cea95b575cd42bb15beb835e8b79d18ebfc33a56c53bb77",
+      "bytes": 2772
+    },
+    {
+      "path": "tools/verify_v5_migration.py",
+      "sha256": "e02969f145c8984b297792215ad7243dea26282dd62bb573fd450977aedcd203",
+      "bytes": 2461
     },
     {
       "path": "ui.css",
@@ -454,8 +729,8 @@
     },
     {
       "path": "ui.js",
-      "sha256": "8d51cbd997755d8dcc7751d142396eda273f659442fa1db22ee3142c6c2be9a9",
-      "bytes": 24780
+      "sha256": "7e2cabc5061229023fba24f1d4fe3110f8e50f1ec0c8fb381cc63bdf6f3d8a03",
+      "bytes": 26205
     }
   ]
 }

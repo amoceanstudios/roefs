@@ -1,0 +1,10 @@
+test_clock_persistence_ownership_duplicate_and_actual_hours (test_v6_operations.V6Operations.test_clock_persistence_ownership_duplicate_and_actual_hours) ... ok
+test_configurable_draft_numbers_rollback_collision_and_no_fiscal_activation (test_v6_operations.V6Operations.test_configurable_draft_numbers_rollback_collision_and_no_fiscal_activation) ... ok
+test_contract_locations_renewal_and_workorder_constraints (test_v6_operations.V6Operations.test_contract_locations_renewal_and_workorder_constraints) ... ok
+test_legacy_pagination_search_and_employee_scope (test_v6_operations.V6Operations.test_legacy_pagination_search_and_employee_scope) ... ok
+test_management_exports_use_dutch_labels_and_csv_formula_guard (test_v6_operations.V6Operations.test_management_exports_use_dutch_labels_and_csv_formula_guard) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 4.353s
+
+OK

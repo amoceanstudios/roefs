@@ -41,3 +41,15 @@ Start: 12 oktober 2026. V5-rollback: `619db082438051d45b76d7f29615486cfc1b6536`,
 | PLN-04 | Teamplanning / middel | Gekoppelde eindtijd alleen na annuleren wijzigen → atomair oudertijdvak en alle teamdiensten aanpassen | planning.resize, routes, schuifbediening | Conflict draait ouder+diensten terug; versieconflict geweigerd | PASS 6 planningtests; browserresize nog open |
 
 Open regels in het oorspronkelijke register zijn geen actuele eindstatusclaim; V6-FUNCTIEMATRIX en V6-VOORTGANG beschrijven de inmiddels gerealiseerde deelimplementaties. Bij afronding moeten alle regels een afzonderlijke eindstatus krijgen.
+
+## Hervatting — afzonderlijke verificatie
+
+| ID | Uitkomst in deze tussenstand | Bewijs |
+|---|---|---|
+| SEC-05 | PARTIAL: scopebeleidskern voorbereid, bewust inactief; routebrede integratie nog OPEN | 10 kern-tests; geen HTTP-scopeclaim |
+| SEC-11 | PASS: gelijktijdige HTTP-werkers begrensd, overbelasting geeft 503/Retry-After en herstelt | tests/test_v6_http.py |
+| UX-02 | PASS: mislukte klokstart houdt formulier en invoer vast; navigatie alleen na succesvolle opslag | tests/test_v6_browser.py |
+| PLN-04 | PASS voor resizeschuif met toetsenbord/opslag en bestaande API-teamtests | tests/test_v6_browser.py, test_v6_planning.py |
+| BIZ-01 | PASS voor contractlocaties en verlengbesluit via mobiele Chromium; overige scope blijft PARTIAL | tests/test_v6_browser.py |
+| BIZ-04 | PASS voor Nederlandse management-CSV/PDF en formulebescherming; financiële acceptatie blijft open | tests/test_v6_operations.py |
+| REL-01 | PASS voor V5-demomigratie en Dockerbasis/versleuteld herstel; FINAL blijft OPEN | reports/v6-migration.json, v6-docker-runtime.json, v6-docker-encrypted-restore.txt |

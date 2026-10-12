@@ -51,3 +51,12 @@ Zie V6-ISSUEREGISTER.md. Onder meer strikte CSP, afdelings-/rayonbeleid, verdere
 | 32 | 212,29 | 3764,51 | 3862,63 | 98,70 |
 
 Ruwe resultaten: reports/load-enterprise-{1,8,16,32}.json. Dit zijn korte lokale proeven, geen duurtest, productieschaalgarantie of 250 gelijktijdige gebruikers.
+
+## Hervatting: HTTP-begrenzing, bedieningsfout en distributieproeven
+
+- Begrensde HTTP-workerpool; capaciteitstekort levert 503 met Retry-After, daarna werkt de server weer. Login begrenst wachtwoordlengte en voert voor onbekende accounts een dummyhashberekening uit. JSON-limiet is alleen voor het uploadendpoint verruimd.
+- Geweigerde klokstart liet de gebruiker toch naar uren navigeren; v5Submit retourneert nu succes/mislukking en v6ClockStart navigeert alleen bij succes. Zes V6-Chromiumtests slagen.
+- Management-CSV/PDF gebruikt Nederlandse labels en behoudt CSV-formulebescherming.
+- Inactieve scopebeleidskern met tien unit-tests toegevoegd; niet aan server of beheerinterface gekoppeld. Dit blijft expliciet intern open werk. Verwijdertriggers voorkomen verouderde classificaties bij hergebruik van recordnummers.
+- Volledige run: 123 tests + legacy/API/planning/logo/load geslaagd. V5-demo-migratie, Dockerbasis en versleuteld containerherstel getest.
+- Een pakket wordt als TUSSENSTAND gebouwd, nooit als V6-FINAL zolang de functiematrix open implementatie bevat.

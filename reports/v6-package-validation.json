@@ -1,0 +1,19 @@
+{
+  "archive": "ROEFS-ONE-ENTERPRISE-V6-TUSSENSTAND.zip",
+  "sha256": "ba754f14ae07ddbfa52f3255cc71d60377ac27821ea44b36609d703f3144f58b",
+  "manifest_files": 143,
+  "fresh_venv": true,
+  "checks": [
+    {
+      "check": "install",
+      "exit_code": 0,
+      "log": "v6-package-validation-install.txt"
+    },
+    {
+      "check": "tests",
+      "exit_code": 0,
+      "log": "v6-package-validation-tests.txt"
+    }
+  ],
+  "production_claim": false
+}

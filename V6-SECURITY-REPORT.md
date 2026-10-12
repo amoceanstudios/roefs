@@ -30,3 +30,9 @@ Docker kan de optionele backupafhankelijkheid meenemen met `--build-arg WITH_BAC
 ## Uitgevoerde pakketcontrole
 
 pip-audit meldde geen bekende kwetsbaarheden in Playwright 1.62.0, cryptography 50.0.0 en de vijf opgeloste indirecte afhankelijkheden. Ruwe JSON: reports/v6-dependency-audit.json. Dit is een momentopname van bekende meldingen, geen bewijs van afwezigheid van kwetsbaarheden. OS/container/CSP-stijlen, volledige objectbeleid-audit en onafhankelijke aanvallersvalidatie blijven afzonderlijke controles.
+
+## Aanvullende hardening in de hervatting
+
+HTTP-concurrentie is begrensd door BoundedHTTPServer (standaard 64 werkers; instelbaar 4–128). Een volle pool geeft 503 met Retry-After en sluit de verbinding. Verzadiging en herstel zijn getest. Dit is geen bewijs tegen een langdurige DDoS; reverse proxy/TLS en productielimieten blijven deploymenttaken. Login weigert wachtwoorden langer dan 200 tekens en voert voor onbekende accounts ook een PBKDF-berekening uit. JSON-bodies buiten het uploadendpoint behouden de kleinere limiet.
+
+De nieuwe services/scopes.py is **niet actief en nog niet aan HTTP-routes gekoppeld**. Unit-tests van de beleidskern mogen niet worden uitgelegd als gerealiseerde afdelings-/rayonisolatie. Bestaande rollen en eigenaarscontroles blijven gelden; SEC-05 blijft intern open.

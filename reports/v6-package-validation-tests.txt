@@ -1,0 +1,205 @@
+
+Controle: legacy-api
+PASS: 65 API checks
+
+
+Controle: legacy-planning
+PASS: 18 planning/permissions checks
+
+
+Controle: logo
+PASS: logo HTTP 200, PNG, Nederlandse veldnamen, navigatiegeschiedenis, slim-widget-vernieuwing
+
+
+Controle: all-tests
+test_accounts_permissions_and_link (test_browser.Browser.test_accounts_permissions_and_link) ... ok
+test_all_admin_screens_real_backend (test_browser.Browser.test_all_admin_screens_real_backend) ... ok
+test_back_and_focus_trap (test_browser.Browser.test_back_and_focus_trap) ... ok
+test_crud_form_persists_and_no_xss (test_browser.Browser.test_crud_form_persists_and_no_xss) ... ok
+test_csv_formula_guard (test_browser.Browser.test_csv_formula_guard) ... ok
+test_employee_hours_and_availability (test_browser.Browser.test_employee_hours_and_availability) ... ok
+test_mobile_tablet_desktop_layout (test_browser.Browser.test_mobile_tablet_desktop_layout) ... ok
+test_planner_suggestion_to_saved_shift (test_browser.Browser.test_planner_suggestion_to_saved_shift) ... ok
+test_server_validation_inline (test_browser.Browser.test_server_validation_inline) ... ok
+test_tour_uses_live_screens (test_browser.Browser.test_tour_uses_live_screens) ... ok
+test_batch_report_detects_same_absence_conflict (test_enterprise.Enterprise.test_batch_report_detects_same_absence_conflict) ... ok
+test_concurrent_assignment_exactly_one_success (test_enterprise.Enterprise.test_concurrent_assignment_exactly_one_success) ... ok
+test_cookie_csrf_and_session_invalidation (test_enterprise.Enterprise.test_cookie_csrf_and_session_invalidation) ... ok
+test_customer_import_all_or_nothing_and_number (test_enterprise.Enterprise.test_customer_import_all_or_nothing_and_number) ... ok
+test_full_role_chain_persists_restart (test_enterprise.Enterprise.test_full_role_chain_persists_restart) ... ok
+test_home_counts_and_drilldown_scope (test_enterprise.Enterprise.test_home_counts_and_drilldown_scope) ... ok
+test_mandatory_certification_equipment_and_capacity (test_enterprise.Enterprise.test_mandatory_certification_equipment_and_capacity) ... ok
+test_rbac_every_role_and_legacy_bypass (test_enterprise.Enterprise.test_rbac_every_role_and_legacy_bypass) ... ok
+test_restricted_roles_cannot_read_admin_messages_or_approve_hours (test_enterprise.Enterprise.test_restricted_roles_cannot_read_admin_messages_or_approve_hours) ... ok
+test_stale_versions_and_transactional_bulk (test_enterprise.Enterprise.test_stale_versions_and_transactional_bulk) ... ok
+test_time_dst_midnight_duplicates (test_enterprise.Enterprise.test_time_dst_midnight_duplicates) ... ok
+test_upload_path_type_scope_and_deduplicated_notifications (test_enterprise.Enterprise.test_upload_path_type_scope_and_deduplicated_notifications) ... ok
+test_all_viewports_real_pages_cookie_and_reload (test_enterprise_browser.EnterpriseBrowser.test_all_viewports_real_pages_cookie_and_reload) ... ok
+test_customer_form_persistence_validation_and_timeline (test_enterprise_browser.EnterpriseBrowser.test_customer_form_persistence_validation_and_timeline) ... ok
+test_inactive_integration_saved_and_visible (test_enterprise_browser.EnterpriseBrowser.test_inactive_integration_saved_and_visible) ... ok
+test_planning_copy_and_conflict_keyboard_alternative (test_enterprise_browser.EnterpriseBrowser.test_planning_copy_and_conflict_keyboard_alternative) ... ok
+test_workorder_checklist_and_file_upload_real_storage (test_enterprise_browser.EnterpriseBrowser.test_workorder_checklist_and_file_upload_real_storage) ... ok
+test_gate_basic_cookie_and_bearer (test_regression.Gate.test_gate_basic_cookie_and_bearer) ... ok
+test_account_deactivation_and_last_admin (test_regression.Regression.test_account_deactivation_and_last_admin) ... ok
+test_admin_endpoints_deny_employee (test_regression.Regression.test_admin_endpoints_deny_employee) ... ok
+test_all_modules_crud_persist_restart (test_regression.Regression.test_all_modules_crud_persist_restart) ... ok
+test_availability_and_suggestions (test_regression.Regression.test_availability_and_suggestions) ... ok
+test_available_window (test_regression.Regression.test_available_window) ... ok
+test_concurrent_overlap_atomic (test_regression.Regression.test_concurrent_overlap_atomic) ... ok
+test_cross_customer_invoice_contract (test_regression.Regression.test_cross_customer_invoice_contract) ... ok
+test_delete_protects_links (test_regression.Regression.test_delete_protects_links) ... ok
+test_demo_chain_accepts_more_records (test_regression.Regression.test_demo_chain_accepts_more_records) ... ok
+test_employee_cannot_access_other_records_or_counters (test_regression.Regression.test_employee_cannot_access_other_records_or_counters) ... ok
+test_employee_cannot_set_other_employee (test_regression.Regression.test_employee_cannot_set_other_employee) ... ok
+test_employee_hours_save_and_approval (test_regression.Regression.test_employee_hours_save_and_approval) ... ok
+test_every_module_rejects_invalid_fields (test_regression.Regression.test_every_module_rejects_invalid_fields) ... ok
+test_failed_mutation_rollback (test_regression.Regression.test_failed_mutation_rollback) ... ok
+test_hour_duplicate_and_24h (test_regression.Regression.test_hour_duplicate_and_24h) ... ok
+test_hr_cao_and_contracts (test_regression.Regression.test_hr_cao_and_contracts) ... ok
+test_invoice_unique (test_regression.Regression.test_invoice_unique) ... ok
+test_invoice_workflow (test_regression.Regression.test_invoice_workflow) ... ok
+test_leave_after_schedule_visible_conflict (test_regression.Regression.test_leave_after_schedule_visible_conflict) ... ok
+test_leave_blocks_all_assignment_paths (test_regression.Regression.test_leave_blocks_all_assignment_paths) ... ok
+test_link_account_explicitly (test_regression.Regression.test_link_account_explicitly) ... ok
+test_logbook_scoped (test_regression.Regression.test_logbook_scoped) ... ok
+test_login_throttle (test_regression.Regression.test_login_throttle) ... ok
+test_malformed_bodies_and_content_type (test_regression.Regression.test_malformed_bodies_and_content_type) ... ok
+test_messages_isolation_and_read (test_regression.Regression.test_messages_isolation_and_read) ... ok
+test_more_than_1000_records_not_silently_truncated (test_regression.Regression.test_more_than_1000_records_not_silently_truncated) ... ok
+test_no_default_data_reseed (test_regression.Regression.test_no_default_data_reseed) ... ok
+test_normalized_times_and_required_object (test_regression.Regression.test_normalized_times_and_required_object) ... ok
+test_numeric_date_and_relationship_validation (test_regression.Regression.test_numeric_date_and_relationship_validation) ... ok
+test_origin_and_headers (test_regression.Regression.test_origin_and_headers) ... ok
+test_rename_keeps_employee_binding (test_regression.Regression.test_rename_keeps_employee_binding) ... ok
+test_same_name_cannot_impersonate_employee (test_regression.Regression.test_same_name_cannot_impersonate_employee) ... ok
+test_session_hash_expiry_and_logout (test_regression.Regression.test_session_hash_expiry_and_logout) ... ok
+test_widgets_refresh_after_mutation (test_regression.Regression.test_widgets_refresh_after_mutation) ... ok
+test_workflow_approve_once (test_regression.Regression.test_workflow_approve_once) ... ok
+test_workorder_employee_completion (test_regression.Regression.test_workorder_employee_completion) ... ok
+test_full_backup_files_restore_private_and_sessions_revoked (test_security_recovery.SecurityRecovery.test_full_backup_files_restore_private_and_sessions_revoked) ... ok
+test_mfa_enrollment_login_replay_session_invalidation (test_security_recovery.SecurityRecovery.test_mfa_enrollment_login_replay_session_invalidation) ... ok
+test_restore_rejects_traversal_and_corruption (test_security_recovery.SecurityRecovery.test_restore_rejects_traversal_and_corruption) ... ok
+test_weak_password_and_inactive_connectors (test_security_recovery.SecurityRecovery.test_weak_password_and_inactive_connectors) ... ok
+test_occupied_port_fails_without_stopping_existing_server (test_startup.Startup.test_occupied_port_fails_without_stopping_existing_server) ... ok
+test_original_database_migration (test_startup.Startup.test_original_database_migration) ... ok
+test_repeatable_start_and_backup (test_startup.Startup.test_repeatable_start_and_backup) ... ok
+test_tunnel_start_check_reuses_existing_gate (test_startup.Startup.test_tunnel_start_check_reuses_existing_gate) ... ok
+test_automatic_worker_without_manual_run_and_restart (test_sync.Sync.test_automatic_worker_without_manual_run_and_restart) ... ok
+test_bidirectional_and_simultaneous_changes_conflict (test_sync.Sync.test_bidirectional_and_simultaneous_changes_conflict) ... ok
+test_conditional_update_refuses_external_overwrite (test_sync.Sync.test_conditional_update_refuses_external_overwrite) ... ok
+test_dead_letter_preserves_key_and_manual_retry (test_sync.Sync.test_dead_letter_preserves_key_and_manual_retry) ... ok
+test_deleted_and_duplicate_records_preserved (test_sync.Sync.test_deleted_and_duplicate_records_preserved) ... ok
+test_dependency_order_external_ids_and_hours_materials_invoice (test_sync.Sync.test_dependency_order_external_ids_and_hours_materials_invoice) ... ok
+test_durable_outbox_retry_after_remote_commit_no_duplicate (test_sync.Sync.test_durable_outbox_retry_after_remote_commit_no_duplicate) ... ok
+test_import_repeat_and_updates_no_duplicates (test_sync.Sync.test_import_repeat_and_updates_no_duplicates) ... ok
+test_incremental_cursor_committed_only_after_successful_pull (test_sync.Sync.test_incremental_cursor_committed_only_after_successful_pull) ... ok
+test_invalid_credentials_pause_connection (test_sync.Sync.test_invalid_credentials_pause_connection) ... ok
+test_lease_only_one_worker_and_recovery (test_sync.Sync.test_lease_only_one_worker_and_recovery) ... ok
+test_outage_history_backoff_and_conflict_resolution (test_sync.Sync.test_outage_history_backoff_and_conflict_resolution) ... ok
+test_prepared_connector_inactive_missing_api_and_ssrf (test_sync.Sync.test_prepared_connector_inactive_missing_api_and_ssrf) ... ok
+test_clock_rejected_start_keeps_form_then_saved_cancel (test_v6_browser.V6Browser.test_clock_rejected_start_keeps_form_then_saved_cancel) ... ok
+test_contract_location_and_renewal_forms_persist (test_v6_browser.V6Browser.test_contract_location_and_renewal_forms_persist) ... ok
+test_resize_keyboard_saves_actual_end_time (test_v6_browser.V6Browser.test_resize_keyboard_saves_actual_end_time) ... ok
+test_rules_settings_saved_without_leaving_settings_and_numbering (test_v6_browser.V6Browser.test_rules_settings_saved_without_leaving_settings_and_numbering) ... ok
+test_script_csp_blocks_inline_handlers_and_command_injection (test_v6_browser.V6Browser.test_script_csp_blocks_inline_handlers_and_command_injection) ... ok
+test_series_form_persists_and_cancellation (test_v6_browser.V6Browser.test_series_form_persists_and_cancellation) ... ok
+test_worker_limit_rejects_then_recovers (test_v6_http.V6HTTP.test_worker_limit_rejects_then_recovers) ... ok
+test_audit_modification_detected_and_unauthorized_check_denied (test_v6_integrity.V6Integrity.test_audit_modification_detected_and_unauthorized_check_denied) ... ok
+test_encrypted_backup_restore_wrong_key_and_corruption (test_v6_integrity.V6Integrity.test_encrypted_backup_restore_wrong_key_and_corruption) ... ok
+test_pdf_quarantine_text_delete_version_and_backup (test_v6_integrity.V6Integrity.test_pdf_quarantine_text_delete_version_and_backup) ... ok
+test_restart_does_not_release_quarantined_text (test_v6_integrity.V6Integrity.test_restart_does_not_release_quarantined_text) ... ok
+test_retention_opt_in_expiry_and_future_file_preserved (test_v6_integrity.V6Integrity.test_retention_opt_in_expiry_and_future_file_preserved) ... ok
+test_clock_persistence_ownership_duplicate_and_actual_hours (test_v6_operations.V6Operations.test_clock_persistence_ownership_duplicate_and_actual_hours) ... ok
+test_configurable_draft_numbers_rollback_collision_and_no_fiscal_activation (test_v6_operations.V6Operations.test_configurable_draft_numbers_rollback_collision_and_no_fiscal_activation) ... ok
+test_contract_locations_renewal_and_workorder_constraints (test_v6_operations.V6Operations.test_contract_locations_renewal_and_workorder_constraints) ... ok
+test_legacy_pagination_search_and_employee_scope (test_v6_operations.V6Operations.test_legacy_pagination_search_and_employee_scope) ... ok
+test_management_exports_use_dutch_labels_and_csv_formula_guard (test_v6_operations.V6Operations.test_management_exports_use_dutch_labels_and_csv_formula_guard) ... ok
+test_closed_workorder_shift_cannot_be_cancelled_via_planning (test_v6_planning.V6Planning.test_closed_workorder_shift_cannot_be_cancelled_via_planning) ... ok
+test_configured_rules_daily_weekly_rest_break_and_legacy (test_v6_planning.V6Planning.test_configured_rules_daily_weekly_rest_break_and_legacy) ... ok
+test_linked_resize_atomic_parent_and_shift_conflict_rollback (test_v6_planning.V6Planning.test_linked_resize_atomic_parent_and_shift_conflict_rollback) ... ok
+test_series_all_or_nothing_conflict_and_safe_restore (test_v6_planning.V6Planning.test_series_all_or_nothing_conflict_and_safe_restore) ... ok
+test_series_employee_denied (test_v6_planning.V6Planning.test_series_employee_denied) ... ok
+test_series_exceptions_cancel_restore_versions_restart (test_v6_planning.V6Planning.test_series_exceptions_cancel_restore_versions_restart) ... ok
+test_admin_routes_reject_non_admin (test_v6_scopes.ScopePolicy.test_admin_routes_reject_non_admin) ... ok
+test_children_inherit_parent_scope (test_v6_scopes.ScopePolicy.test_children_inherit_parent_scope) ... ok
+test_created_record_inherits_and_context_resets (test_v6_scopes.ScopePolicy.test_created_record_inherits_and_context_resets) ... ok
+test_deleted_classification_cannot_be_inherited_by_reused_id (test_v6_scopes.ScopePolicy.test_deleted_classification_cannot_be_inherited_by_reused_id) ... ok
+test_migration_repeatable_and_unstructured_logs_fail_closed (test_v6_scopes.ScopePolicy.test_migration_repeatable_and_unstructured_logs_fail_closed) ... ok
+test_nested_references_cannot_cross_boundary (test_v6_scopes.ScopePolicy.test_nested_references_cannot_cross_boundary) ... ok
+test_policy_requires_explicit_consistent_defaults (test_v6_scopes.ScopePolicy.test_policy_requires_explicit_consistent_defaults) ... ok
+test_scope_intersection_and_unclassified_denied (test_v6_scopes.ScopePolicy.test_scope_intersection_and_unclassified_denied) ... ok
+test_sql_parameterizes_names_and_rejects_alias_injection (test_v6_scopes.ScopePolicy.test_sql_parameterizes_names_and_rejects_alias_injection) ... ok
+test_unknown_tables_fail_closed (test_v6_scopes.ScopePolicy.test_unknown_tables_fail_closed) ... ok
+test_account_limit_persisted_in_database (test_v6_security.V6Security.test_account_limit_persisted_in_database) ... ok
+test_idle_session_expiry_and_security_headers (test_v6_security.V6Security.test_idle_session_expiry_and_security_headers) ... ok
+test_lost_authenticator_requires_recovery_and_can_be_reenrolled (test_v6_security.V6Security.test_lost_authenticator_requires_recovery_and_can_be_reenrolled) ... ok
+test_recovery_hashed_one_time_concurrent_and_persistent (test_v6_security.V6Security.test_recovery_hashed_one_time_concurrent_and_persistent) ... ok
+test_recovery_requires_password_and_rotation_invalidates_old_codes (test_v6_security.V6Security.test_recovery_requires_password_and_rotation_invalidates_old_codes) ... ok
+
+----------------------------------------------------------------------
+Ran 123 tests in 211.580s
+
+OK
+
+
+Controle: load-smoke
+{
+  "employees": 250,
+  "customers": 800,
+  "shifts": 1250,
+  "requests": 24,
+  "concurrency": 4,
+  "passed": 24,
+  "failed": 0,
+  "median_ms": 275.0,
+  "max_ms": 1314.3,
+  "elapsed_seconds": 2.6,
+  "sqlite_integrity": "ok",
+  "limitations": "Korte lokale leesproef. Geen duurtest, 250 gelijktijdige gebruikers, productie-infrastructuur of extern tunnelverkeer."
+}
+
+
+Controle: load-enterprise
+{
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "logical_cpus": 5,
+    "network": "Loopback HTTP, geen tunnel of externe ERP"
+  },
+  "data": {
+    "employees": 250,
+    "customers": 820,
+    "objects": 1600,
+    "workorders": 5001,
+    "shifts": 5001,
+    "hours": 5001
+  },
+  "requests": 100,
+  "concurrency": 8,
+  "read_percent": 80,
+  "write_percent": 20,
+  "elapsed_seconds": 4.089,
+  "requests_per_second": 24.45,
+  "median_ms": 17.46,
+  "p95_ms": 1327.12,
+  "p99_ms": 1399.47,
+  "max_ms": 1523.9,
+  "failed": 0,
+  "error_rate_percent": 0.0,
+  "http_503_database_unavailable": 0,
+  "server_peak_sampled_rss_mb": 61.46,
+  "server_cpu_seconds": 5.279,
+  "sqlite_integrity": "ok",
+  "foreign_key_violations": 0,
+  "limitations": [
+    "Korte lokale proef met 8 gelijktijdige verzoeken; geen 250 gelijktijdige gebruikers of duurtest.",
+    "CPU is gemeten over de gehele serverlevensduur, inclusief opstart en fixtures.",
+    "Contention gemeten via zichtbare HTTP 503; interne SQLite-wachttijd niet afzonderlijk ge\u00efnstrumenteerd.",
+    "RSS periodiek bemonsterd; echte piek kan hoger zijn.",
+    "Geen echte mobiele hardware, externe ERP of productie-infrastructuur."
+  ],
+  "errors": []
+}
+
+Alle geselecteerde controles geslaagd.

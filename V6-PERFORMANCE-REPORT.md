@@ -7,11 +7,11 @@ Dataset: 250 fictieve medewerkers, aanvankelijk 800 klanten, 1600 locaties, 5001
 | Gelijktijdige verzoeken | Mediaan | p95 | p99 | Fouten | Zichtbare HTTP 503 | Bemonsterde RSS |
 |---|---:|---:|---:|---:|---:|---:|
 | 1 | 5,17 ms | 151,96 ms | 173,40 ms | 0 | 0 | 35,12 MB |
-| 8 | 28,69 ms | 1591,95 ms | 1660,81 ms | 0 | 0 | 64,28 MB |
+| 8 (hervatting) | 26.43 ms | 1731.89 ms | 2076.24 ms | 0 | 0 | 60.57 MB |
 | 16 | 57,67 ms | 2003,88 ms | 2261,88 ms | 0 | 0 | 77,45 MB |
 | 32 | 212,29 ms | 3764,51 ms | 3862,63 ms | 0 | 0 | 98,70 MB |
 
-Bronnen: reports/load-enterprise-1.json, -8.json, -16.json en -32.json. Deze getallen horen bij het tweede ontwikkelblok, vóór de laatste sessie-/retentieaanvullingen. Een latere eindmeting moet apart worden gerapporteerd; historische bestanden niet stilzwijgend als eindresultaten labelen.
+Bronnen: reports/load-enterprise-1.json, -8.json, -16.json en -32.json. De proeven met 1/16/32 horen bij het eerdere tweede ontwikkelblok. Alleen de rij met 8 is bijgewerkt naar de volledige hervattingsrun met 123 tests en HTTP-workerbegrenzing. Dit zijn verschillende bronstanden, geen gezamenlijke finale benchmark. De ruwe JSON-bestanden corresponderen met de getoonde waarden.
 
 SQLite integrity_check was ok; geen foreign-keyovertredingen. CPU betreft het serverleven inclusief fixtures/startup. RSS is bemonsterd, geen gegarandeerde piek. Lockcontention is alleen via zichtbare HTTP 503 gemeten; interne wachttijd niet afzonderlijk geïnstrumenteerd. Geen duurtest, crashherstel onder maximale belasting of fysieke productiehardware.
 

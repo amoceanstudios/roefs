@@ -1,0 +1,31 @@
+WARNING: The directory '/home/agent/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Ignoring tzdata: markers 'sys_platform == "win32"' don't match your environment
+Collecting playwright==1.62.0 (from -r requirements-dev.txt (line 2))
+  Downloading playwright-1.62.0-py3-none-manylinux1_x86_64.whl.metadata (3.3 kB)
+Collecting cryptography==50.0.0 (from -r /tmp/roefs-package-check-_oh3symk/ROEFS-ONE-ENTERPRISE-V6-TUSSENSTAND/requirements-security.txt (line 2))
+  Downloading cryptography-50.0.0-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.3 kB)
+Collecting pyee<14,>=13 (from playwright==1.62.0->-r requirements-dev.txt (line 2))
+  Downloading pyee-13.0.1-py3-none-any.whl.metadata (3.0 kB)
+Collecting greenlet<4.0.0,>=3.1.1 (from playwright==1.62.0->-r requirements-dev.txt (line 2))
+  Downloading greenlet-3.5.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+Collecting cffi>=2.0.0 (from cryptography==50.0.0->-r /tmp/roefs-package-check-_oh3symk/ROEFS-ONE-ENTERPRISE-V6-TUSSENSTAND/requirements-security.txt (line 2))
+  Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+Collecting pycparser (from cffi>=2.0.0->cryptography==50.0.0->-r /tmp/roefs-package-check-_oh3symk/ROEFS-ONE-ENTERPRISE-V6-TUSSENSTAND/requirements-security.txt (line 2))
+  Downloading pycparser-3.11-py3-none-any.whl.metadata (8.2 kB)
+Collecting typing-extensions (from pyee<14,>=13->playwright==1.62.0->-r requirements-dev.txt (line 2))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Downloading playwright-1.62.0-py3-none-manylinux1_x86_64.whl (47.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 47.7/47.7 MB 60.0 MB/s eta 0:00:00
+Downloading cryptography-50.0.0-cp311-abi3-manylinux_2_34_x86_64.whl (4.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 39.8 MB/s eta 0:00:00
+Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (221 kB)
+Downloading greenlet-3.5.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (621 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 621.4/621.4 kB 22.8 MB/s eta 0:00:00
+Downloading pyee-13.0.1-py3-none-any.whl (15 kB)
+Downloading pycparser-3.11-py3-none-any.whl (51 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Installing collected packages: typing-extensions, pycparser, greenlet, pyee, cffi, playwright, cryptography
+Successfully installed cffi-2.1.1 cryptography-50.0.0 greenlet-3.5.6 playwright-1.62.0 pycparser-3.11 pyee-13.0.1 typing-extensions-4.16.0
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: python -m pip install --upgrade pip

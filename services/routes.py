@@ -239,13 +239,13 @@ def dispatch(h,c,user,path,method,modules,db):
     elif parts[0]=='files' and len(parts)==2 and method=='GET':
         row,data=documents.download(c,user,int(parts[1]),db);return send_binary(h,data,row['mime'],row['name'])
     elif path in ('reports/management','reports/management/csv','reports/management/pdf') and method=='GET':
-        from .management_reporting import build
+        from .management_reporting import build,LABELS
         base=reporting.report(c,user,query);result=build(c,user,base)
         section=query.get('section','employees')
         if section not in ('employees','customers','contracts','equipment'):raise Problem('Onbekend rapportonderdeel.')
         rows=result[section]
-        if path.endswith('/csv'):return send_binary(h,reporting.csv_bytes(rows,list(rows[0]) if rows else ['Geen gegevens']),'text/csv; charset=utf-8','management-'+section+'.csv')
-        if path.endswith('/pdf'):return send_binary(h,reporting.pdf('Managementrapport '+{'employees':'Medewerkers','customers':'Klanten','contracts':'Contracten','equipment':'Materieel'}[section],[result['definitions'].get(section,'')]+[' | '.join(str(v) for v in row.values()) for row in rows]),'application/pdf','management-'+section+'.pdf')
+        if path.endswith('/csv'):return send_binary(h,reporting.csv_bytes(rows,list(rows[0]) if rows else ['Geen gegevens'],LABELS),'text/csv; charset=utf-8','management-'+section+'.csv')
+        if path.endswith('/pdf'):return send_binary(h,reporting.pdf('Managementrapport '+{'employees':'Medewerkers','customers':'Klanten','contracts':'Contracten','equipment':'Materieel'}[section],[result['definitions'].get(section,'')]+[' | '.join(LABELS.get(k,k)+': '+str(v) for k,v in row.items()) for row in rows]),'application/pdf','management-'+section+'.pdf')
     elif path=='reports' and method=='GET':result=reporting.report(c,user,query)
     elif path in ('reports/csv','reports/pdf') and method=='GET':
         r=reporting.report(c,user,query)

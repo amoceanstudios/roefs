@@ -1,6 +1,7 @@
 import time,logging,re
 from services import migrations,access,authentication,sync_migrations,synchronization,mfa,operational_migrations,security_v6
 from services.routes import dispatch
+from services.http_server import BoundedHTTPServer
 from domain import Problem, REFERENCES, REQUIRED, STATUSES, NUMBERS, LABELS, date_value, interval, schedule_issues, scoped_rows, validate, protect_delete
 import json,sqlite3,os,hashlib,hmac,secrets,threading,datetime,csv,io,urllib.parse,base64
 from http.server import ThreadingHTTPServer,BaseHTTPRequestHandler
@@ -184,7 +185,8 @@ class Handler(BaseHTTPRequestHandler):
   if self.headers.get('Transfer-Encoding'):raise Problem('Niet-ondersteunde overdracht.',400)
   try:n=int(self.headers.get('Content-Length','0'))
   except ValueError:raise Problem('Ongeldige verzoeklengte.')
-  if not 0<=n<=max(1000000,min(10000000,max(1024,int(os.environ.get('ROEFS_UPLOAD_MAX_BYTES','600000'))))*4//3+10000):raise Problem('Verzoek te groot of ongeldig.',413)
+  limit=max(1000000,min(10000000,max(1024,int(os.environ.get('ROEFS_UPLOAD_MAX_BYTES','600000'))))*4//3+10000) if urllib.parse.urlsplit(self.path).path=='/api/v5/files' else 1000000
+  if not 0<=n<=limit:raise Problem('Verzoek te groot of ongeldig.',413)
   try:b=json.loads(self.rfile.read(n) or b'{}',parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
   except (ValueError,UnicodeDecodeError):raise Problem('Ongeldige JSON-invoer.')
   if not isinstance(b,dict):raise Problem('Verwacht een JSON-object.')
@@ -238,7 +240,10 @@ class Handler(BaseHTTPRequestHandler):
     LOGIN_ATTEMPTS[key]=(attempts[0],attempts[1]+1)
    security_v6.attempt(conn(),username)
    r=conn().execute('SELECT * FROM users WHERE username=? AND active=1',(username,)).fetchone()
-   good=r and hmac.compare_digest(hashlib.pbkdf2_hmac('sha256',str(b.get('password','')).encode(),bytes.fromhex(r['salt']),r['password_iterations']).hex(),r['password_hash'])
+   password=str(b.get('password',''))
+   if len(password)>200:return self.respond({'error':'Ongeldige inloggegevens'},401)
+   computed=hashlib.pbkdf2_hmac('sha256',password.encode(),bytes.fromhex(r['salt']) if r else bytes(16),r['password_iterations'] if r else 600000).hex()
+   good=r and hmac.compare_digest(computed,r['password_hash'])
    if not good:return self.respond({'error':'Ongeldige inloggegevens'},401)
    conn().execute('BEGIN IMMEDIATE')
    current=conn().execute('SELECT * FROM users WHERE id=? AND active=1',(r['id'],)).fetchone()
@@ -715,4 +720,4 @@ class Handler(BaseHTTPRequestHandler):
     CONN.db.close();del CONN.db
  def log_message(self,*args):pass
 if __name__=='__main__':
- init();synchronization.start_worker(DB,MODULES);print(f'ROEFS ONE: http://localhost:{PORT}');ThreadingHTTPServer((os.environ.get('ROEFS_HOST','127.0.0.1'),PORT),Handler).serve_forever()
+ init();synchronization.start_worker(DB,MODULES);print(f'ROEFS ONE: http://localhost:{PORT}');BoundedHTTPServer((os.environ.get('ROEFS_HOST','127.0.0.1'),PORT),Handler).serve_forever()

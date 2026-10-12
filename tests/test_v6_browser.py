@@ -26,3 +26,23 @@ class V6Browser(unittest.TestCase):
   self.page.evaluate("""() => {const button=document.createElement('button');button.id='command-test';button.setAttribute('data-roefs-click',"eval('window.inlineExecuted=true')");document.body.append(button);button.click()}""")
   self.assertFalse(self.page.evaluate('window.inlineExecuted'))
   self.login();self.open('calendar');self.assertEqual(self.page.locator('[onclick],[onsubmit],[onchange]').count(),0)
+ def test_resize_keyboard_saves_actual_end_time(self):
+  code,shift,_=self.s.request('/api/v5/shifts','POST',{'object_id':1,'employee_id':1,'date':'2030-04-01','start_time':'08:00','end_time':'12:00'},self.admin);self.assertEqual(code,200,shift)
+  self.login();self.open('calendar');self.page.evaluate("plannerDate='2030-04-01';v5Calendar()")
+  self.page.get_by_role('button',name='↕ Eindtijd aanpassen').first.click();slider=self.page.get_by_role('slider');slider.focus();slider.press('ArrowRight');self.assertEqual(self.page.locator('#v6resizeTime').inner_text(),'12:01')
+  self.page.get_by_role('button',name='Tijdvak opslaan').click();self.page.locator('#modalbg').wait_for(state='detached')
+  row=self.s.request('/api/records/shifts/'+str(shift['id']),token=self.admin)[1];self.assertEqual(row['end_time'],'12:01')
+ def test_contract_location_and_renewal_forms_persist(self):
+  code,contract,_=self.s.request('/api/v5/entities/contracts','POST',{'name':'Fictief browsercontract','customer_id':1,'object_id':1,'monthly_value':'100','start_date':'2030-01-01','end_date':'2030-12-31','status':'Actief'},self.admin);self.assertEqual(code,201,contract)
+  self.login();self.open('contracts');self.page.locator('.v5-item').filter(has_text='Fictief browsercontract').get_by_role('button',name='Contractdossier').click()
+  self.page.get_by_role('button',name='Locaties wijzigen').click();self.page.locator('input[name=frequency_1]').fill('Elke maandag');self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.get_by_role('heading',name='Contractdossier · Fictief browsercontract').wait_for()
+  self.page.get_by_role('button',name='Verlengen',exact=True).click();self.page.locator('#v5-reason').fill('Fictieve verlengingsafspraak');self.page.locator('#v5-end_date').fill('2031-12-31');self.page.locator('#v5-renewal_date').fill('2031-11-01');self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.get_by_role('heading',name='Contractdossier · Fictief browsercontract').wait_for()
+  saved=self.s.request('/api/v5/contracts/'+str(contract['id']),token=self.admin)[1];self.assertEqual(saved['locations'][0]['frequency'],'Elke maandag');self.assertEqual(saved['contract']['end_date'],'2031-12-31');self.assertEqual(saved['events'][0]['reason'],'Fictieve verlengingsafspraak')
+ def test_clock_rejected_start_keeps_form_then_saved_cancel(self):
+  code,work,_=self.s.request('/api/v5/workorders','POST',{'object_id':1,'description':'Fictieve browserklok','date':'2030-04-01','start_time':'08:00','end_time':'12:00'},self.admin);self.assertEqual(code,200,work)
+  self.login();self.open('workorders');self.page.locator('.v5-item').filter(has_text='Fictieve browserklok').get_by_role('button',name='Opdracht openen').click();self.page.get_by_role('button',name='Inklokken',exact=True).click();self.page.locator('#v5-employee_id').select_option('1');self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.locator('#v5error').filter(has_text='Klok in bij').wait_for();self.assertEqual(self.page.locator('#v5-employee_id').input_value(),'1');self.assertEqual(self.page.evaluate('v5tab'),'workorders')
+  self.s.request('/api/v5/shifts','POST',{'object_id':1,'employee_id':1,'date':work['date'],'start_time':'08:00','end_time':'12:00','workorder_id':work['id']},self.admin)
+  for state in ('Gepland','Toegewezen'):
+   code,work,_=self.s.request('/api/v5/workorders/'+str(work['id'])+'/transition','POST',{'version':work['version'],'state':state},self.admin);self.assertEqual(code,200,work)
+  self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.get_by_role('button',name='Klok annuleren',exact=True).wait_for();self.assertEqual(len(self.s.request('/api/v5/clock',token=self.admin)[1]),1)
+  self.page.get_by_role('button',name='Klok annuleren',exact=True).click();self.page.locator('#v5-reason').fill('Fictieve verkeerde start');self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.locator('#modalbg').wait_for(state='detached');self.assertEqual(self.s.request('/api/v5/clock',token=self.admin)[1],[])

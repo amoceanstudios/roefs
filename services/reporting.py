@@ -6,12 +6,12 @@ from domain import date_value,Problem,interval
 from .common import *
 from .access import require
 
-def csv_bytes(rows,fields):
+def csv_bytes(rows,fields,labels=None):
     stream=io.StringIO(newline='');writer=csv.writer(stream,delimiter=';')
     def cell(v):
         v=str(v if v is not None else '')
         return "'"+v if v.lstrip().startswith(('=','+','-','@')) or v.startswith(('\t','\r','\n')) else v
-    writer.writerow(fields)
+    writer.writerow([labels.get(f,f) for f in fields] if labels else fields)
     for row in rows:writer.writerow([cell(row.get(f,'')) for f in fields])
     return ('\ufeff'+stream.getvalue()).encode('utf-8')
 def pdf(title,lines):

@@ -31,3 +31,13 @@ Trapsgewijze load 1/8/16/32 gelijktijdig: nul fouten, p95 circa 152/1592/2004/37
 - Oude volledige lijst-API blijft voor compatibiliteit; oorspronkelijke CRUD-schermen gebruiken limit/offset/q. Andere ondersteunende keuzelijsten niet allemaal begrensd.
 - Oude lopende lokale ontwikkelserver is niet automatisch herstart naar V6. Stop uitsluitend eigen processen; start.py maakt vooraf backup. Tests gebruiken eigen tijdelijke databases.
 - Geen echte credentials, productiegegevens of publieke appdeployment. GitHub-broncode/ZIP-publicatie is wel door gebruiker geautoriseerd.
+
+## Nieuw hervatpunt (na bovenstaande checkpoint)
+
+De huidige bronstand bevat HTTP-workerbegrenzing, inactieve scopes.py met 10 kern-tests, fix voor navigatie na mislukte klokstart, Nederlandse managementexport en 3 extra V6-browsertests. Laatste volledige run: **123 tests, 0 mislukt (168,362 s)**, plus oorspronkelijke 65/18 controles, logo en twee loadproeven. V5-migratieproef (51 tabellen), Dockerbasis en encrypted containerrestore geslaagd. Zie V6-TESTRAPPORT.md voor beperkingen.
+
+**Eerste volgende taak blijft SEC-05:** scopes.py is NIET aangesloten op server.actor, migratie, routes, lijsten, exports of UI. Activeer geen beleid voordat ook joins, afgeleide rapportages, dashboardcounts, lookups, notificaties, documenten en directe mutaties dezelfde grenzen afdwingen en negatieve HTTP-tests slagen. ContextVar moet per request worden gereset. Let op contract_locations: samengestelde sleutel, geen id-kolom. Maak classificaties en policyversies zichtbaar voor beheer.
+
+V6-INSTALLATIE.md en tools/verify_package.py beschrijven/verifiëren de TUSSENSTAND; build_package.py noemt deze bewust niet FINAL. De vereiste definitieve V6-acceptatie blijft open.
+
+Schone tussenstand-ZIP is ook getest: nieuwe venv, echte installatie, 123 tests/0 fouten (211,580 s), 65 API/18 planning/logo/load geslaagd. Bronpakket: ROEFS-ONE-ENTERPRISE-V6-TUSSENSTAND.zip, met startscript en V6-INSTALLATIE.md. Definitieve V6-FINAL blijft open. De bronbestanden in de leverings-ZIP zijn bytegelijk aan de schoon geteste versie; alleen rapporten/documentatie zijn daarna aangevuld.

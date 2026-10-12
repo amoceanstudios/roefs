@@ -1,0 +1,265 @@
+{
+  "source": "V5 demo-initialisatie",
+  "target": "huidige broncode",
+  "preserved": [
+    {
+      "table": "settings",
+      "rows": 1,
+      "columns": 2
+    },
+    {
+      "table": "audit",
+      "rows": 0,
+      "columns": 7
+    },
+    {
+      "table": "users",
+      "rows": 2,
+      "columns": 11
+    },
+    {
+      "table": "sessions",
+      "rows": 0,
+      "columns": 3
+    },
+    {
+      "table": "messages",
+      "rows": 0,
+      "columns": 6
+    },
+    {
+      "table": "permissions",
+      "rows": 0,
+      "columns": 2
+    },
+    {
+      "table": "autopilot_jobs",
+      "rows": 0,
+      "columns": 11
+    },
+    {
+      "table": "employee_cao_profiles",
+      "rows": 1,
+      "columns": 8
+    },
+    {
+      "table": "employee_contract_terms",
+      "rows": 1,
+      "columns": 6
+    },
+    {
+      "table": "customers",
+      "rows": 2,
+      "columns": 14
+    },
+    {
+      "table": "objects",
+      "rows": 1,
+      "columns": 12
+    },
+    {
+      "table": "contracts",
+      "rows": 1,
+      "columns": 16
+    },
+    {
+      "table": "quotes",
+      "rows": 1,
+      "columns": 9
+    },
+    {
+      "table": "invoices",
+      "rows": 1,
+      "columns": 15
+    },
+    {
+      "table": "ledger",
+      "rows": 1,
+      "columns": 10
+    },
+    {
+      "table": "payroll",
+      "rows": 1,
+      "columns": 9
+    },
+    {
+      "table": "employees",
+      "rows": 1,
+      "columns": 15
+    },
+    {
+      "table": "shifts",
+      "rows": 1,
+      "columns": 12
+    },
+    {
+      "table": "hours",
+      "rows": 1,
+      "columns": 15
+    },
+    {
+      "table": "inspections",
+      "rows": 1,
+      "columns": 10
+    },
+    {
+      "table": "logbook",
+      "rows": 1,
+      "columns": 9
+    },
+    {
+      "table": "workorders",
+      "rows": 1,
+      "columns": 23
+    },
+    {
+      "table": "orders",
+      "rows": 1,
+      "columns": 10
+    },
+    {
+      "table": "assets",
+      "rows": 1,
+      "columns": 11
+    },
+    {
+      "table": "keys",
+      "rows": 1,
+      "columns": 9
+    },
+    {
+      "table": "vehicles",
+      "rows": 1,
+      "columns": 11
+    },
+    {
+      "table": "documents",
+      "rows": 1,
+      "columns": 9
+    },
+    {
+      "table": "leave",
+      "rows": 1,
+      "columns": 9
+    },
+    {
+      "table": "availability",
+      "rows": 0,
+      "columns": 9
+    },
+    {
+      "table": "alerts",
+      "rows": 1,
+      "columns": 8
+    },
+    {
+      "table": "teams",
+      "rows": 0,
+      "columns": 4
+    },
+    {
+      "table": "contacts",
+      "rows": 0,
+      "columns": 7
+    },
+    {
+      "table": "certifications",
+      "rows": 0,
+      "columns": 5
+    },
+    {
+      "table": "checklist",
+      "rows": 0,
+      "columns": 7
+    },
+    {
+      "table": "reservations",
+      "rows": 0,
+      "columns": 6
+    },
+    {
+      "table": "workorder_events",
+      "rows": 0,
+      "columns": 7
+    },
+    {
+      "table": "schedule_history",
+      "rows": 0,
+      "columns": 7
+    },
+    {
+      "table": "invoice_lines",
+      "rows": 0,
+      "columns": 8
+    },
+    {
+      "table": "files",
+      "rows": 0,
+      "columns": 13
+    },
+    {
+      "table": "notifications",
+      "rows": 0,
+      "columns": 7
+    },
+    {
+      "table": "preferences",
+      "rows": 0,
+      "columns": 4
+    },
+    {
+      "table": "travel_estimates",
+      "rows": 0,
+      "columns": 6
+    },
+    {
+      "table": "articles",
+      "rows": 0,
+      "columns": 8
+    },
+    {
+      "table": "sync_connections",
+      "rows": 0,
+      "columns": 17
+    },
+    {
+      "table": "sync_links",
+      "rows": 0,
+      "columns": 8
+    },
+    {
+      "table": "sync_runs",
+      "rows": 0,
+      "columns": 9
+    },
+    {
+      "table": "sync_events",
+      "rows": 0,
+      "columns": 9
+    },
+    {
+      "table": "sync_conflicts",
+      "rows": 0,
+      "columns": 13
+    },
+    {
+      "table": "sync_outbox",
+      "rows": 0,
+      "columns": 13
+    },
+    {
+      "table": "communications",
+      "rows": 0,
+      "columns": 6
+    },
+    {
+      "table": "sync_resolution_snapshots",
+      "rows": 0,
+      "columns": 4
+    }
+  ],
+  "integrity_check": "ok",
+  "foreign_key_errors": 0,
+  "repeatable": true,
+  "production_data_used": false
+}

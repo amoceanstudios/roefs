@@ -45,3 +45,5 @@ def build(c,user,report):
         invoices=[dict(r) for r in c.execute('SELECT i.* FROM invoices i JOIN workorders w ON w.id=i.workorder_id WHERE w.date BETWEEN ? AND ?',(report['from'],report['to'])) if r['workorder_id'] in work_ids]
         result['finance']={'invoices':invoices,'net':eur(sum((money(x['net_amount'] or '0',True) for x in invoices),Decimal(0))),'vat':eur(sum((money(x['vat_amount'] or '0',True) for x in invoices),Decimal(0))),'total':eur(sum((money(x['amount'],True) for x in invoices),Decimal(0)))}
     return result
+
+LABELS={"employee_id":"Medewerkernummer","customer_id":"Klantnummer","contract_id":"Contractnummer","asset_id":"Materieelnummer","name":"Naam","status":"Status","planned_hours":"Geplande uren","approved_hours":"Goedgekeurde uren","contract_capacity":"Indicatieve contractcapaciteit","planned_capacity_percent":"Geplande benutting (%)","workorders":"Werkopdrachten","completed":"Afgeronde opdrachten","reserved_hours":"Gereserveerde uren","reservations":"Reserveringen","calendar_utilization_percent":"Kalenderbenutting (%)"}

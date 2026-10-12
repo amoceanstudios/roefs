@@ -4,16 +4,18 @@ Geen voltooiings- of productieclaim zolang noodzakelijke poorten openstaan.
 
 - [x] V5-rollbackpunt en aparte V6-branch.
 - [x] Traceerbaar issueregister en onderscheid intern/externe afhankelijkheid.
-- [x] Volledige ontwikkelregressie daadwerkelijk uitgevoerd (106 tests plus legacy/load).
+- [x] Volledige ontwikkelregressie daadwerkelijk uitgevoerd (123 tests plus legacy/load).
 - [x] Rolketen en gegevens na herstart in bestaande integratietests.
 - [x] Nieuwe herstel-/integriteits-/syncfoutscenario’s uitgevoerd.
 - [x] Trapsgewijze korte belasting en p95/p99/RSS/fouten vastgelegd.
 - [x] Pakketmeldingen gecontroleerd; beperkte scanomvang benoemd.
 - [ ] Alle interne open items in V6-ISSUEREGISTER geëvalueerd, geïmplementeerd of met concrete technische blokkade onderbouwd.
-- [ ] Laatste bronstand volledig getest na alle wijzigingen.
+- [x] Deze ontwikkeltussenstand volledig getest: 123 tests; opnieuw vanuit schone ZIP.
 - [ ] Iedere relevante nieuwe bediening met API/opslag/reload/foutscenario getest.
-- [ ] V6-installatie, Docker, migratie vanaf echte V5-snapshot en shutdown/restart gecontroleerd.
-- [ ] Definitieve ZIP maken, schoon uitpakken, afhankelijkheden installeren en alle controles opnieuw uitvoeren.
+- [x] V6-installatie, Dockerbasis, tijdelijke V5-demo-snapshotmigratie en shutdown/restart gecontroleerd.
+- [ ] Migratie met representatieve geschoonde klantbackup; geen echte klantgegevens in deze cloud.
+- [x] TUSSENSTAND-ZIP schoon uitgepakt, in nieuwe venv geïnstalleerd en volledig getest.
+- [ ] Definitieve V6-FINAL na afronding interne openpunten opnieuw accepteren.
 - [ ] Documentatie/manifest/broncode/eindtestresultaten gelijkgetrokken.
 - [ ] GitHub-V6-branch en aantoonbaar beschikbare ZIP geleverd.
 

@@ -1,0 +1,11 @@
+test_clock_rejected_start_keeps_form_then_saved_cancel (test_v6_browser.V6Browser.test_clock_rejected_start_keeps_form_then_saved_cancel) ... ok
+test_contract_location_and_renewal_forms_persist (test_v6_browser.V6Browser.test_contract_location_and_renewal_forms_persist) ... ok
+test_resize_keyboard_saves_actual_end_time (test_v6_browser.V6Browser.test_resize_keyboard_saves_actual_end_time) ... ok
+test_rules_settings_saved_without_leaving_settings_and_numbering (test_v6_browser.V6Browser.test_rules_settings_saved_without_leaving_settings_and_numbering) ... ok
+test_script_csp_blocks_inline_handlers_and_command_injection (test_v6_browser.V6Browser.test_script_csp_blocks_inline_handlers_and_command_injection) ... ok
+test_series_form_persists_and_cancellation (test_v6_browser.V6Browser.test_series_form_persists_and_cancellation) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 17.365s
+
+OK

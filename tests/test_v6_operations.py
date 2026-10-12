@@ -51,3 +51,13 @@ class V6Operations(unittest.TestCase):
   second=self.s.request('/api/records/customers?limit=50&offset=50',token=self.admin)[1];self.assertEqual(len(second['items']),26);self.assertFalse({x['id'] for x in first['items']}&{x['id'] for x in second['items']})
   found=self.s.request('/api/records/customers?limit=50&q=paginaklant%2074',token=self.admin)[1];self.assertEqual(found['total'],1)
   own=self.s.request('/api/records/hours?limit=50',token=self.emp)[1];self.assertTrue(all(x['employee_id']=='1' for x in own['items']))
+ def test_management_exports_use_dutch_labels_and_csv_formula_guard(self):
+  from services.reporting import csv_bytes
+  from services.management_reporting import LABELS
+  import csv,io
+  output=csv_bytes([{'name':'=Fictief()','approved_hours':'1.50'}],['name','approved_hours'],LABELS).decode('utf-8-sig')
+  rows=list(csv.reader(io.StringIO(output),delimiter=';'));self.assertEqual(rows[0],['Naam','Goedgekeurde uren']);self.assertEqual(rows[1],["'=Fictief()",'1.50'])
+  self.req('workorders',{'object_id':1,'description':'Fictieve rapportexport','date':'2030-04-01','start_time':'08:00','end_time':'12:00'})
+  url='/api/v5/reports/management/csv?section=customers&from=2030-04-01&to=2030-04-01'
+  code,data,_=self.s.request(url,token=self.admin);self.assertEqual(code,200);self.assertIn('Klantnummer;Naam;Werkopdrachten',data.decode('utf-8-sig'))
+  code,pdf,_=self.s.request(url.replace('/csv?','/pdf?'),token=self.admin);self.assertEqual(code,200);self.assertTrue(pdf.startswith(b'%PDF-1.4'));self.assertIn(b'Werkopdrachten:',pdf)

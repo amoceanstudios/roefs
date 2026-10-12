@@ -1,3 +1,5 @@
+> **V6 ontwikkeltussenstand:** zie [V6-INSTALLATIE.md](V6-INSTALLATIE.md), [V6-FUNCTIEMATRIX.md](V6-FUNCTIEMATRIX.md) en [V6-CONTINUATION.md](V6-CONTINUATION.md). De onderstaande V5-beschrijving is de behouden basis; open V6-werk is geen eindacceptatie.
+
 # ROEFS ONE — V5 + automatische synchronisatie
 
 Voortgebouwd op de aangeleverde ROEFS ONE-broncode. De Python-backend, SQLite, bestaande modules, Amocean-logo en eerste scherm **‘Hoi Beheerder. Wat wil je doen?’** blijven behouden. Dit pakket gebruikt uitsluitend fictieve demonstratiegegevens.
