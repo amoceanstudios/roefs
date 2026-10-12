@@ -1,0 +1,17 @@
+test_batch_report_detects_same_absence_conflict (test_enterprise.Enterprise.test_batch_report_detects_same_absence_conflict) ... ok
+test_concurrent_assignment_exactly_one_success (test_enterprise.Enterprise.test_concurrent_assignment_exactly_one_success) ... ok
+test_cookie_csrf_and_session_invalidation (test_enterprise.Enterprise.test_cookie_csrf_and_session_invalidation) ... ok
+test_customer_import_all_or_nothing_and_number (test_enterprise.Enterprise.test_customer_import_all_or_nothing_and_number) ... ok
+test_full_role_chain_persists_restart (test_enterprise.Enterprise.test_full_role_chain_persists_restart) ... ok
+test_home_counts_and_drilldown_scope (test_enterprise.Enterprise.test_home_counts_and_drilldown_scope) ... ok
+test_mandatory_certification_equipment_and_capacity (test_enterprise.Enterprise.test_mandatory_certification_equipment_and_capacity) ... ok
+test_rbac_every_role_and_legacy_bypass (test_enterprise.Enterprise.test_rbac_every_role_and_legacy_bypass) ... ok
+test_restricted_roles_cannot_read_admin_messages_or_approve_hours (test_enterprise.Enterprise.test_restricted_roles_cannot_read_admin_messages_or_approve_hours) ... ok
+test_stale_versions_and_transactional_bulk (test_enterprise.Enterprise.test_stale_versions_and_transactional_bulk) ... ok
+test_time_dst_midnight_duplicates (test_enterprise.Enterprise.test_time_dst_midnight_duplicates) ... ok
+test_upload_path_type_scope_and_deduplicated_notifications (test_enterprise.Enterprise.test_upload_path_type_scope_and_deduplicated_notifications) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 12.170s
+
+OK

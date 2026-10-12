@@ -22,7 +22,8 @@ def money(value,allow_negative=False):
 def eur(value):return str(value.quantize(Decimal('.01'),rounding=ROUND_HALF_UP))
 def words(value):return {s.strip().casefold() for s in str(value or '').split(',') if s.strip()}
 def audit(c,user,action,module,rid,detail=''):
-    c.execute('INSERT INTO audit(actor,action,module,record_id,detail,at) VALUES(?,?,?,?,?,?)',(user['username'],action,module,rid,text(detail,10000),dt.datetime.now(dt.timezone.utc).isoformat()))
+    from .audit_integrity import append
+    append(c,user['username'],action,module,rid,text(detail,10000),dt.datetime.now(dt.timezone.utc).isoformat())
 def update(c,table,rid,values):
     c.execute('UPDATE '+table+' SET '+','.join(k+'=?' for k in values)+' WHERE id=?',list(values.values())+[rid])
 def insert(c,table,values):

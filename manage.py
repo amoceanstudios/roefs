@@ -18,7 +18,8 @@ def backup(db,output):
         check(snapshot);files={'roefs.db':snapshot.read_bytes()}
         with sqlite3.connect(snapshot) as c:
             if c.execute("SELECT 1 FROM sqlite_master WHERE name='files'").fetchone():
-                for key,expected in c.execute('SELECT storage_key,sha256 FROM files'):
+                deleted='deleted_at' in {r[1] for r in c.execute('PRAGMA table_info(files)')}
+                for key,expected in c.execute('SELECT storage_key,sha256 FROM files'+(' WHERE deleted_at IS NULL' if deleted else '')):
                     if not re.fullmatch('[a-f0-9]{64}',key):raise ValueError('Ongeldige bestandsreferentie.')
                     path=db.parent/'uploads'/key
                     if path.is_symlink():raise ValueError('Symbolische link in bestandsopslag.')
@@ -61,8 +62,18 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);sub=parser.add_subparsers(dest='command',required=True)
     b=sub.add_parser('backup');b.add_argument('--db',type=Path,default=Path('data/roefs.db'));b.add_argument('--output',type=Path,required=True)
     r=sub.add_parser('restore');r.add_argument('--archive',type=Path,required=True);r.add_argument('--target',type=Path,required=True)
+    b.add_argument('--key-file',type=Path);r.add_argument('--key-file',type=Path)
+    k=sub.add_parser('generate-backup-key');k.add_argument('--key-file',type=Path,required=True)
     args=parser.parse_args()
     try:
+        if args.command=='generate-backup-key':
+            from services.encrypted_backup import generate
+            generate(args.key_file);print('Privésleutel gemaakt. Bewaar onafhankelijk van backups; verlies maakt herstel onmogelijk.');return 0
+        if args.key_file:
+            from services import encrypted_backup
+            if args.command=='backup':encrypted_backup.backup(args.db,args.output,args.key_file)
+            else:encrypted_backup.restore(args.archive,args.target,args.key_file)
+            print('Versleutelde backuphandeling voltooid en integriteit gecontroleerd.');return 0
         if args.command=='backup':backup(args.db,args.output);print('Backup gemaakt en integriteit gecontroleerd. Bewaar dit bestand privé.')
         else:restore(args.archive,args.target);print('Hersteld en gecontroleerd. Sessies ingetrokken; externe koppelingen gepauzeerd.')
         return 0

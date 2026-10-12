@@ -1,5 +1,5 @@
 import time,logging,re
-from services import migrations,access,authentication,sync_migrations,synchronization,mfa,operational_migrations
+from services import migrations,access,authentication,sync_migrations,synchronization,mfa,operational_migrations,security_v6
 from services.routes import dispatch
 from domain import Problem, REFERENCES, REQUIRED, STATUSES, NUMBERS, LABELS, date_value, interval, schedule_issues, scoped_rows, validate, protect_delete
 import json,sqlite3,os,hashlib,hmac,secrets,threading,datetime,csv,io,urllib.parse,base64
@@ -38,7 +38,8 @@ def conn():
   CONN.db=sqlite3.connect(DB,timeout=15,check_same_thread=False);CONN.db.row_factory=sqlite3.Row;CONN.db.execute('PRAGMA foreign_keys=ON');CONN.db.execute('PRAGMA journal_mode=WAL')
  return CONN.db
 def log(actor,action,module,record,detail=''):
- conn().execute('INSERT INTO audit(actor,action,module,record_id,detail,at) VALUES(?,?,?,?,?,?)',(actor,action,module,record,str(detail),datetime.datetime.now().isoformat(timespec='seconds')))
+ from services.audit_integrity import append
+ append(conn(),actor,action,module,record,str(detail),datetime.datetime.now().isoformat(timespec='seconds'))
 def init():
  c=conn();c.execute('CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT)');c.execute('CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,actor TEXT,action TEXT,module TEXT,record_id INTEGER,detail TEXT,at TEXT)');c.execute('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,username TEXT UNIQUE,salt TEXT,password_hash TEXT,role TEXT)');c.execute('CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY,user_id INTEGER,expires TEXT)');c.execute('CREATE TABLE IF NOT EXISTS messages(id INTEGER PRIMARY KEY AUTOINCREMENT,sender_id INTEGER NOT NULL,subject TEXT NOT NULL,body TEXT NOT NULL,created_at TEXT DEFAULT CURRENT_TIMESTAMP,read_at TEXT)');c.execute('CREATE TABLE IF NOT EXISTS permissions(user_id INTEGER NOT NULL,module TEXT NOT NULL,PRIMARY KEY(user_id,module))')
  c.execute('CREATE TABLE IF NOT EXISTS autopilot_jobs(id INTEGER PRIMARY KEY AUTOINCREMENT,kind TEXT NOT NULL,source_id INTEGER NOT NULL,candidate_id INTEGER,status TEXT NOT NULL,payload TEXT NOT NULL,created_by TEXT,approved_by TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,executed_at TEXT,notes TEXT)')
@@ -100,6 +101,9 @@ def init():
  sync_migrations.migrate(c)
  mfa.migrate(c)
  operational_migrations.migrate(c)
+ security_v6.migrate(c)
+ from services.audit_integrity import migrate as migrate_audit
+ migrate_audit(c)
  c.commit()
 def rows(m):return [dict(r) for r in conn().execute('SELECT * FROM '+m+' ORDER BY id DESC')]
 def number(v):
@@ -179,7 +183,7 @@ class Handler(BaseHTTPRequestHandler):
   if self.headers.get('Transfer-Encoding'):raise Problem('Niet-ondersteunde overdracht.',400)
   try:n=int(self.headers.get('Content-Length','0'))
   except ValueError:raise Problem('Ongeldige verzoeklengte.')
-  if not 0<=n<=1000000:raise Problem('Verzoek te groot of ongeldig.',413)
+  if not 0<=n<=max(1000000,min(10000000,max(1024,int(os.environ.get('ROEFS_UPLOAD_MAX_BYTES','600000'))))*4//3+10000):raise Problem('Verzoek te groot of ongeldig.',413)
   try:b=json.loads(self.rfile.read(n) or b'{}',parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
   except (ValueError,UnicodeDecodeError):raise Problem('Ongeldige JSON-invoer.')
   if not isinstance(b,dict):raise Problem('Verwacht een JSON-object.')
@@ -230,15 +234,18 @@ class Handler(BaseHTTPRequestHandler):
     if attempts[1]>=10:raise Problem('Te veel inlogpogingen. Probeer over vijf minuten opnieuw.',429)
     if len(LOGIN_ATTEMPTS)>10000:raise Problem('Te veel verzoeken. Probeer later opnieuw.',429)
     LOGIN_ATTEMPTS[key]=(attempts[0],attempts[1]+1)
+   security_v6.attempt(conn(),username)
    r=conn().execute('SELECT * FROM users WHERE username=? AND active=1',(username,)).fetchone()
    good=r and hmac.compare_digest(hashlib.pbkdf2_hmac('sha256',str(b.get('password','')).encode(),bytes.fromhex(r['salt']),r['password_iterations']).hex(),r['password_hash'])
    if not good:return self.respond({'error':'Ongeldige inloggegevens'},401)
-   if r['mfa_secret']:
-    conn().execute('BEGIN IMMEDIATE')
-    current=conn().execute('SELECT mfa_secret,mfa_counter FROM users WHERE id=?',(r['id'],)).fetchone()
-    counter=mfa.verify(current['mfa_secret'],b.get('code',''),current['mfa_counter']);conn().execute('UPDATE users SET mfa_counter=? WHERE id=?',(counter,r['id']))
+   conn().execute('BEGIN IMMEDIATE')
+   current=conn().execute('SELECT * FROM users WHERE id=? AND active=1',(r['id'],)).fetchone()
+   if not current or current['password_hash']!=r['password_hash'] or current['role']!=r['role'] or current['mfa_secret']!=r['mfa_secret']:raise Problem('Account gewijzigd. Log opnieuw in.',401)
+   if current['mfa_secret']:
+    mfa.authenticate(conn(),dict(current),b.get('code',''))
    if r['password_iterations']<600000:
     hashed=hashlib.pbkdf2_hmac('sha256',str(b.get('password','')).encode(),bytes.fromhex(r['salt']),600000).hex();conn().execute('UPDATE users SET password_hash=?,password_iterations=600000 WHERE id=?',(hashed,r['id']))
+   conn().execute('DELETE FROM auth_attempts WHERE username=?',(username,))
    with LOGIN_LOCK:LOGIN_ATTEMPTS.pop(key,None)
    token=secrets.token_urlsafe(36);exp=(datetime.datetime.now()+datetime.timedelta(hours=8)).isoformat();conn().execute('INSERT INTO sessions VALUES(?,?,?)',(hashlib.sha256(token.encode()).hexdigest(),r['id'],exp));conn().commit();return self.respond({'token':token,'csrf':authentication.csrf(token),'username':r['username'],'role':r['role']},headers={'Set-Cookie':authentication.cookie(self,token)})
   user=self.actor()

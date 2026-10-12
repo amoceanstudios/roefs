@@ -1,0 +1,2 @@
+# Optionele versleutelde backups; geen wijziging aan SQLite-opslagformaat.
+cryptography==50.0.0

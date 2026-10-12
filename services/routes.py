@@ -90,6 +90,10 @@ def dispatch(h,c,user,path,method,modules,db):
     if path=='home' and method=='GET':
         from .dashboard import home
         result=home(c,user)
+    elif path=='security/audit-integrity' and method=='GET':
+        require(user,'settings')
+        from .audit_integrity import verify
+        result=verify(c)
     elif path.startswith('security/mfa/'):
         from .mfa import route
         action=parts[-1]
@@ -141,6 +145,12 @@ def dispatch(h,c,user,path,method,modules,db):
         rows=body.get('rows')
         if not isinstance(rows,list) or not 1<=len(rows)<=200:raise Problem('Importeer 1 tot 200 klanten per batch.')
         result={'items':[entity_save(c,user,'customers',row,modules) for row in rows]}
+    elif parts[:2]==['planning','series']:
+        from . import planning_series
+        if len(parts)==2 and method=='GET':result=planning_series.listing(c,user)
+        elif len(parts)==2 and method=='POST':result=planning_series.create(c,user,body)
+        elif len(parts)==3 and method=='POST':result=planning_series.change(c,user,int(parts[2]),body)
+        else:raise Problem('Ongeldige reeksactie.',405)
     elif path=='planning/suggest' and method=='POST':result=planning.suggestions(c,user,body)
     elif path=='planning/calendar' and method=='GET':
         if user['role']!='employee':require(user,'shifts')
@@ -182,6 +192,12 @@ def dispatch(h,c,user,path,method,modules,db):
         elif len(parts)==3 and parts[2]=='pdf' and method=='GET':
             w=workorders.visible(c,user,rid);lines=[f"Werkopdracht #{rid}",w['description'],'Status: '+str(w['workflow'] or w['status']),'Datum: '+w['date'],'Afronding: '+str(w['completion_notes'] or ''),'Aftekennaam (geen gekwalificeerde handtekening): '+w['signed_by']]+[('Gereed: ' if t['done'] else 'Open: ')+t['title'] for t in c.execute('SELECT * FROM checklist WHERE workorder_id=?',(rid,))];return send_binary(h,reporting.pdf('Werkbon',lines),'application/pdf',f'werkbon-{rid}.pdf')
         else:raise Problem('Ongeldige werkopdrachthandeling.',405)
+    elif parts[0]=='clock':
+        from . import time_clock
+        if len(parts)==1 and method=='GET':result=time_clock.listing(c,user)
+        elif len(parts)==1 and method=='POST':result=time_clock.start(c,user,body)
+        elif len(parts)==2 and method=='POST':result=time_clock.finish(c,user,int(parts[1]),body)
+        else:raise Problem('Ongeldige klokhandeling.',405)
     elif parts[0]=='hours' and len(parts)<=3:
         rid=int(parts[1]) if len(parts)>1 else None
         if method=='GET':
@@ -201,10 +217,13 @@ def dispatch(h,c,user,path,method,modules,db):
             elif parts[2]=='csv':return send_binary(h,reporting.csv_bytes(lines,['description','quantity','rate','vat_rate','net','vat']),'text/csv; charset=utf-8',f'factuur-{rid}.csv')
             else:return send_binary(h,reporting.pdf('Conceptfactuur '+inv['number'],['Beoordeling: '+str(inv['review_status']),'Klant: '+record(c,'customers',inv['customer_id'])['name']]+[f"{x['description']} | {x['quantity']} × EUR {x['rate']} | netto EUR {x['net']} | btw EUR {x['vat']}" for x in lines]+['Totaal EUR '+inv['amount'],'Niet verzonden; controleer in uw boekhouding.']),'application/pdf',f'factuur-{rid}.pdf')
         else:raise Problem('Ongeldige factuurhandeling.',405)
+    elif path=='files/config' and method=='GET':result={'max_bytes':documents.MAX_BYTES,'scanning':'ClamAV indien beschikbaar; anders quarantaine voor PDF en afbeeldingen.'}
+    elif parts[0]=='files' and len(parts)==3 and parts[2]=='rescan' and method=='POST':result=documents.rescan(c,user,int(parts[1]),db)
+    elif parts[0]=='files' and len(parts)==2 and method=='DELETE':result=documents.delete(c,user,int(parts[1]),body,db)
     elif path=='files' and method=='POST':result=documents.upload(c,user,body,db)
     elif path=='files' and method=='GET':
         result=[]
-        for raw in c.execute('SELECT * FROM files ORDER BY id DESC'):
+        for raw in c.execute('SELECT * FROM files WHERE deleted_at IS NULL ORDER BY id DESC'):
             row=dict(raw)
             try:documents.authorized(c,user,row)
             except Problem:continue
@@ -234,12 +253,16 @@ def dispatch(h,c,user,path,method,modules,db):
         from .notifications import deadlines
         deadlines(c,user);result={'ok':True,'external_delivery':'Niet geconfigureerd; uitsluitend interne meldingen.'}
     elif path=='settings' and method in ('GET','PUT'):
-        require(user,'settings',method!='GET');keys={'organization','services','departments','planning_weights','retention_days'}
+        require(user,'settings',method!='GET');keys={'organization','services','departments','planning_weights','retention_days','labor_rules','invoice_numbering'}
         if method=='PUT':
             if set(body)-keys:raise Problem('Onbekende instelling.')
             for key,value in body.items():
                 if key=='planning_weights':
                     if not isinstance(value,dict) or set(value)-{'availability','workload','familiarity','region','skills'} or any(not isinstance(v,(int,float)) or isinstance(v,bool) or not 0<=v<=100 for v in value.values()):raise Problem('Planningsgewichten: getallen tussen 0 en 100.')
+                elif key=='invoice_numbering':finance.validate_numbering(value)
+                elif key=='labor_rules':
+                    from .labor_rules import validate
+                    validate(value)
                 elif key=='retention_days':
                     if not 1<=int(value)<=36500:raise Problem('Bewaartermijn buiten bereik.')
                 else:text(value,4000)

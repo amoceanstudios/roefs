@@ -4,6 +4,6 @@ test_repeatable_start_and_backup (test_startup.Startup.test_repeatable_start_and
 test_tunnel_start_check_reuses_existing_gate (test_startup.Startup.test_tunnel_start_check_reuses_existing_gate) ... ok
 
 ----------------------------------------------------------------------
-Ran 4 tests in 1.906s
+Ran 4 tests in 2.215s
 
 OK

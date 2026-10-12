@@ -80,8 +80,18 @@ test_import_repeat_and_updates_no_duplicates (test_sync.Sync.test_import_repeat_
 test_lease_only_one_worker_and_recovery (test_sync.Sync.test_lease_only_one_worker_and_recovery) ... ok
 test_outage_history_backoff_and_conflict_resolution (test_sync.Sync.test_outage_history_backoff_and_conflict_resolution) ... ok
 test_prepared_connector_inactive_missing_api_and_ssrf (test_sync.Sync.test_prepared_connector_inactive_missing_api_and_ssrf) ... ok
+test_audit_modification_detected_and_unauthorized_check_denied (test_v6_integrity.V6Integrity.test_audit_modification_detected_and_unauthorized_check_denied) ... ok
+test_encrypted_backup_restore_wrong_key_and_corruption (test_v6_integrity.V6Integrity.test_encrypted_backup_restore_wrong_key_and_corruption) ... ok
+test_pdf_quarantine_text_delete_version_and_backup (test_v6_integrity.V6Integrity.test_pdf_quarantine_text_delete_version_and_backup) ... ok
+test_configured_rules_daily_weekly_rest_break_and_legacy (test_v6_planning.V6Planning.test_configured_rules_daily_weekly_rest_break_and_legacy) ... ok
+test_series_all_or_nothing_conflict_and_safe_restore (test_v6_planning.V6Planning.test_series_all_or_nothing_conflict_and_safe_restore) ... ok
+test_series_employee_denied (test_v6_planning.V6Planning.test_series_employee_denied) ... ok
+test_series_exceptions_cancel_restore_versions_restart (test_v6_planning.V6Planning.test_series_exceptions_cancel_restore_versions_restart) ... ok
+test_account_limit_persisted_in_database (test_v6_security.V6Security.test_account_limit_persisted_in_database) ... ok
+test_recovery_hashed_one_time_concurrent_and_persistent (test_v6_security.V6Security.test_recovery_hashed_one_time_concurrent_and_persistent) ... ok
+test_recovery_requires_password_and_rotation_invalidates_old_codes (test_v6_security.V6Security.test_recovery_requires_password_and_rotation_invalidates_old_codes) ... ok
 
 ----------------------------------------------------------------------
-Ran 82 tests in 153.866s
+Ran 92 tests in 133.457s
 
 OK

@@ -86,6 +86,8 @@ def schedule_issues(c, row, exclude=0, extended=True):
         for start,end in windows:
             if start<=covered: covered=max(covered,end)
         if covered<row['end_time']: issues.append('Dienst valt buiten de opgegeven beschikbaarheid.')
+    from services.labor_rules import issues as labor_issues
+    issues.extend(labor_issues(c,row,exclude))
     if extended and row.get('workorder_id'):
         from services.planning import issues as extended_issues
         return extended_issues(c,row,exclude,issues)

@@ -37,6 +37,6 @@ test_workflow_approve_once (test_regression.Regression.test_workflow_approve_onc
 test_workorder_employee_completion (test_regression.Regression.test_workorder_employee_completion) ... ok
 
 ----------------------------------------------------------------------
-Ran 37 tests in 14.389s
+Ran 37 tests in 25.375s
 
 OK

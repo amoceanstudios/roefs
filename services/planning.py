@@ -50,12 +50,14 @@ def save(c,user,body,rid=None):
     require(user,'shifts',True)
     previous=record(c,'shifts',rid) if rid else {}
     if previous:version(previous,body.get('version'))
-    allowed={'object_id','employee_id','date','start_time','end_time','status','workorder_id','planner_notes'}
+    allowed={'object_id','employee_id','date','start_time','end_time','status','workorder_id','planner_notes','break_minutes'}
     if set(body)-allowed-{'version'}:raise Problem('Onbekend planningsveld.')
     row={k:body.get(k,previous.get(k,'')) for k in allowed}
     row['status']=row['status'] or 'Gepland';row['workorder_id']=int(row['workorder_id']) if row['workorder_id'] else None
     if row['status'] not in ('Gepland','Bevestigd','Afgerond','Geannuleerd'):raise Problem('Ongeldige dienststatus.')
-    for key in allowed-{'workorder_id'}:row[key]=text(row[key])
+    for key in allowed-{'workorder_id','break_minutes'}:row[key]=text(row[key])
+    row['break_minutes']=int(row['break_minutes'] or 0)
+    if not 0<=row['break_minutes']<interval(row)*60:raise Problem('Pauze moet binnen de dienst vallen.')
     record(c,'objects',row['object_id']);interval(row)
     if row['employee_id']:record(c,'employees',row['employee_id'])
     if row['workorder_id']:
@@ -106,8 +108,8 @@ def undo(c,user,body):
     if h['undone'] or current['version']!=h['after_version']:raise Problem('Deze wijziging kan niet veilig worden teruggedraaid.',409)
     before=json.loads(h['before_json'])
     if not before:raise Problem('Nieuwe dienst: annuleer deze via het formulier.',409)
-    fields={'object_id','employee_id','date','start_time','end_time','status','workorder_id','planner_notes'}
-    result=save(c,user,{k:before[k] for k in fields}|{'version':current['version']},current['id'])
+    fields={'object_id','employee_id','date','start_time','end_time','status','workorder_id','planner_notes','break_minutes'}
+    result=save(c,user,{k:before.get(k,0 if k=='break_minutes' else '') for k in fields}|{'version':current['version']},current['id'])
     update(c,'schedule_history',h['id'],{'undone':1});audit(c,user,'undo','shifts',current['id']);return result
 
 def assess_many(c,rows):

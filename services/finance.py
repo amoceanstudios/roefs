@@ -24,7 +24,7 @@ def prepare(c,user,body):
         net=Decimal(eur(q*r));vat=Decimal(eur(net*v/100))
         computed.append({'description':text(line['description'],500,True),'quantity':str(q),'rate':str(r),'vat_rate':str(v),'net':str(net),'vat':str(vat)})
     net=sum((Decimal(x['net']) for x in computed),Decimal(0));vat=sum((Decimal(x['vat']) for x in computed),Decimal(0))
-    obj=record(c,'objects',work['object_id']);number='CONCEPT-WB-'+str(work['id'])
+    obj=record(c,'objects',work['object_id']);number=draft_number(c,work['id'])
     rid=insert(c,'invoices',{'number':number,'customer_id':obj['customer_id'],'contract_id':'','amount':eur(net+vat),'due_date':str(dt.date.today()+dt.timedelta(days=30)),'status':'Concept','net_amount':eur(net),'vat_amount':eur(vat),'workorder_id':work['id'],'review_status':'Te beoordelen'})
     for line in computed:insert(c,'invoice_lines',{'invoice_id':rid,**line})
     audit(c,user,'prepare','invoices',rid);return record(c,'invoices',rid)
@@ -42,3 +42,24 @@ def credit(c,user,rid,body):
     for raw in c.execute('SELECT * FROM invoice_lines WHERE invoice_id=?',(rid,)).fetchall():
         line=dict(raw);line.pop('id');line.update(invoice_id=new,quantity=str(-money(line['quantity'])),net=eur(-money(line['net'])),vat=eur(-money(line['vat'])));insert(c,'invoice_lines',line)
     audit(c,user,'credit','invoices',new,reason);return record(c,'invoices',new)
+
+
+def validate_numbering(value):
+    import re
+    if not isinstance(value,dict) or set(value)!={'enabled','prefix','width'} or not isinstance(value['enabled'],bool):raise Problem('Vul het conceptnummerprofiel volledig in.')
+    if not isinstance(value['prefix'],str) or not re.fullmatch('[A-Z0-9-]{1,20}',value['prefix']):raise Problem('Nummerprefix: 1–20 hoofdletters, cijfers of streepjes.')
+    if type(value['width'])!=int or not 3<=value['width']<=10:raise Problem('Nummerlengte: 3–10 cijfers.')
+    return value
+
+def draft_number(c,work_id):
+    setting=c.execute("SELECT value FROM settings WHERE key='invoice_numbering'").fetchone()
+    profile=json.loads(setting[0]) if setting else {'enabled':False}
+    if not profile['enabled']:return 'CONCEPT-WB-'+str(work_id)
+    series='CONCEPT-'+profile['prefix']+'-'+str(dt.date.today().year)
+    c.execute('INSERT OR IGNORE INTO invoice_sequences VALUES(?,1)',(series,))
+    number=c.execute('SELECT next_number FROM invoice_sequences WHERE series=?',(series,)).fetchone()[0]
+    for _ in range(1000):
+        value=series+'-'+str(number).zfill(profile['width']);number+=1
+        if not c.execute('SELECT 1 FROM invoices WHERE number=?',(value,)).fetchone():
+            c.execute('UPDATE invoice_sequences SET next_number=? WHERE series=?',(number,series));return value
+    raise Problem('Conceptnummerreeks bevat te veel bestaande nummers; controleer de configuratie.',409)

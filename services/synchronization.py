@@ -113,7 +113,7 @@ def enqueue(c,cid,category,modules):
             if link and row['version']==link['local_version']:continue
             if c.execute("SELECT 1 FROM sync_conflicts WHERE connection_id=? AND category=? AND (local_id=? OR local_id IS NULL) AND status='Open'",(cid,category,row['id'])).fetchone():continue
             # Eerst een onzekere eerdere poging afmaken, ook wanneer lokaal daarna is gewijzigd.
-            if c.execute("SELECT 1 FROM sync_outbox WHERE connection_id=? AND category=? AND local_id=? AND status='Wacht'",(cid,category,row['id'])).fetchone():continue
+            if c.execute("SELECT 1 FROM sync_outbox WHERE connection_id=? AND category=? AND local_id=? AND status IN ('Wacht','Uitval')",(cid,category,row['id'])).fetchone():continue
             payload=translate(c,cid,local_payload(row,category,modules),True)
             key=hashlib.sha256(f'{cid}:{category}:{row["id"]}:{row["version"]}'.encode()).hexdigest()
             c.execute('INSERT OR IGNORE INTO sync_outbox(connection_id,category,local_id,local_version,external_id,remote_revision,payload,idempotency_key) VALUES(?,?,?,?,?,?,?,?)',(cid,category,row['id'],row['version'],link['external_id'] if link else None,link['remote_revision'] if link else None,canonical({'fields':payload,'roefs_id':str(row['id'])}),key))
@@ -136,6 +136,8 @@ def push_pending(c,cid,run,category,adapter,modules,owner=None):
             c.execute('BEGIN IMMEDIATE');c.execute('UPDATE sync_outbox SET attempts=attempts+1,last_error=? WHERE id=?',(str(exc),job['id']))
             if exc.status in (409,412):
                 local=record(c,category,job['local_id']);conflict(c,cid,run,category,{'id':job['external_id'] or 'onbekend-'+str(job['id']),'revision':job['remote_revision'] or 'onbekend','fields':json.loads(job['payload'])['fields']},local,'Externe versie veranderde tijdens verzenden. Vernieuw extern en beoordeel het conflict.');c.execute("UPDATE sync_outbox SET status='Conflict' WHERE id=?",(job['id'],))
+            elif exc.status not in (401,403) and (not exc.retryable or job['attempts']+1>=10):
+                c.execute("UPDATE sync_outbox SET status='Uitval' WHERE id=?",(job['id'],));event(c,cid,run,category,'Uitval','Verzending vereist handmatige beoordeling; oorspronkelijke sleutel blijft behouden.',job['local_id'],job['external_id'])
             c.commit();raise
         c.execute('BEGIN IMMEDIATE')
         try:
@@ -171,7 +173,7 @@ def run_connection(db,cid,modules,force=False):
                     if result:counts[result]+=1
             if policy in ('roefs','both'):
                 enqueue(c,cid,category,modules);counts['exported']+=push_pending(c,cid,run,category,adapter,modules,owner)
-        c.execute('BEGIN IMMEDIATE');finished=stamp();open_count=c.execute("SELECT COUNT(*) FROM sync_conflicts WHERE connection_id=? AND status='Open'",(cid,)).fetchone()[0];status='Conflicten' if open_count else 'Geslaagd'
+        c.execute('BEGIN IMMEDIATE');finished=stamp();open_count=c.execute("SELECT COUNT(*) FROM sync_conflicts WHERE connection_id=? AND status='Open'",(cid,)).fetchone()[0];dead=c.execute("SELECT COUNT(*) FROM sync_outbox WHERE connection_id=? AND status='Uitval'",(cid,)).fetchone()[0];status='Uitval' if dead else 'Conflicten' if open_count else 'Geslaagd'
         update(c,'sync_runs',run,{**counts,'status':status,'finished_at':finished});c.execute('UPDATE sync_connections SET last_run=?,last_success=?,last_error=NULL,failures=0,next_run=?,lease_owner=NULL,lease_until=NULL WHERE id=? AND lease_owner=?',(finished,finished,stamp(now()+dt.timedelta(seconds=config['interval_seconds'])),cid,owner));c.commit();return {'status':status,**counts}
     except Exception as exc:
         c.rollback()
@@ -180,6 +182,8 @@ def run_connection(db,cid,modules,force=False):
         if run:
             counts={key:c.execute('SELECT COUNT(*) FROM sync_events WHERE run_id=? AND action=?',(run,action)).fetchone()[0] for key,action in [('imported','Import'),('exported','Export'),('conflicts','Conflict')]}
             c.execute('BEGIN IMMEDIATE');config=record(c,'sync_connections',cid);failures=config['failures']+1;delay=min(3600,max(30,config['interval_seconds'])*2**min(failures-1,6));update(c,'sync_runs',run,{**counts,'status':'Mislukt','error':detail,'finished_at':stamp()});event(c,cid,run,None,'Fout',detail)
+            if isinstance(exc,RemoteError) and exc.status in (401,403):
+                c.execute('UPDATE sync_connections SET enabled=0 WHERE id=?',(cid,));notify(c,f'sync-auth:{cid}:{run}','Koppeling gepauzeerd: controleer API-toegang.','integrations',roles={'admin','company_admin'})
             c.execute('UPDATE sync_connections SET last_run=?,last_error=?,failures=?,next_run=?,lease_owner=NULL,lease_until=NULL WHERE id=? AND lease_owner=?',(stamp(),detail,failures,stamp(now()+dt.timedelta(seconds=delay)),cid,owner));c.commit()
         return {'status':'Mislukt','error':detail,**counts}
     finally:c.close()
@@ -274,7 +278,12 @@ def resolve(c,user,conflict_id,body,modules):
 def route(h,c,user,path,method,body,modules,db):
     if user['role'] not in {'admin','company_admin','auditor'} or (method!='GET' and user['role']=='auditor'):raise Problem('Geen toegang tot integratiebeheer.',403)
     parts=path.split('/')
-    if path=='sync' and method=='GET':return {'providers':PROVIDERS,'categories':CATEGORIES,'policy_labels':POLICIES,'connections':[safe_config(x) for x in c.execute('SELECT * FROM sync_connections ORDER BY id')],'runs':[dict(x) for x in c.execute('SELECT * FROM sync_runs ORDER BY id DESC LIMIT 100')],'conflicts':[dict(x) for x in c.execute("SELECT * FROM sync_conflicts WHERE status='Open' ORDER BY id DESC LIMIT 200")],'events':[dict(x) for x in c.execute('SELECT * FROM sync_events ORDER BY id DESC LIMIT 200')]}
+    if path=='sync' and method=='GET':return {'outbox':[dict(x) for x in c.execute("SELECT id,connection_id,category,local_id,attempts,status,last_error FROM sync_outbox WHERE status='Uitval' ORDER BY id LIMIT 100")],'providers':PROVIDERS,'categories':CATEGORIES,'policy_labels':POLICIES,'connections':[safe_config(x) for x in c.execute('SELECT * FROM sync_connections ORDER BY id')],'runs':[dict(x) for x in c.execute('SELECT * FROM sync_runs ORDER BY id DESC LIMIT 100')],'conflicts':[dict(x) for x in c.execute("SELECT * FROM sync_conflicts WHERE status='Open' ORDER BY id DESC LIMIT 200")],'events':[dict(x) for x in c.execute('SELECT * FROM sync_events ORDER BY id DESC LIMIT 200')]}
+    if len(parts)==4 and parts[:2]==['sync','outbox'] and parts[3]=='retry' and method=='POST':
+        job=record(c,'sync_outbox',int(parts[2]));config=record(c,'sync_connections',job['connection_id']);reason=text(body.get('reason',''),1000,True)
+        if config['lease_until'] and config['lease_until']>stamp():raise Problem('Wacht tot de actieve synchronisatie is afgerond.',409)
+        if job['status']!='Uitval':raise Problem('Deze verzending wacht niet op handmatige beoordeling.',409)
+        c.execute("UPDATE sync_outbox SET status='Wacht',attempts=0 WHERE id=?",(job['id'],));c.execute('UPDATE sync_connections SET next_run=? WHERE id=?',(stamp(),config['id']));audit(c,user,'retry','sync_outbox',job['id'],reason);return {'ok':True,'status':'In wachtrij; bestaande idempotentiesleutel behouden.'}
     if path=='sync/connections' and method=='POST':return save_config(c,user,body)
     if len(parts)==3 and parts[:2]==['sync','connections'] and method=='PUT':return save_config(c,user,body,int(parts[2]))
     if len(parts)==4 and parts[:2]==['sync','connections'] and parts[3]=='schedule' and method=='POST':
