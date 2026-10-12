@@ -12,6 +12,6 @@ test_time_dst_midnight_duplicates (test_enterprise.Enterprise.test_time_dst_midn
 test_upload_path_type_scope_and_deduplicated_notifications (test_enterprise.Enterprise.test_upload_path_type_scope_and_deduplicated_notifications) ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 12.170s
+Ran 12 tests in 14.878s
 
 OK

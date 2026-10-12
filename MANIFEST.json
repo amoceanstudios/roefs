@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "product": "ROEFS ONE V6 — tussenstand, geen eindacceptatie",
+  "product": "ROEFS ONE V6 — migratievoorzieningen getest, klantacceptatie vereist",
   "files": [
     {
       "path": ".dockerignore",
@@ -24,8 +24,8 @@
     },
     {
       "path": "BEKENDE-PROBLEMEN.md",
-      "sha256": "6381aedcf57b39f7db3af6fe5c5bb1d9589031adc0c60943aa2b790b1b58f7aa",
-      "bytes": 4064
+      "sha256": "b65c70956a46b97d0766fad8c6186faa01eba9a7dc74b0575aac616ab712c047",
+      "bytes": 3256
     },
     {
       "path": "BEVEILIGING.md",
@@ -44,8 +44,8 @@
     },
     {
       "path": "FUNCTIEMATRIX.md",
-      "sha256": "2800196b8873feea32cfbbffdbefb96fa425d2063883150b7804f3f48680d8c5",
-      "bytes": 4772
+      "sha256": "86d3e66c35bab64f762a249b23805a9c04f81fac392a78290da8f6fcc15a7670",
+      "bytes": 4902
     },
     {
       "path": "GEBRUIKERSHANDLEIDING.md",
@@ -74,18 +74,23 @@
     },
     {
       "path": "PRODUCTIE-CHECKLIST.md",
-      "sha256": "3bac8bb16ad2d88f9e848cee0c79b85476c2cf8a81ae0876deb0e3d5b71d06d5",
-      "bytes": 1749
+      "sha256": "375878e845cc676c0b88c0d1fc0bdadf3bda0a11063975a1680b2a0136c9f652",
+      "bytes": 1975
     },
     {
       "path": "README.md",
-      "sha256": "38da6e5c0bbd70d7c78d00b1d4e808cc7638601f8b370fb74534c854ed8f9a79",
-      "bytes": 2922
+      "sha256": "aa619bb74e503884c44a81c23273fd6b2e30fe44561e1895e08c91d016812b0b",
+      "bytes": 3400
+    },
+    {
+      "path": "ROEFS-MIGRATIEHANDLEIDING.md",
+      "sha256": "fd9a43393e4895834d01b68b58e4a8763f3251b73e13207af657c76a8885b1c8",
+      "bytes": 8217
     },
     {
       "path": "ROEFS-NODIG.md",
-      "sha256": "a344847bec46bc2b8a95dc5c434df088ebed6294fa82e3affb7a562b01ecdca5",
-      "bytes": 3585
+      "sha256": "329da62c816f17e2d4e678a52a9b6b425bc5d66e617d410cccac07f8ac9b0d44",
+      "bytes": 2851
     },
     {
       "path": "START-GRATIS-24U.command",
@@ -109,8 +114,8 @@
     },
     {
       "path": "TESTRAPPORT.md",
-      "sha256": "b554543f58f6fea16ddab619f32a7690729fdffbcc0c36993ecd7fbad06ad8ee",
-      "bytes": 3382
+      "sha256": "f8723f064f3105d236cc0f0c4aa1468674179bab0b06bf10458456842da74915",
+      "bytes": 3512
     },
     {
       "path": "V6-ACCEPTATIECHECKLIST.md",
@@ -124,13 +129,33 @@
     },
     {
       "path": "V6-CONTINUATION.md",
-      "sha256": "ed2b46badfe137d7eaacb97430bdfe0a01adc9355299fcaafb412df3673b404b",
-      "bytes": 5294
+      "sha256": "50f272fd27755e0203b3fbf8b752cdd57bcdef0ad7801e484d42c5aef4834a4d",
+      "bytes": 1633
+    },
+    {
+      "path": "V6-FINAL-FUNCTIEMATRIX.md",
+      "sha256": "65ff10d5ec425f0907358b07b7f286ffb5a21215ba4b544372d092a11e396b97",
+      "bytes": 4562
+    },
+    {
+      "path": "V6-FINAL-PERFORMANCE.md",
+      "sha256": "e960cb385323b4729a75881ab84806b714ecc164e80d111aaf36b132441a4728",
+      "bytes": 2345
+    },
+    {
+      "path": "V6-FINAL-SECURITY.md",
+      "sha256": "870c31b41331c17232a8d7a8c638fd39b375220f454f356e63a91c0bdf6de8bc",
+      "bytes": 4528
+    },
+    {
+      "path": "V6-FINAL-TESTRAPPORT.md",
+      "sha256": "9164f7966e5618b26b8479d80dbb2f5f1aa877e3dfb7e855e13bb42709fe4e30",
+      "bytes": 4944
     },
     {
       "path": "V6-FUNCTIEMATRIX.md",
-      "sha256": "1da15b1a4e960f04e33a262ff3cf17bddd53efb2cbf9c0e814d71ef970cb0b47",
-      "bytes": 3378
+      "sha256": "2818c93d17e6f645aced1b48e75a020297db75b50d8967a77b87cf68d4aa773b",
+      "bytes": 3508
     },
     {
       "path": "V6-INSTALLATIE.md",
@@ -139,23 +164,33 @@
     },
     {
       "path": "V6-ISSUEREGISTER.md",
-      "sha256": "166efee978614fb8260354d4c20c71efd47832e03550e4b11c05ede4b660d8b4",
-      "bytes": 8132
+      "sha256": "7bf2545546fd5f578898d2a50b40ad3a01ec7c518ae1b7322d636f9e708b3c1b",
+      "bytes": 8940
+    },
+    {
+      "path": "V6-MIGRATION-GAPS.md",
+      "sha256": "e552dca04ebd2204fe006f894190652868e01d17184e29203dcd1933dfab6f98",
+      "bytes": 3076
+    },
+    {
+      "path": "V6-MIGRATION-REPORT.md",
+      "sha256": "89fae3b2563fe1475904688163a7dcde0ec78ee15969fbef02855ea63cf3d0d4",
+      "bytes": 4745
     },
     {
       "path": "V6-PERFORMANCE-REPORT.md",
-      "sha256": "6205b441beb8b6512791811761b648a3b468353198dd5a519eae33e10c080236",
-      "bytes": 2043
+      "sha256": "49b6b8d4747fa28f4d38a4b19c63fe11206699facb76ae1391be7a33aec64e81",
+      "bytes": 2173
     },
     {
       "path": "V6-SECURITY-REPORT.md",
-      "sha256": "1c55ea7d6db7eb7e4a757a2ff194f0aa0f0813739d3fd3cb576656d57eb10705",
-      "bytes": 4729
+      "sha256": "f09f01b312e518aedef5524c307bed281313ab1c814aa2ab7c101c1a999e36b2",
+      "bytes": 4859
     },
     {
       "path": "V6-TESTRAPPORT.md",
-      "sha256": "fc503f90eaab20626764a605edc837a22deff8be03e35a1f5beb66da98f69194",
-      "bytes": 5953
+      "sha256": "a6100552d61ca3eebe19f4a0267afc451698ab6772759d03a85deb41c7c4f768",
+      "bytes": 6083
     },
     {
       "path": "V6-VOORTGANG.md",
@@ -174,13 +209,13 @@
     },
     {
       "path": "build_package.py",
-      "sha256": "c1c65c122056717ba1034e7e9314f2618cda0436a95eaf58a2ea9aa51b1a228b",
-      "bytes": 1773
+      "sha256": "501dc26f362c733e92e56d34eb1cbb90ba9f16b44d118e10803684d33a11e29e",
+      "bytes": 1816
     },
     {
       "path": "domain.py",
-      "sha256": "009cc998fc6641bd31490fef5ca6cfded210dcbfc81caa657c35564c05dc4977",
-      "bytes": 13741
+      "sha256": "484207f5faa8fbee01db853221bd6bd7077b00386ebd9025407e98810f99836c",
+      "bytes": 14415
     },
     {
       "path": "enterprise.css",
@@ -189,13 +224,83 @@
     },
     {
       "path": "enterprise.js",
-      "sha256": "35ae6ae54972a50637bf676c06d19aad46c84990e4583f6ed1f5dab3e48fd841",
-      "bytes": 61673
+      "sha256": "f114bc3bed7f80fc4140a7e92fb637d9c49121d1cefef70d17f5ea988dc1425e",
+      "bytes": 89943
     },
     {
       "path": "events.js",
-      "sha256": "a3e484bfb07f31aac385e412eac0ba5d4ff34a8a2458a20881c17f02744c7049",
-      "bytes": 5678
+      "sha256": "25656f03048931c736525e6b897cd720ac5dca6d9e299f43f23603af1355ded1",
+      "bytes": 6375
+    },
+    {
+      "path": "fixtures/migration/contracts.csv",
+      "sha256": "16f467d6f955e5af58eccb1650dcd2605db72ed882ba0dbf54c44c32ee134150",
+      "bytes": 79077
+    },
+    {
+      "path": "fixtures/migration/contracts.xlsx",
+      "sha256": "229d80cb85383cda5c740d9e2a6ca2a6fc8f3acaf81f521f0a7062b957f1c8d6",
+      "bytes": 34545
+    },
+    {
+      "path": "fixtures/migration/customers.csv",
+      "sha256": "ce58d1b253a3d050a516d122298493cbf2c6fa2ed65a3fa50a2798a4cb58f2f4",
+      "bytes": 29621
+    },
+    {
+      "path": "fixtures/migration/customers.xlsx",
+      "sha256": "51606adf8059e92b233bcb836cd04ab57057da0de8ed2c04d85aec8779fc3397",
+      "bytes": 12656
+    },
+    {
+      "path": "fixtures/migration/employees.csv",
+      "sha256": "6d02dccd15cf1a91537a4d1dc54f091777bfef45a85f23950a02df658fd94798",
+      "bytes": 11286
+    },
+    {
+      "path": "fixtures/migration/employees.xlsx",
+      "sha256": "5f750e2acbf4bc58549bcdb4fb828a0c47ba05eba538ddca0a0ed1677220219d",
+      "bytes": 5907
+    },
+    {
+      "path": "fixtures/migration/hours.csv",
+      "sha256": "86e22d1c734626379162852c3f6f54147d57dd6dedf90ebf2fb2badc803bb48d",
+      "bytes": 910084
+    },
+    {
+      "path": "fixtures/migration/hours.xlsx",
+      "sha256": "faea3c6e827a775c9f070db5b4e23966cdeb8f8fe13421f32c9d3f8a97a7974f",
+      "bytes": 364563
+    },
+    {
+      "path": "fixtures/migration/objects.csv",
+      "sha256": "b3ce72facd42fd7ace822bc713419ecf61318ad5791cdc5d16a935df7ae1d072",
+      "bytes": 92033
+    },
+    {
+      "path": "fixtures/migration/objects.xlsx",
+      "sha256": "37ba005149f8322fdd2d49c5bb6c2333f073d0f4750239cd243394254a634a5e",
+      "bytes": 41969
+    },
+    {
+      "path": "fixtures/migration/shifts.csv",
+      "sha256": "43375b1d0eb89c3dad32adb9b588b5f97e2f1cac1395e6884438bbd46879baea",
+      "bytes": 260076
+    },
+    {
+      "path": "fixtures/migration/shifts.xlsx",
+      "sha256": "cc2c5266e21a6b645fd54ee4e6738e2e08faca0361c114e2f028d48cc7d66a5c",
+      "bytes": 168267
+    },
+    {
+      "path": "fixtures/migration/workorders.csv",
+      "sha256": "dbcb20e7e542f4abb998ae0ac57d707abc00433e0c922b994a48dcaabd37e5ca",
+      "bytes": 395084
+    },
+    {
+      "path": "fixtures/migration/workorders.xlsx",
+      "sha256": "e4fae4e2407c3e133a00090badc2899cd20dd3c1448147662362e1225e24d263",
+      "bytes": 185879
     },
     {
       "path": "index.html",
@@ -209,8 +314,8 @@
     },
     {
       "path": "manage.py",
-      "sha256": "372a978775701a41c85bf364a3b7ea77b7fdce6226494a8059b2b0aae638c1a0",
-      "bytes": 5992
+      "sha256": "96e5cd102ce064b331a5c47d4c10c8df46677911dfe579d322326839471e7642",
+      "bytes": 6469
     },
     {
       "path": "nl.js",
@@ -224,8 +329,8 @@
     },
     {
       "path": "reports/all-tests.txt",
-      "sha256": "9c2be33dda939233b6cc7203a372ecf606485ecda181d7df7cde6c2630f61c70",
-      "bytes": 15289
+      "sha256": "11ea6514eeed49d03f484ccdb6c650d907f966ae68d25f284bf7ce30b0a8691b",
+      "bytes": 19558
     },
     {
       "path": "reports/desktop.png",
@@ -269,7 +374,7 @@
     },
     {
       "path": "reports/load-enterprise-8.json",
-      "sha256": "d9b9e7bedaf9dd66392481175a3d3891161f0c934abb0d80ed65839b31001867",
+      "sha256": "ab242231dfedfc02adaa00ab2ec7f2f90fb8fcb787a5499b7393bdf14aff190a",
       "bytes": 1254
     },
     {
@@ -279,28 +384,33 @@
     },
     {
       "path": "reports/load-enterprise.json",
-      "sha256": "d9b9e7bedaf9dd66392481175a3d3891161f0c934abb0d80ed65839b31001867",
+      "sha256": "ab242231dfedfc02adaa00ab2ec7f2f90fb8fcb787a5499b7393bdf14aff190a",
       "bytes": 1254
     },
     {
       "path": "reports/load-enterprise.txt",
-      "sha256": "14421b386844e92def1a282c501fcf98e93d74e97add9533c786868a4166c525",
+      "sha256": "8e699a9ce3f4785b3a16daba32bb09ab7a0c4413d8858afa76b925b4ba244737",
       "bytes": 1255
     },
     {
       "path": "reports/load-smoke.json",
-      "sha256": "b2fb52efafac2d17a448629458a838fe42edf1ad23689fd5e0bc8c647f388b8e",
+      "sha256": "bb507f2f4f6f6fa97674e953fb23bbe4e6a1a8421bcaa051cfd2e334db647b64",
       "bytes": 365
     },
     {
       "path": "reports/load-smoke.txt",
-      "sha256": "f0fd59b166e8adb48a0ebbd309ff3130e6544886e18d8003c97302b41af9c202",
+      "sha256": "7a4b6a0d64ddb677368276bcddf4cab877352ca13f75ede76d0a79cb36330ec1",
       "bytes": 366
     },
     {
       "path": "reports/logo.txt",
       "sha256": "ecf90d6c0279f6cddf86ed9ee168c38115817527316b310611841312f6dae042",
       "bytes": 96
+    },
+    {
+      "path": "reports/migration-volume.json",
+      "sha256": "5ef07cc5977048fc5d081c1f8063ef65ad712c7ae78500a7e037e87599a70fe5",
+      "bytes": 1814
     },
     {
       "path": "reports/mobile.png",
@@ -319,28 +429,58 @@
     },
     {
       "path": "reports/test_enterprise.txt",
-      "sha256": "fc043f96145e2e28e1a14ebab09aaae9dba35dd2af7e81b7dea9bdb9eabc01e9",
+      "sha256": "91085d1f7c177ed614be9dd6c9c33e0ed578957eec5a713fa5e235f43935fd71",
       "bytes": 1636
     },
     {
       "path": "reports/test_regression.txt",
-      "sha256": "dec683eb4ed035d59f8e86c77094c4e536e4c14a11619dc37526945f39fd8840",
+      "sha256": "1b1bb1a4401f3a4ad2cd02e37a7bbf7551c72ec2f1d6ab1fd2875f87b78985e8",
       "bytes": 3948
     },
     {
       "path": "reports/test_security_recovery.txt",
-      "sha256": "0eae5e2ed1abd84f3a620dc67a372afe43345cb4d5f5889d557ba32ce5ceeb91",
+      "sha256": "c324185ecf53396f66dcbcb93daeb2b199ea53eaaa85f06e5025f0b8b95f0961",
       "bytes": 700
     },
     {
       "path": "reports/test_startup.txt",
-      "sha256": "e5bb2df05bad331c71675b1f5c3e016c1614fe7dabcf4ac265e2421a60b6703e",
+      "sha256": "c62ca2ba0ce10e06ee092034963a163b9d662bb627311bf206406a3898266cc7",
       "bytes": 556
     },
     {
       "path": "reports/test_sync.txt",
-      "sha256": "a18064c43dccd97b3a60f69849ffe27a1a44c50df27fdd5e0e8db1dd4cc39ae6",
-      "bytes": 1370
+      "sha256": "9dc17d270e06f5b323328674219ccaa40aacfb5a24fc96de152d9d11ebb1cf1f",
+      "bytes": 1744
+    },
+    {
+      "path": "reports/test_v6_http.txt",
+      "sha256": "0e069238db14a206949f8ea61f3f7ffa8a5a9a2005917e896c44f3e9d24d7f54",
+      "bytes": 206
+    },
+    {
+      "path": "reports/test_v6_integrity.txt",
+      "sha256": "bfe0d81ef561269529a0e476e8f552e0c69c4606f2f86cf72646127440f05680",
+      "bytes": 835
+    },
+    {
+      "path": "reports/test_v6_operations.txt",
+      "sha256": "56953acd8accb89b54e2f73be9148d10982110af2b0ba1655ca16920f2b2b709",
+      "bytes": 915
+    },
+    {
+      "path": "reports/test_v6_planning.txt",
+      "sha256": "eb5c9fd6dc219aff2b0f63d547378ab426afcf32428a3f23aaac6ca7c188b754",
+      "bytes": 950
+    },
+    {
+      "path": "reports/test_v6_scopes.txt",
+      "sha256": "7bd18a7e121cd25461e2cca7cce76e8de583bde32647cac4318e2f181f3ff2eb",
+      "bytes": 1401
+    },
+    {
+      "path": "reports/test_v6_security.txt",
+      "sha256": "2b3ba2b91d259089409bfaece87e1cbd986cafa8b9f882c8b2b3e3dbd5daef76",
+      "bytes": 831
     },
     {
       "path": "reports/tunnel.txt",
@@ -349,8 +489,8 @@
     },
     {
       "path": "reports/v5-mobile-planning.png",
-      "sha256": "a9679714085d727736e435d3ae81c4e3d36307f6970f32a73ac14354f5b1f142",
-      "bytes": 118142
+      "sha256": "1064b1aa4923fe44109ce3731edc44100a9cc801dc0252a05069f238c532db24",
+      "bytes": 124793
     },
     {
       "path": "reports/v6-browser.txt",
@@ -371,6 +511,11 @@
       "path": "reports/v6-docker-runtime.json",
       "sha256": "70c4b3f4c01b72006e15d7a5f0230962913691262453b5d781a4eaede0450540",
       "bytes": 925
+    },
+    {
+      "path": "reports/v6-migration-docker.json",
+      "sha256": "a6c1d184da0dd463042651522e1ec7ea2a66d148cc3662ca6d7af7700f001dba",
+      "bytes": 281
     },
     {
       "path": "reports/v6-migration.json",
@@ -444,13 +589,13 @@
     },
     {
       "path": "run_tests.py",
-      "sha256": "345a256044f28bab00cf3acacfa077f808cbdbd2c23aa6b02778f472b192ddbf",
-      "bytes": 1672
+      "sha256": "f547633f9265b17ce0ee854d0b8cf2c2b7d65a34f8d4dfd26f61b45e57884260",
+      "bytes": 1789
     },
     {
       "path": "server.py",
-      "sha256": "b3301f11ad637226ee26c7507489be349797cb12e637b281006747fdb332457c",
-      "bytes": 68414
+      "sha256": "022a73b247fd0f892744494e68a6c821482894e24c80dc606abf2669d1df8ffd",
+      "bytes": 68844
     },
     {
       "path": "services/__init__.py",
@@ -461,6 +606,11 @@
       "path": "services/access.py",
       "sha256": "9b0eb9f566fa69336dde5d6725a49d785ef1f1023437623a2beac35baecf7d3e",
       "bytes": 2230
+    },
+    {
+      "path": "services/accounting.py",
+      "sha256": "e41f8025e2790f9a9abccc34d4b9b3edbef0e571f8cc33ed9c3e8155d21d5a50",
+      "bytes": 12101
     },
     {
       "path": "services/audit_integrity.py",
@@ -474,8 +624,8 @@
     },
     {
       "path": "services/common.py",
-      "sha256": "af249de6c8021b932dd445896d732b970e53fc6850f310281b0af0fd1db723f6",
-      "bytes": 2456
+      "sha256": "7cb301d001c189bd9772f4c61f31785906a62ec128323468d0619d2e088b021a",
+      "bytes": 2930
     },
     {
       "path": "services/connectors/__init__.py",
@@ -489,18 +639,23 @@
     },
     {
       "path": "services/contracts.py",
-      "sha256": "8bb78563c7bdeb2e90af2a4f7817e27e1738c29051d8e92bd857d883a1664f6e",
-      "bytes": 3562
+      "sha256": "38c540c9997bf50edd7dc4274a8d899fb9933c2aceb87db5e60bddedf282689b",
+      "bytes": 3965
     },
     {
       "path": "services/dashboard.py",
-      "sha256": "79b6ab1e70d5bd16235217e824271bc1da8c2ce7875bb38584d24de13bf640dd",
-      "bytes": 2450
+      "sha256": "4c3362dcc6b3dec3c0ee15d7c92b323d03315ec93aaafe668a7d746a50858697",
+      "bytes": 2612
+    },
+    {
+      "path": "services/data_migration.py",
+      "sha256": "8dec5113e58b4042d00f194b5d2b1b8f3f474414918d8c0391fd00a70868c5a4",
+      "bytes": 19175
     },
     {
       "path": "services/documents.py",
-      "sha256": "14fbdf5984d9ecec4b664b22c69e69a7107081354878bf6c0071afd8077bc32b",
-      "bytes": 7569
+      "sha256": "0d4f0eacda63113531dceb40198ea4905547e9a3b80c15e753b5b3be838e33f3",
+      "bytes": 7700
     },
     {
       "path": "services/encrypted_backup.py",
@@ -514,8 +669,8 @@
     },
     {
       "path": "services/finance.py",
-      "sha256": "7d1f41a740a2d2b5e52c7953fb69db07a117705b87e5df2ea8df41155f7e9b9c",
-      "bytes": 5628
+      "sha256": "971504b89f363f549a0a4c9ec56a97c3479d5382402aea9872c613cb58b768f1",
+      "bytes": 5724
     },
     {
       "path": "services/http_server.py",
@@ -529,13 +684,23 @@
     },
     {
       "path": "services/management_reporting.py",
-      "sha256": "3a34da84b069129e48fc8368d8bc9ed2f580380c80655fb0de0eb9afbe28781a",
-      "bytes": 5177
+      "sha256": "cc10159e32a4bfb8bfe33df80ccc9057cbc38d1b789c731430bc2f859c1d12d9",
+      "bytes": 5299
     },
     {
       "path": "services/mfa.py",
       "sha256": "73a396593cd2332ff75fae7b9ef58b01ad9ba65b41b55baeb0c413af95d01f16",
       "bytes": 5477
+    },
+    {
+      "path": "services/migration_models.py",
+      "sha256": "7b6669f454b225c4e61fdf0a57e28751cea274e6e678f4467104c61c838bf2c3",
+      "bytes": 2507
+    },
+    {
+      "path": "services/migration_registry.py",
+      "sha256": "09570963ab474ea7905c4dc87a4085eb1af34c24249daba2f8c77d5d2034f4a4",
+      "bytes": 8402
     },
     {
       "path": "services/migrations.py",
@@ -548,39 +713,54 @@
       "bytes": 1625
     },
     {
+      "path": "services/onboarding.py",
+      "sha256": "4c1f0cefe8af9d64034626cec9fce794849a590df4a148b853d7f5fde775af37",
+      "bytes": 2811
+    },
+    {
       "path": "services/operational_migrations.py",
       "sha256": "59e4c3799f8d3a7574095e2dd9071e7bd9b666da5e4489c1c02e38d4a870c072",
       "bytes": 821
     },
     {
       "path": "services/planning.py",
-      "sha256": "cfa3858ceeb77248f2bfc98d2efde688b09bb61e454160224625efc18aa8e53c",
-      "bytes": 16074
+      "sha256": "c4de649f833f9d2454933a708bea84cb69073dda90d53faa54456617d7f7be04",
+      "bytes": 16445
     },
     {
       "path": "services/planning_series.py",
-      "sha256": "1e2d4f1fbffe110d184df09abc574609f47b64b95d6a2866239fd4e3e84e760c",
-      "bytes": 4550
+      "sha256": "2301237dd958988264eeb1e896c16eb67add5e961bc214051a3b9871e3b0ca80",
+      "bytes": 4677
     },
     {
       "path": "services/reporting.py",
-      "sha256": "366b2a3b03d8c70dbf6c77601eef229832a06dc6f0a186d29614508b5ff833ab",
-      "bytes": 5049
+      "sha256": "abed1b06782c033a11f1698c697bad2c86d8cd72e02d643f7c94d1622b09ac4b",
+      "bytes": 5227
     },
     {
       "path": "services/routes.py",
-      "sha256": "48f86d025038a1b39cab1620e2167297467c3b1703184e5a2cb69d10d3e39310",
-      "bytes": 27182
+      "sha256": "b54d0015a8097dc5335ff64c78ba8d889d5055efa494f1d155a81385b696e59d",
+      "bytes": 31192
     },
     {
       "path": "services/scopes.py",
-      "sha256": "6308fd7ae1be93cd8b692339d53815416588329d8eb9ce1374301ad010f26771",
-      "bytes": 10265
+      "sha256": "b24bb2e8584e7a50ebdac5057122f761a10dd198537a408f504a121299ceb2e3",
+      "bytes": 12802
     },
     {
       "path": "services/security_v6.py",
-      "sha256": "a7785f1bdc7b4d6ec4daf2aebff00c13773198256fea7deab28181552936e64e",
-      "bytes": 4742
+      "sha256": "15858a766cd493d8ecf06b0116f03a5f485be3d8058380b65e7eda3f3d491773",
+      "bytes": 5239
+    },
+    {
+      "path": "services/service_plans.py",
+      "sha256": "ee76d9169144638b3d2383936a83351ac1655b133a0d1b0bff295f15aab30f9d",
+      "bytes": 9359
+    },
+    {
+      "path": "services/spreadsheets.py",
+      "sha256": "4282bd1b1c64988cc57f4d6652bcad4f46c7a426af61412b3ae32fb532bc6057",
+      "bytes": 9533
     },
     {
       "path": "services/sync_migrations.py",
@@ -589,13 +769,13 @@
     },
     {
       "path": "services/synchronization.py",
-      "sha256": "33d98bf259a39882cb2832325569623b08d12a0ba2400ce4c2394b3927f31a0a",
-      "bytes": 30012
+      "sha256": "b4f7e3551d2f93259013e1177702639e99db3e737ddf2900f66ecbb53be6d6f7",
+      "bytes": 30373
     },
     {
       "path": "services/time_clock.py",
-      "sha256": "74e3535e7449556e247e790d138f9261441c4e340f8e2012d692bc61f724c0c3",
-      "bytes": 2988
+      "sha256": "abcad06fc25ab20618e119beb9d83018b1e1035855bf3e3e65dc7965e083fd93",
+      "bytes": 2985
     },
     {
       "path": "services/timekeeping.py",
@@ -604,8 +784,8 @@
     },
     {
       "path": "services/workorders.py",
-      "sha256": "a969c785f38f01be4bf126316777834b1174ae0e908cff4050d769625ff21400",
-      "bytes": 7347
+      "sha256": "6aefdb2df0bbbaa1adbc4a68e0b3e198cb04ecacc76a9d1dcfc42081bcfd8890",
+      "bytes": 7507
     },
     {
       "path": "start.py",
@@ -616,6 +796,266 @@
       "path": "styles.css",
       "sha256": "3a1ce66227c2eb978685cb8cb6d8b79a6f30eed5cc4895ec33a67242e44fc0a1",
       "bytes": 30476
+    },
+    {
+      "path": "templates/migration/alerts.csv",
+      "sha256": "1159cc058ed9b9f3f3774a0e6ad779d36b8aba73ad423fd65e36099e137bcbe3",
+      "bytes": 134
+    },
+    {
+      "path": "templates/migration/alerts.xlsx",
+      "sha256": "0140d747514324fad3b6d96835c4327ebfdeec37dd8c1ddfa891f17b914ad8df",
+      "bytes": 2203
+    },
+    {
+      "path": "templates/migration/articles.csv",
+      "sha256": "f64813a4fd895e1dea808f883bc578d0e3e28088f9ce1838b06fad35f7d68940",
+      "bytes": 130
+    },
+    {
+      "path": "templates/migration/articles.xlsx",
+      "sha256": "56a9122386ba4016ac143bc8137f3f6d7d0a14ea2b62061a1f8346059bc430dd",
+      "bytes": 2243
+    },
+    {
+      "path": "templates/migration/assets.csv",
+      "sha256": "1fb3fa485797e6062f5f9525bbeb1df8c96dfab1dcd66bef522d5a85e0495fb4",
+      "bytes": 163
+    },
+    {
+      "path": "templates/migration/assets.xlsx",
+      "sha256": "2cbb46a08f68a3a5e31f8e7c77199ce4d829d23dc4b57aa2ceefdef0aa1d138d",
+      "bytes": 2406
+    },
+    {
+      "path": "templates/migration/availability.csv",
+      "sha256": "9956b2f15f6680b89243bf15400bbb458010836fdd96141ae30f6b549673e296",
+      "bytes": 127
+    },
+    {
+      "path": "templates/migration/availability.xlsx",
+      "sha256": "8b0bbfe429768362a06e87ba47ec69b0b9cc6c1814f728fcd7efe0b7729d0cff",
+      "bytes": 2273
+    },
+    {
+      "path": "templates/migration/communications.csv",
+      "sha256": "bbdda7f0d75c7d8916f70f76cd4cc3ccf2dc71a568c988ea8f404f3db592a282",
+      "bytes": 107
+    },
+    {
+      "path": "templates/migration/communications.xlsx",
+      "sha256": "e2817609ba35b6b0d519aba64020915912153fa908e54b8738e1ae27de1876a0",
+      "bytes": 2217
+    },
+    {
+      "path": "templates/migration/contacts.csv",
+      "sha256": "0be0d8e67639d4001693ad0269645bd41545699d01fc4c49050aa5676cfd0318",
+      "bytes": 120
+    },
+    {
+      "path": "templates/migration/contacts.xlsx",
+      "sha256": "1b70fd1602d9c90b5bdd1afda596b32c85efdf88bf93aee97ea204d3c4cdb5e4",
+      "bytes": 2243
+    },
+    {
+      "path": "templates/migration/contracts.csv",
+      "sha256": "d981398eaa3e6c00623ada9e9e24c327a157b9433c29b9ef6f70c0f64d998602",
+      "bytes": 240
+    },
+    {
+      "path": "templates/migration/contracts.xlsx",
+      "sha256": "cba9b928728f6e513048777e3f408a530c73a888e6fc4f1e79c9a138f6d96ead",
+      "bytes": 2656
+    },
+    {
+      "path": "templates/migration/customers.csv",
+      "sha256": "fbd04f394780392076ec0c18b8c785df02bf63f11005abee21d59d38c2a7ac49",
+      "bytes": 175
+    },
+    {
+      "path": "templates/migration/customers.xlsx",
+      "sha256": "c83f4b2f3c9ed2e98269b7fd4669b46ed5b2535db0b1a56ee384c8eaaa422a09",
+      "bytes": 2461
+    },
+    {
+      "path": "templates/migration/documents.csv",
+      "sha256": "09ce485c43f483fa0064c4755e967d70efd02d3cf32b4d116bca553c7b6e4dde",
+      "bytes": 129
+    },
+    {
+      "path": "templates/migration/documents.xlsx",
+      "sha256": "e71f509d6b23aa3bc49f826c1612309f3f98fd527a6fd4d5e5053d5896889f1d",
+      "bytes": 2240
+    },
+    {
+      "path": "templates/migration/employees.csv",
+      "sha256": "67bf77a39d6c111c5b1a650e0a855467a501af039ad4d5439907ed9d16376ab5",
+      "bytes": 176
+    },
+    {
+      "path": "templates/migration/employees.xlsx",
+      "sha256": "f305a23ade961c7606c97b8d424655e9778a597ffb62c55920853b7f7be31473",
+      "bytes": 2558
+    },
+    {
+      "path": "templates/migration/hours.csv",
+      "sha256": "3be94dc38c26a42718f3304c4d5b6504101252dae36cdae5d6f8e742bf3b3805",
+      "bytes": 168
+    },
+    {
+      "path": "templates/migration/hours.xlsx",
+      "sha256": "9873445ef8b67d1af95f91e1678d575b4571a15f1a10224dd3d77952a97dd97d",
+      "bytes": 2597
+    },
+    {
+      "path": "templates/migration/inspections.csv",
+      "sha256": "02c7d54bbfa6df287f28ba07748806b2b143e6764b829607782b3ab1b88d2138",
+      "bytes": 134
+    },
+    {
+      "path": "templates/migration/inspections.xlsx",
+      "sha256": "f8659da03d00f3263302f0acdb2ed547e056883bc3703942c58e111ea8f3bd6c",
+      "bytes": 2310
+    },
+    {
+      "path": "templates/migration/keys.csv",
+      "sha256": "ff3a5e871e07f9408c314e7474605555463c6e456d23436abd689ef3cd4013ee",
+      "bytes": 132
+    },
+    {
+      "path": "templates/migration/keys.xlsx",
+      "sha256": "a228effc9731fc087cc9b5a1d5b33e13c32f739ce484f3ac1d4285fbc2c31be0",
+      "bytes": 2277
+    },
+    {
+      "path": "templates/migration/leave.csv",
+      "sha256": "a99e2198c8b4b6d4fde87aa4ed6df90d438fda2cf6252cf70a5af0d40d028b0c",
+      "bytes": 134
+    },
+    {
+      "path": "templates/migration/leave.xlsx",
+      "sha256": "0ac328cf7d2be306e0128f813257c424a953db3182272ac74d3d08777c08bcb5",
+      "bytes": 2304
+    },
+    {
+      "path": "templates/migration/logbook.csv",
+      "sha256": "430c7293af9ef337c7f1849db6c5536024aa58f8f94e63fa0441107b9256d4df",
+      "bytes": 137
+    },
+    {
+      "path": "templates/migration/logbook.xlsx",
+      "sha256": "0dc182db96de268229eef20bcea46b5f493c40748d587fc4206016a8330b3295",
+      "bytes": 2288
+    },
+    {
+      "path": "templates/migration/objects.csv",
+      "sha256": "ee781d08e853e84b243e1ce5209a7ab59f570c11b699fd648f9bf8849fdff267",
+      "bytes": 146
+    },
+    {
+      "path": "templates/migration/objects.xlsx",
+      "sha256": "001a783d6b75e0185b1444c27f69e33a10ebe24545b24627ba1aef296b9a9a4d",
+      "bytes": 2375
+    },
+    {
+      "path": "templates/migration/orders.csv",
+      "sha256": "119f6e1374bfa14ca9a04386362e128bcc74c0b156b898cdfb76a7420b19c1ef",
+      "bytes": 119
+    },
+    {
+      "path": "templates/migration/orders.xlsx",
+      "sha256": "7b900c4cdbdcb170c280f75452a308d53b83950cbc24881d5a180835860db14c",
+      "bytes": 2273
+    },
+    {
+      "path": "templates/migration/quotes.csv",
+      "sha256": "4b6c23f09c9e9a1ce1346968c5b98d675e1cc134430258f4d4ef293d8837745e",
+      "bytes": 131
+    },
+    {
+      "path": "templates/migration/quotes.xlsx",
+      "sha256": "656bbbf5584a79fc21d8da996a8c0a62c88fdc41af8fe7aae27270491b3967f4",
+      "bytes": 2299
+    },
+    {
+      "path": "templates/migration/rooms.csv",
+      "sha256": "8872ba72abe506fcf582667146da0fbaacd9744d98d596d2923e2e549f9c0087",
+      "bytes": 116
+    },
+    {
+      "path": "templates/migration/rooms.xlsx",
+      "sha256": "ff2d7e8094f38d733bb3b253c9b8a9060311e2bdba714fdbb2c33bfeed6fbc18",
+      "bytes": 2253
+    },
+    {
+      "path": "templates/migration/service_types.csv",
+      "sha256": "de1f5ee638604aa4370916e77cc19db4f3653f73819e7b684cf8ab4705480f72",
+      "bytes": 101
+    },
+    {
+      "path": "templates/migration/service_types.xlsx",
+      "sha256": "31b9053852b8412d411dcdd355f34371c1743f5622016a8a9cd30e0555018ee1",
+      "bytes": 2136
+    },
+    {
+      "path": "templates/migration/shifts.csv",
+      "sha256": "d7d06fc3ef71c211f2cad16039545d3b47ce1865cd730d2a4d453b51cf31c7c8",
+      "bytes": 178
+    },
+    {
+      "path": "templates/migration/shifts.xlsx",
+      "sha256": "5e1a81d6f158de2fc1b0eae339c3de10afef2023a8e241a7429d05d29cf35b6b",
+      "bytes": 2511
+    },
+    {
+      "path": "templates/migration/teams.csv",
+      "sha256": "f676e56b5b3fa3e511928a7a8c52ec86a814daf213c417ebe38e93adc6284837",
+      "bytes": 80
+    },
+    {
+      "path": "templates/migration/teams.xlsx",
+      "sha256": "7ddd68a3d54573d7cec06b6dbc6a3dfdd9834bf8ff0c7a3acdf1a70e979bbb7a",
+      "bytes": 2074
+    },
+    {
+      "path": "templates/migration/vehicles.csv",
+      "sha256": "dc6608da5dcc1cb049adab91d2fdc952d44462365fc67376d857a76302232ce7",
+      "bytes": 140
+    },
+    {
+      "path": "templates/migration/vehicles.xlsx",
+      "sha256": "910fe35c1cafaadbc6a2e5432be98d9cc2d26adc117462a59f5400eebb589d5d",
+      "bytes": 2334
+    },
+    {
+      "path": "templates/migration/work_instructions.csv",
+      "sha256": "f84b14e61cd515c1333d752ded6d91ad9a17cb3379497626ebf930504c0e83fe",
+      "bytes": 158
+    },
+    {
+      "path": "templates/migration/work_instructions.xlsx",
+      "sha256": "c7060dbb1f3f8148894922b0d725636f28c26d2f1e6e39aea06c0fc0805a158b",
+      "bytes": 2276
+    },
+    {
+      "path": "templates/migration/work_programs.csv",
+      "sha256": "5408b0aeb7d63d718b23a44ddb808c0bd0f769802ee44a0bf703f0b8fdd92abe",
+      "bytes": 152
+    },
+    {
+      "path": "templates/migration/work_programs.xlsx",
+      "sha256": "e0ddd582432993eee2055599e8c34211165bc43515cabdb12c85f61b9dc6302b",
+      "bytes": 2326
+    },
+    {
+      "path": "templates/migration/workorders.csv",
+      "sha256": "9a4a040719dec3302a090c6ce17b3fc51fbea854c8c6f470d81b8a12a9d6ded5",
+      "bytes": 205
+    },
+    {
+      "path": "templates/migration/workorders.xlsx",
+      "sha256": "0c07bd4ab61b2d7db586b7c90ef4cc49bccb30fe5bc3955675bf67a71bea848e",
+      "bytes": 2523
     },
     {
       "path": "test_api.py",
@@ -638,14 +1078,29 @@
       "bytes": 2063
     },
     {
+      "path": "tests/migration_volume.py",
+      "sha256": "73a8ea28499daa80fe0871644818f554540942f1899b89910a6bf6204ef6607a",
+      "bytes": 7445
+    },
+    {
       "path": "tests/support.py",
       "sha256": "4a81076167523777478e94e1b0e694e66e03294b3abacf9791b8c6d18f35b1b4",
       "bytes": 2018
     },
     {
+      "path": "tests/test_accounting.py",
+      "sha256": "906cd605587602f5c4a46d0750acbe839c3540cc80369fa3822e2c0a81253e26",
+      "bytes": 5288
+    },
+    {
       "path": "tests/test_browser.py",
       "sha256": "cb2f2ef0d2c9b02b4e72f93fda31e26acd90fdbceb763c736184974db2a67c86",
       "bytes": 8688
+    },
+    {
+      "path": "tests/test_data_migration.py",
+      "sha256": "9a41825a8ad68256ee53a019487916e46afbb22042626d694d961a873be76c45",
+      "bytes": 9907
     },
     {
       "path": "tests/test_enterprise.py",
@@ -654,8 +1109,18 @@
     },
     {
       "path": "tests/test_enterprise_browser.py",
-      "sha256": "4c2b4c9c23fdf268de228b68050bf31fa89b1b304e364474f45c69e646a787e1",
-      "bytes": 6926
+      "sha256": "b66764a5dbf91fcd6840a185d86f04829e2f1e052f3cc641b41118a1f9ea1635",
+      "bytes": 6930
+    },
+    {
+      "path": "tests/test_migration_browser.py",
+      "sha256": "b058d1a1e29eb3879648a1301cbcfa8f1cd42ae6b60a093d430ece8a2e5ee213",
+      "bytes": 5547
+    },
+    {
+      "path": "tests/test_onboarding.py",
+      "sha256": "f99642ebff694a11b18b84748415e96fbee7db014255942d557de3425d288aae",
+      "bytes": 2099
     },
     {
       "path": "tests/test_regression.py",
@@ -663,9 +1128,24 @@
       "bytes": 14600
     },
     {
+      "path": "tests/test_scope_http.py",
+      "sha256": "58b18b530bf57571a398e264fbac3413f7d3d6b653dbcf6170b53075fef507ad",
+      "bytes": 6705
+    },
+    {
       "path": "tests/test_security_recovery.py",
       "sha256": "091ec7d7628eb6896b3a74e6f444cf1050252e5d8ae6e36311602a86d920b8c9",
       "bytes": 2873
+    },
+    {
+      "path": "tests/test_service_plans.py",
+      "sha256": "befa26699331973deb29f26d1c928316406542dfebb66579a8e2c59ca0984678",
+      "bytes": 3582
+    },
+    {
+      "path": "tests/test_spreadsheets.py",
+      "sha256": "97700c73295c5be52a93692ccb7f1a496fb510c93526b25116b305d6639b6a22",
+      "bytes": 3319
     },
     {
       "path": "tests/test_startup.py",
@@ -714,8 +1194,8 @@
     },
     {
       "path": "tools/verify_package.py",
-      "sha256": "583065e87a4745647cea95b575cd42bb15beb835e8b79d18ebfc33a56c53bb77",
-      "bytes": 2772
+      "sha256": "69f3e491c2f8c6201480e0c61495f0cf03c7c9fe84f0f9c604920e38d8e506ab",
+      "bytes": 2835
     },
     {
       "path": "tools/verify_v5_migration.py",

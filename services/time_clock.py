@@ -37,5 +37,7 @@ def finish(c,user,rid,body):
     return record(c,'time_clocks',rid)
 
 def listing(c,user):
-    if user['role']=='employee':return [dict(r) for r in c.execute("SELECT * FROM time_clocks WHERE employee_id=? AND state='Actief'",(user['employee_id'],))]
-    require(user,'hours');return [dict(r) for r in c.execute("SELECT * FROM time_clocks WHERE state='Actief' ORDER BY id LIMIT 500")]
+    from . import scopes
+    if user['role']=='employee':return scopes.select(c,user,'time_clocks',"employee_id=? AND state='Actief'",(user['employee_id'],))
+    from . import scopes
+    require(user,'hours');return scopes.select(c,user,'time_clocks',"state='Actief'",order='id',limit=500)

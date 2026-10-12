@@ -92,7 +92,8 @@ def suggestions(c,user,body):
     day=date_value(row['date']);start=str(day-dt.timedelta(days=day.weekday()));end=str(day+dt.timedelta(days=6-day.weekday()))
     location=record(c,'objects',row['object_id'])
     candidates=[];excluded=[]
-    for raw in c.execute('SELECT * FROM employees ORDER BY id').fetchall():
+    from . import scopes
+    for raw in scopes.select(c,user,'employees',order='id'):
         emp=dict(raw);proposal={**row,'employee_id':str(emp['id'])};problems=issues(c,proposal,body.get('exclude_shift_id',0))
         if problems:excluded.append({'id':emp['id'],'name':emp['name'],'reasons':problems});continue
         workload=sum(interval(dict(x)) for x in c.execute("SELECT * FROM shifts WHERE employee_id=? AND date BETWEEN ? AND ? AND status!='Geannuleerd' AND id!=?",(str(emp['id']),start,end,body.get('exclude_shift_id',0))))
@@ -141,7 +142,9 @@ def assess_many(c,rows):
         if emp and emp['status']!='Actief':reasons.append('Medewerker is niet actief.')
         for other in shifts.get(key,[]):
             if row['id']==other['id']:continue
-            if other['start_time']<row['end_time'] and other['end_time']>row['start_time']:reasons.append('Roosterconflict met dienst #'+str(other['id']))
+            if other['start_time']<row['end_time'] and other['end_time']>row['start_time']:
+                from . import scopes
+                reasons.append('Roosterconflict met dienst #'+str(other['id']) if scopes.allowed(c,scopes.ACTOR.get(),'shifts',other['id']) else 'Medewerker is al ingepland buiten je toegangsbereik.')
             else:
                 before=other['end_time']<=row['start_time'];pair=(other['object_id'],row['object_id']) if before else (row['object_id'],other['object_id']);minutes=travel.get(pair)
                 if minutes is not None:
@@ -167,6 +170,8 @@ def assess_many(c,rows):
                 if work['team_id'] and emp['team_id']!=work['team_id']:reasons.append('Medewerker behoort niet tot het vereiste team.')
             for aid in asset_ids(work):
                 asset=assets.get(aid)
+                from . import scopes
+                if not scopes.allowed(c,scopes.ACTOR.get(),'assets',aid):reasons.append('Vereist materieel valt buiten je toegangsbereik.');continue
                 if not asset:reasons.append('Materieel ontbreekt.');continue
                 if asset['status'] in ('Onderhoud','Buiten gebruik') or asset['inspection_date'] and asset['inspection_date']<row['date'] or asset['maintenance_date']==row['date']:reasons.append('Materieel niet beschikbaar of keuring verlopen: '+asset['name'])
                 if any(x['workorder_id']!=work['id'] and x['start_time']<row['end_time'] and x['end_time']>row['start_time'] for x in reserved.get((aid,row['date']),[])):reasons.append('Materieel al gereserveerd: '+asset['name'])

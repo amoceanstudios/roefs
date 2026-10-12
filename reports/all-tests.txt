@@ -1,3 +1,7 @@
+test_automatic_cycle_requires_activation_and_restore_pauses (test_accounting.Accounting.test_automatic_cycle_requires_activation_and_restore_pauses) ... ok
+test_changed_invoice_blocks_export_and_unapproved_rejected (test_accounting.Accounting.test_changed_invoice_blocks_export_and_unapproved_rejected) ... ok
+test_configuration_inactive_authz_and_version (test_accounting.Accounting.test_configuration_inactive_authz_and_version) ... ok
+test_outbox_retry_idempotency_payment_status_restart (test_accounting.Accounting.test_outbox_retry_idempotency_payment_status_restart) ... ok
 test_accounts_permissions_and_link (test_browser.Browser.test_accounts_permissions_and_link) ... ok
 test_all_admin_screens_real_backend (test_browser.Browser.test_all_admin_screens_real_backend) ... ok
 test_back_and_focus_trap (test_browser.Browser.test_back_and_focus_trap) ... ok
@@ -8,6 +12,14 @@ test_mobile_tablet_desktop_layout (test_browser.Browser.test_mobile_tablet_deskt
 test_planner_suggestion_to_saved_shift (test_browser.Browser.test_planner_suggestion_to_saved_shift) ... ok
 test_server_validation_inline (test_browser.Browser.test_server_validation_inline) ... ok
 test_tour_uses_live_screens (test_browser.Browser.test_tour_uses_live_screens) ... ok
+test_all_categories_templates_and_additive_model_relationships (test_data_migration.Migration.test_all_categories_templates_and_additive_model_relationships) ... ok
+test_checkpoint_pause_resume_and_concurrent_change (test_data_migration.Migration.test_checkpoint_pause_resume_and_concurrent_change) ... ok
+test_concurrent_confirmation_and_type_mapping (test_data_migration.Migration.test_concurrent_confirmation_and_type_mapping) ... ok
+test_csv_dryrun_reimport_update_and_restart (test_data_migration.Migration.test_csv_dryrun_reimport_update_and_restart) ... ok
+test_every_advertised_category_can_import_its_template (test_data_migration.Migration.test_every_advertised_category_can_import_its_template) ... ok
+test_numeric_normalization_reimport_and_explicit_existing_link (test_data_migration.Migration.test_numeric_normalization_reimport_and_explicit_existing_link) ... ok
+test_unsafe_files_and_dutch_dates (test_data_migration.Migration.test_unsafe_files_and_dutch_dates) ... ok
+test_xlsx_relations_missing_parent_duplicate_and_unauthorized (test_data_migration.Migration.test_xlsx_relations_missing_parent_duplicate_and_unauthorized) ... ok
 test_batch_report_detects_same_absence_conflict (test_enterprise.Enterprise.test_batch_report_detects_same_absence_conflict) ... ok
 test_concurrent_assignment_exactly_one_success (test_enterprise.Enterprise.test_concurrent_assignment_exactly_one_success) ... ok
 test_cookie_csrf_and_session_invalidation (test_enterprise.Enterprise.test_cookie_csrf_and_session_invalidation) ... ok
@@ -25,6 +37,12 @@ test_customer_form_persistence_validation_and_timeline (test_enterprise_browser.
 test_inactive_integration_saved_and_visible (test_enterprise_browser.EnterpriseBrowser.test_inactive_integration_saved_and_visible) ... ok
 test_planning_copy_and_conflict_keyboard_alternative (test_enterprise_browser.EnterpriseBrowser.test_planning_copy_and_conflict_keyboard_alternative) ... ok
 test_workorder_checklist_and_file_upload_real_storage (test_enterprise_browser.EnterpriseBrowser.test_workorder_checklist_and_file_upload_real_storage) ... ok
+test_csv_mapping_preview_real_import_report_and_reload (test_migration_browser.MigrationBrowser.test_csv_mapping_preview_real_import_report_and_reload) ... ok
+test_onboarding_accounting_and_scope_admin_forms (test_migration_browser.MigrationBrowser.test_onboarding_accounting_and_scope_admin_forms) ... ok
+test_school_demo_persisted_service_form (test_migration_browser.MigrationBrowser.test_school_demo_persisted_service_form) ... ok
+test_xlsx_template_download_and_import (test_migration_browser.MigrationBrowser.test_xlsx_template_download_and_import) ... ok
+test_authorization_and_stale_version (test_onboarding.Onboarding.test_authorization_and_stale_version) ... ok
+test_explicit_evidence_dependencies_revoke_restart (test_onboarding.Onboarding.test_explicit_evidence_dependencies_revoke_restart) ... ok
 test_gate_basic_cookie_and_bearer (test_regression.Gate.test_gate_basic_cookie_and_bearer) ... ok
 test_account_deactivation_and_last_admin (test_regression.Regression.test_account_deactivation_and_last_admin) ... ok
 test_admin_endpoints_deny_employee (test_regression.Regression.test_admin_endpoints_deny_employee) ... ok
@@ -62,10 +80,22 @@ test_session_hash_expiry_and_logout (test_regression.Regression.test_session_has
 test_widgets_refresh_after_mutation (test_regression.Regression.test_widgets_refresh_after_mutation) ... ok
 test_workflow_approve_once (test_regression.Regression.test_workflow_approve_once) ... ok
 test_workorder_employee_completion (test_regression.Regression.test_workorder_employee_completion) ... ok
+test_lists_counts_lookup_detail_updates_delete_and_context_isolation (test_scope_http.ScopeHTTP.test_lists_counts_lookup_detail_updates_delete_and_context_isolation) ... ok
+test_planning_reports_export_files_and_atomic_bulk (test_scope_http.ScopeHTTP.test_planning_reports_export_files_and_atomic_bulk) ... ok
+test_policy_change_revokes_sessions_and_scoped_admin_is_rejected (test_scope_http.ScopeHTTP.test_policy_change_revokes_sessions_and_scoped_admin_is_rejected) ... ok
+test_unclassified_records_all_operational_endpoints_are_closed (test_scope_http.ScopeHTTP.test_unclassified_records_all_operational_endpoints_are_closed) ... ok
 test_full_backup_files_restore_private_and_sessions_revoked (test_security_recovery.SecurityRecovery.test_full_backup_files_restore_private_and_sessions_revoked) ... ok
 test_mfa_enrollment_login_replay_session_invalidation (test_security_recovery.SecurityRecovery.test_mfa_enrollment_login_replay_session_invalidation) ... ok
 test_restore_rejects_traversal_and_corruption (test_security_recovery.SecurityRecovery.test_restore_rejects_traversal_and_corruption) ... ok
 test_weak_password_and_inactive_connectors (test_security_recovery.SecurityRecovery.test_weak_password_and_inactive_connectors) ... ok
+test_exceptions_versions_atomic_error_and_rights (test_service_plans.ServicePlans.test_exceptions_versions_atomic_error_and_rights) ... ok
+test_periodic_dates_explicit_not_automatic_quarters (test_service_plans.ServicePlans.test_periodic_dates_explicit_not_automatic_quarters) ... ok
+test_school_budget_calendar_tasks_idempotency_and_restart (test_service_plans.ServicePlans.test_school_budget_calendar_tasks_idempotency_and_restart) ... ok
+test_csv_separators_bom_empty_cells_and_leading_zeros (test_spreadsheets.Spreadsheets.test_csv_separators_bom_empty_cells_and_leading_zeros) ... ok
+test_decompression_and_row_limits (test_spreadsheets.Spreadsheets.test_decompression_and_row_limits) ... ok
+test_excel_numeric_dates_time_and_identifier_format (test_spreadsheets.Spreadsheets.test_excel_numeric_dates_time_and_identifier_format) ... ok
+test_external_content_entities_traversal_and_corruption (test_spreadsheets.Spreadsheets.test_external_content_entities_traversal_and_corruption) ... ok
+test_visible_first_sheet_order (test_spreadsheets.Spreadsheets.test_visible_first_sheet_order) ... ok
 test_occupied_port_fails_without_stopping_existing_server (test_startup.Startup.test_occupied_port_fails_without_stopping_existing_server) ... ok
 test_original_database_migration (test_startup.Startup.test_original_database_migration) ... ok
 test_repeatable_start_and_backup (test_startup.Startup.test_repeatable_start_and_backup) ... ok
@@ -123,6 +153,6 @@ test_recovery_hashed_one_time_concurrent_and_persistent (test_v6_security.V6Secu
 test_recovery_requires_password_and_rotation_invalidates_old_codes (test_v6_security.V6Security.test_recovery_requires_password_and_rotation_invalidates_old_codes) ... ok
 
 ----------------------------------------------------------------------
-Ran 123 tests in 168.362s
+Ran 153 tests in 192.949s
 
 OK

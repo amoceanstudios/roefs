@@ -1,0 +1,7 @@
+{"category": "customers", "format": "csv", "rows": 800, "first_import_seconds": 0.597, "repeat_unchanged": 800}
+{"category": "employees", "format": "xlsx", "rows": 250, "first_import_seconds": 0.172, "repeat_unchanged": 250}
+{"category": "objects", "format": "csv", "rows": 2000, "first_import_seconds": 1.187, "repeat_unchanged": 2000}
+{"category": "contracts", "format": "xlsx", "rows": 1000, "first_import_seconds": 1.17, "repeat_unchanged": 1000}
+{"category": "workorders", "format": "csv", "rows": 5000, "first_import_seconds": 6.201, "repeat_unchanged": 5000}
+{"category": "shifts", "format": "xlsx", "rows": 5000, "first_import_seconds": 6.753, "repeat_unchanged": 5000}
+{"category": "hours", "format": "csv", "rows": 10000, "first_import_seconds": 15.727, "repeat_unchanged": 10000}

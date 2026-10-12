@@ -1,0 +1,6 @@
+test_worker_limit_rejects_then_recovers (test_v6_http.V6HTTP.test_worker_limit_rejects_then_recovers) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.517s
+
+OK

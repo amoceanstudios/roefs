@@ -5,6 +5,7 @@ from domain import Problem,validate,protect_delete,date_value,STATUSES,REQUIRED
 from . import planning,workorders,timekeeping,finance,documents,reporting
 from .common import *
 from .access import *
+from . import scopes
 from .migrations import EXTRA
 
 RESOURCES={
@@ -15,6 +16,9 @@ RESOURCES={
  'certifications':('Certificeringen','employees',['employee_id','name','expires_on']),
  'travel_estimates':('Reistijden','shifts',['from_object','to_object','minutes','source']),
 }
+
+from .migration_models import MODELS
+RESOURCES.update(MODELS)
 
 def send_binary(h,data,mime,name):
     h.send_response(200);h.send_header('Content-Type',mime);h.send_header('Content-Length',str(len(data)));h.send_header('Cache-Control','no-store');h.send_header('Content-Disposition',"attachment; filename*=UTF-8''"+urllib.parse.quote(name));h.end_headers();h.wfile.write(data)
@@ -43,7 +47,7 @@ def entity_save(c,user,module,body,modules,rid=None):
     row.update(extra_validate(c,module,{k:body[k] for k in extra if k in body}))
     if module=='customers':
         duplicate=c.execute('SELECT id FROM customers WHERE lower(trim(name))=lower(trim(?)) AND id!=?',(row['name'],rid or 0)).fetchone()
-        if duplicate:raise Problem('Mogelijke dubbele klant: #'+str(duplicate[0])+'. Controleer de bestaande klant.',409)
+        if duplicate:raise Problem('Mogelijke dubbele klant. Laat beheer de bestaande klant controleren.' if user.get('scope') else 'Mogelijke dubbele klant: #'+str(duplicate[0])+'. Controleer de bestaande klant.',409)
         if not row.get('customer_number',old.get('customer_number')):row['customer_number']='KL-'+str(c.execute('SELECT COALESCE(MAX(id),0)+1 FROM customers').fetchone()[0]).zfill(6)
     if rid:update(c,module,rid,row)
     else:rid=insert(c,module,row)
@@ -57,6 +61,9 @@ def resource_save(c,user,table,body,rid=None):
     if old:version(old,body.get('version'))
     if set(body)-set(fields)-{'version'}:raise Problem('Onbekend veld.')
     row={f:text(body.get(f,old.get(f,''))) for f in fields}
+    if table in MODELS:
+        from .migration_models import validate as validate_model
+        row=validate_model(c,table,row)
     if 'name' in fields and not row['name']:raise Problem('Naam is verplicht.')
     for field,target in [('customer_id','customers'),('employee_id','employees'),('from_object','objects'),('to_object','objects')]:
         if field in row:row[field]=int(row[field]);record(c,target,row[field])
@@ -77,17 +84,47 @@ def resource_save(c,user,table,body,rid=None):
     audit(c,user,'update' if old else 'create',table,rid);return record(c,table,rid)
 
 def visible_work(c,user):
-    if permitted(user,'workorders'):return [dict(x) for x in c.execute('SELECT * FROM workorders ORDER BY id DESC')]
+    if permitted(user,'workorders'):return scopes.select(c,user,'workorders')
     if user['role']=='employee' and user.get('employee_id'):
-        return [dict(x) for x in c.execute("SELECT DISTINCT w.* FROM workorders w LEFT JOIN shifts s ON s.workorder_id=w.id AND s.status!='Geannuleerd' WHERE w.employee_id=? OR s.employee_id=? ORDER BY w.id DESC",(str(user['employee_id']),str(user['employee_id'])))]
+        return scopes.filter_rows(c,user,'workorders',[dict(x) for x in c.execute("SELECT DISTINCT w.* FROM workorders w LEFT JOIN shifts s ON s.workorder_id=w.id AND s.status!='Geannuleerd' WHERE w.employee_id=? OR s.employee_id=? ORDER BY w.id DESC",(str(user['employee_id']),str(user['employee_id'])))])
     raise Problem('Geen toegang tot opdrachten.',403)
 
 def dispatch(h,c,user,path,method,modules,db):
     parts=path.strip('/').split('/');query={k:v[0] for k,v in urllib.parse.parse_qs(urllib.parse.urlsplit(h.path).query).items()}
+    if parts[0] in ('migration','onboarding','accounting'):
+        from .data_migration import admin
+        admin(user)
     body=h.body() if method in ('POST','PUT','DELETE') else {}
-    if method!='GET':c.execute('BEGIN IMMEDIATE')
+    if method!='GET' and not (parts[0]=='migration' and len(parts)==3 and parts[2]=='preview' or parts[0]=='accounting' and len(parts)==2 and parts[1] in ('test','run')):c.execute('BEGIN IMMEDIATE')
     result=None;status=200
-    if path=='home' and method=='GET':
+    if parts[:2] in (['security','scopes'],['security','classifications']):result=scopes.route(c,user,parts,method,body)
+    elif parts[0]=='migration':
+        from .data_migration import route as migration_route
+        if len(parts)==4 and parts[1]=='template' and method=='GET':
+            from .data_migration import template
+            data,mime=template(parts[2],modules,parts[3]);return send_binary(h,data,mime,'import-'+parts[2]+'.'+parts[3])
+        if len(parts)==3 and parts[1].isdigit() and parts[2]=='report' and method=='GET':
+            from .data_migration import report
+            return send_binary(h,report(c,int(parts[1])),'text/csv; charset=utf-8','migratie-'+parts[1]+'.csv')
+        result=migration_route(h,c,user,parts,method,body,query,modules)
+    elif parts[0]=='accounting':
+        from . import accounting
+        if len(parts)==1 and method=='GET':result=accounting.overview(c,user)
+        elif len(parts)==1 and method=='PUT':result=accounting.save(c,user,body)
+        elif parts==['accounting','queue'] and method=='POST':result=accounting.queue(c,user,body)
+        elif parts==['accounting','test'] and method=='POST':result=accounting.test_connection(c,user)
+        elif parts==['accounting','run'] and method=='POST':result=accounting.run(c,user)
+        elif len(parts)==3 and parts[2]=='retry' and method=='POST':result=accounting.retry(c,user,int(parts[1]))
+        else:raise Problem('Onbekende boekhoudhandeling.',405)
+    elif parts[0]=='onboarding':
+        from . import onboarding
+        if len(parts)==1 and method=='GET':result=onboarding.listing(c)
+        elif parts==['onboarding','report'] and method=='GET':
+            rows=[{'Stap':x['label'],'Status':x['status'],'Verantwoordelijke':x['owner'],'Datum':x['completed_at'],'Bewijs':x['evidence'],'Blokkades':', '.join(x['blocked_by'])} for x in onboarding.listing(c)['steps']]
+            return send_binary(h,reporting.csv_bytes(rows,list(rows[0])),'text/csv; charset=utf-8','roefs-onboarding.csv')
+        elif len(parts)==2 and method=='PUT':result=onboarding.save(c,user,parts[1],body)
+        else:raise Problem('Onbekende onboardinghandeling.',405)
+    elif path=='home' and method=='GET':
         from .dashboard import home
         result=home(c,user)
     elif path=='security/audit-integrity' and method=='GET':
@@ -112,6 +149,7 @@ def dispatch(h,c,user,path,method,modules,db):
                 fields=modules[module][1]+list(EXTRA.get(module,{}));sort=query.get('sort','id')
                 if sort not in fields+['id','version']:raise Problem('Ongeldig sorteerveld.')
                 direction='DESC' if query.get('direction')=='desc' else 'ASC';limit=min(100,max(1,int(query.get('limit',25))));offset=max(0,int(query.get('offset',0)));args=[];where=[]
+                scope,scope_args=scopes.sql(user,module);where.append(scope);args.extend(scope_args)
                 if 'ids' in query:
                     ids=query['ids'].split(',')
                     if len(ids)>1000 or any(not value.isdigit() for value in ids):raise Problem('Ongeldige recordselectie.')
@@ -131,16 +169,28 @@ def dispatch(h,c,user,path,method,modules,db):
         else:raise Problem('Ongeldige methode.',405)
     elif parts[0]=='resources' and len(parts) in (2,3) and parts[1] in RESOURCES:
         table=parts[1];rid=int(parts[2]) if len(parts)==3 else None;require(user,RESOURCES[table][1],method!='GET')
-        if method=='GET':result=record(c,table,rid) if rid else [dict(x) for x in c.execute('SELECT * FROM '+table+' ORDER BY id DESC')]
+        if method=='GET':result=record(c,table,rid) if rid else scopes.select(c,user,table)
         elif method in ('POST','PUT') and (rid is None)==(method=='POST'):result=resource_save(c,user,table,body,rid)
         elif method=='DELETE' and rid:
             old=record(c,table,rid);version(old,body.get('version'))
+            if c.execute('SELECT 1 FROM migration_links WHERE category=? AND local_id=?',(table,rid)).fetchone():raise Problem('Geïmporteerd record: archiveer via de status.',409)
             if table=='teams' and (c.execute('SELECT 1 FROM employees WHERE team_id=?',(rid,)).fetchone() or c.execute('SELECT 1 FROM workorders WHERE team_id=?',(rid,)).fetchone()):raise Problem('Team is nog gekoppeld.',409)
             if table=='articles' and c.execute("SELECT 1 FROM sync_links WHERE category='articles' AND local_id=?",(rid,)).fetchone():raise Problem('Artikel is extern gekoppeld. Kies Inactief.',409)
             c.execute('DELETE FROM '+table+' WHERE id=?',(rid,));audit(c,user,'delete',table,rid);result={'ok':True}
         else:raise Problem('Ongeldige methode.',405)
     elif parts[0]=='customers' and len(parts)==3 and parts[2]=='timeline' and method=='GET':
         require(user,'customers');rid=int(parts[1]);result={'customer':record(c,'customers',rid),'locations':[dict(x) for x in c.execute('SELECT * FROM objects WHERE customer_id=?',(str(rid),))],'contacts':[dict(x) for x in c.execute('SELECT * FROM contacts WHERE customer_id=?',(rid,))],'contracts':[dict(x) for x in c.execute('SELECT * FROM contracts WHERE customer_id=?',(str(rid),))],'workorders':[dict(x) for x in c.execute('SELECT w.* FROM workorders w JOIN objects o ON o.id=w.object_id WHERE o.customer_id=?',(str(rid),))],'communications':[dict(x) for x in c.execute('SELECT * FROM communications WHERE customer_id=? ORDER BY date DESC,id DESC',(rid,))],'audit':[dict(x) for x in c.execute("SELECT * FROM audit WHERE module='customers' AND record_id=? ORDER BY id DESC",(rid,))]}
+    elif path=='school-demo' and method=='POST':
+        from .service_plans import demo
+        result=demo(c,user,modules)
+    elif parts[0]=='contracts' and len(parts)>=3 and parts[2]=='services':
+        from . import service_plans
+        cid=int(parts[1])
+        if len(parts)==3 and method=='GET':result=service_plans.detail(c,user,cid)
+        elif len(parts)==3 and method=='POST':result=service_plans.save(c,user,cid,body)
+        elif len(parts)==4 and method=='PUT':result=service_plans.save(c,user,cid,body,int(parts[3]))
+        elif len(parts)==5 and parts[4]=='generate' and method=='POST':result=service_plans.generate(c,user,cid,int(parts[3]),body)
+        else:raise Problem('Onbekende diensthandeling.',405)
     elif parts[0]=='contracts' and len(parts) in (2,3):
         from . import contracts
         cid=int(parts[1])
@@ -165,11 +215,12 @@ def dispatch(h,c,user,path,method,modules,db):
         if not 0<=(z-a).days<=62:raise Problem('Kies maximaal 63 kalenderdagen.')
         source=[dict(x) for x in c.execute('SELECT s.*,e.name employee_name,e.department,e.team_id,o.name object_name,o.customer_id FROM shifts s LEFT JOIN employees e ON e.id=s.employee_id JOIN objects o ON o.id=s.object_id WHERE s.date BETWEEN ? AND ? ORDER BY s.date,s.start_time',(start,end))]
         if user['role']=='employee':source=[x for x in source if x['employee_id']==str(user.get('employee_id') or -1)]
+        source=scopes.filter_rows(c,user,'shifts',source)
         for f in ('employee_id','team_id','customer_id','object_id','department'):
             if query.get(f):source=[x for x in source if str(x.get(f) or '')==query[f]]
         if query.get('asset_id'):
             ids={x[0] for x in c.execute('SELECT workorder_id FROM reservations WHERE asset_id=?',(query['asset_id'],))};source=[x for x in source if x['workorder_id'] in ids]
-        result={'shifts':source,'unassigned':[] if user['role']=='employee' else [dict(x) for x in c.execute("SELECT * FROM workorders WHERE workflow IN ('Concept','Gepland') ORDER BY date,id")],'history':[] if user['role']=='employee' else [dict(x) for x in c.execute('SELECT * FROM schedule_history ORDER BY id DESC LIMIT 100')],'reservations':[] if user['role']=='employee' else [dict(x) for x in c.execute('SELECT * FROM reservations WHERE date BETWEEN ? AND ?',(start,end))]}
+        result={'shifts':source,'unassigned':[] if user['role']=='employee' else scopes.select(c,user,'workorders',"workflow IN ('Concept','Gepland')",order='date,id'),'history':[] if user['role']=='employee' else scopes.select(c,user,'schedule_history',limit=100),'reservations':[] if user['role']=='employee' else scopes.select(c,user,'reservations','date BETWEEN ? AND ?',(start,end))}
     elif parts[0]=='shifts' and len(parts)<=2 and method in ('POST','PUT'):result=planning.save(c,user,body,int(parts[1]) if len(parts)==2 else None)
     elif path=='planning/bulk' and method=='POST':
         rows=body.get('shifts')
@@ -209,8 +260,8 @@ def dispatch(h,c,user,path,method,modules,db):
     elif parts[0]=='hours' and len(parts)<=3:
         rid=int(parts[1]) if len(parts)>1 else None
         if method=='GET':
-            if user['role']=='employee':result=[dict(x) for x in c.execute('SELECT * FROM hours WHERE employee_id=? ORDER BY id DESC',(str(user['employee_id']),))]
-            else:require(user,'hours');result=[dict(x) for x in c.execute('SELECT * FROM hours ORDER BY id DESC')]
+            if user['role']=='employee':result=scopes.select(c,user,'hours','employee_id=?',(str(user['employee_id']),))
+            else:require(user,'hours');result=scopes.select(c,user,'hours')
         elif method in ('POST','PUT') and len(parts)<=2:result=timekeeping.save(c,user,body,rid)
         elif method=='POST' and len(parts)==3 and parts[2]=='review':result=timekeeping.review(c,user,rid,body)
         else:raise Problem('Ongeldige urenhandeling.',405)
@@ -251,10 +302,10 @@ def dispatch(h,c,user,path,method,modules,db):
         r=reporting.report(c,user,query)
         if path.endswith('csv'):return send_binary(h,reporting.csv_bytes(r['hours'],['id','employee_name','date','hours','status','customer_id']),'text/csv; charset=utf-8','urenrapport.csv')
         return send_binary(h,reporting.pdf('Bedrijfsrapport',[r['from']+' tot '+r['to'],r['definition'],f"Gepland: {r['planned_hours']} uur; goedgekeurd: {r['approved_hours']} uur",json.dumps(r['workorder_status'],ensure_ascii=False)]+[f"{x['employee_name']} | {x['date']} | {x['hours']} uur | {x['status']}" for x in r['hours']]),'application/pdf','rapport.pdf')
-    elif path=='notifications' and method=='GET':result=[dict(x) for x in c.execute('SELECT * FROM notifications WHERE user_id=? ORDER BY id DESC LIMIT 200',(user['id'],))]
+    elif path=='notifications' and method=='GET':result=[dict(x) for x in c.execute('SELECT * FROM notifications WHERE user_id=? ORDER BY id DESC LIMIT 200',(user['id'],)) if scopes.notification_visible(c,user,dict(x))]
     elif path=='notifications/read' and method=='POST':
         row=record(c,'notifications',int(body['id']))
-        if row['user_id']!=user['id']:raise Problem('Melding niet gevonden.',404)
+        if row['user_id']!=user['id'] or not scopes.notification_visible(c,user,row):raise Problem('Melding niet gevonden.',404)
         update(c,'notifications',row['id'],{'read_at':dt.datetime.now(dt.timezone.utc).isoformat()});result={'ok':True}
     elif path=='preferences' and method in ('GET','PUT'):
         if method=='PUT':
@@ -296,5 +347,8 @@ def dispatch(h,c,user,path,method,modules,db):
         if user['role'] not in {'admin','company_admin','operations','director','auditor'}:raise Problem('Geen toegang tot het wijzigingslogboek.',403)
         result=[dict(x) for x in c.execute('SELECT * FROM audit WHERE actor LIKE ? AND module LIKE ? ORDER BY id DESC LIMIT 200',('%'+query.get('actor','')+'%','%'+query.get('module','')+'%'))]
     else:raise Problem('Route niet gevonden.',404)
+    if user.get('scope') and path=='planning/calendar':
+        for item in result['history']:item.pop('before_json',None)
+    if user.get('scope') and isinstance(result,dict) and parts[0]=='workorders' and method=='GET' and 'shifts' in result:result['shifts']=scopes.filter_rows(c,user,'shifts',result['shifts'])
     if method!='GET':c.commit()
     return h.respond(result,status)

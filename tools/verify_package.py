@@ -21,7 +21,7 @@ def main():
   for item in manifest['files']:
    data=(root/item['path']).read_bytes();assert len(data)==item['bytes'] and hashlib.sha256(data).hexdigest()==item['sha256'],'Manifest-hash wijkt af: '+item['path']
   venv=temp/'venv';subprocess.run([sys.executable,'-m','venv',str(venv)],check=True);python=venv/('Scripts/python.exe' if os.name=='nt' else 'bin/python')
-  commands=[('install',[str(python),'-m','pip','install','-r','requirements-dev.txt','-r','requirements.txt']),('tests',[str(python),'run_tests.py','--load'])]
+  commands=[('install',[str(python),'-m','pip','install','-r','requirements-dev.txt','-r','requirements.txt']),('tests',[str(python),'run_tests.py','--load']),('migration-volume',[str(python),'tests/migration_volume.py'])]
   checks=[]
   for label,command in commands:
    log=report.with_name(report.stem+'-'+label+'.txt')

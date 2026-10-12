@@ -1,0 +1,16 @@
+{
+  "image": "roefs-one:v6-migration",
+  "uid": "10001",
+  "health": true,
+  "login": true,
+  "categories": 26,
+  "csv_import": {
+    "Nieuw": 1
+  },
+  "xlsx_reimport": {
+    "Ongewijzigd": 1
+  },
+  "onboarding_steps": 10,
+  "live_accounting": false,
+  "public_deployment": false
+}

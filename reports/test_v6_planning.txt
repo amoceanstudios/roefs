@@ -1,0 +1,11 @@
+test_closed_workorder_shift_cannot_be_cancelled_via_planning (test_v6_planning.V6Planning.test_closed_workorder_shift_cannot_be_cancelled_via_planning) ... ok
+test_configured_rules_daily_weekly_rest_break_and_legacy (test_v6_planning.V6Planning.test_configured_rules_daily_weekly_rest_break_and_legacy) ... ok
+test_linked_resize_atomic_parent_and_shift_conflict_rollback (test_v6_planning.V6Planning.test_linked_resize_atomic_parent_and_shift_conflict_rollback) ... ok
+test_series_all_or_nothing_conflict_and_safe_restore (test_v6_planning.V6Planning.test_series_all_or_nothing_conflict_and_safe_restore) ... ok
+test_series_employee_denied (test_v6_planning.V6Planning.test_series_employee_denied) ... ok
+test_series_exceptions_cancel_restore_versions_restart (test_v6_planning.V6Planning.test_series_exceptions_cancel_restore_versions_restart) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 3.417s
+
+OK

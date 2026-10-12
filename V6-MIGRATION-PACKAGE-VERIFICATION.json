@@ -1,0 +1,24 @@
+{
+  "archive": "ROEFS-ONE-ENTERPRISE-V6-MIGRATION-READY.zip",
+  "sha256": "117e2ea8174e68eeeedeb08425ef46020d91c5b34e463fa51e0c8d8e35d8ac19",
+  "manifest_files": 242,
+  "fresh_venv": true,
+  "checks": [
+    {
+      "check": "install",
+      "exit_code": 0,
+      "log": "V6-MIGRATION-PACKAGE-VERIFICATION-install.txt"
+    },
+    {
+      "check": "tests",
+      "exit_code": 0,
+      "log": "V6-MIGRATION-PACKAGE-VERIFICATION-tests.txt"
+    },
+    {
+      "check": "migration-volume",
+      "exit_code": 0,
+      "log": "V6-MIGRATION-PACKAGE-VERIFICATION-migration-volume.txt"
+    }
+  ],
+  "production_claim": false
+}

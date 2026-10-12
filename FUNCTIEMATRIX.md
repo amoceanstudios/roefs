@@ -1,3 +1,5 @@
+> Historisch meetpunt. Actuele migratieversie: zie V6-FINAL-FUNCTIEMATRIX.md, V6-FINAL-TESTRAPPORT.md en V6-MIGRATION-REPORT.md.
+
 # Functiematrix V5 en synchronisatie
 
 PASS: genoemd scenario uitgevoerd en geslaagd. PARTIAL: werkende deelimplementatie, bredere mastereis nog niet compleet. BLOCKED: externe voorwaarde ontbreekt. NOT TESTED: geen uitgevoerde validatie. Geen voltooiingspercentages.

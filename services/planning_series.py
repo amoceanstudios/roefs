@@ -56,6 +56,10 @@ def change(c,user,sid,body):
 
 def listing(c,user):
     require(user,'shifts')
-    rows=[dict(x) for x in c.execute('SELECT id,title,status,version FROM planning_series ORDER BY id DESC LIMIT 100')]
+    from . import scopes
+    rows=scopes.select(c,user,'planning_series',limit=100)
+    for row in rows:
+        row.pop('definition',None);row.pop('snapshot',None)
     for row in rows:row['items']=[dict(x) for x in c.execute('SELECT s.* FROM shifts s JOIN planning_occurrences o ON o.shift_id=s.id WHERE o.series_id=? ORDER BY s.date,s.id',(row['id'],))]
+    for row in rows:row['items']=scopes.filter_rows(c,user,'shifts',row['items'])
     return {'items':rows,'limit':100}

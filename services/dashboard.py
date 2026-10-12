@@ -2,10 +2,14 @@
 import datetime as dt
 from zoneinfo import ZoneInfo
 from .access import permitted
+from . import scopes
 
 def home(c,user):
     now=dt.datetime.now(ZoneInfo('Europe/Amsterdam'));day=str(now.date());time=now.strftime('%H:%M');end=str(now.date()+dt.timedelta(days=30));employee=user.get('employee_id');cards=[]
-    def add(title,tab,rows):cards.append({'title':title,'tab':tab,'ids':[x[0] for x in rows],'count':len(rows)})
+    def add(title,tab,rows):
+        table={'calendar':'shifts','time':'hours'}.get(tab,tab)
+        rows=[x for x in rows if scopes.allowed(c,user,table,x[0])]
+        cards.append({'title':title,'tab':tab,'ids':[x[0] for x in rows],'count':len(rows)})
     own=" AND employee_id=?" if user['role']=='employee' else '';args=[day]+([str(employee or -1)] if own else [])
     add('Opdrachten vandaag','calendar',c.execute("SELECT id FROM shifts WHERE date=? AND status!='Geannuleerd'"+own,args).fetchall())
     if permitted(user,'workorders'):add('Nog in te plannen opdrachten','workorders',c.execute("SELECT id FROM workorders WHERE workflow IN ('Concept','Gepland')").fetchall())

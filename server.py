@@ -1,3 +1,4 @@
+from services import scopes
 import time,logging,re
 from services import migrations,access,authentication,sync_migrations,synchronization,mfa,operational_migrations,security_v6
 from services.routes import dispatch
@@ -186,16 +187,18 @@ class Handler(BaseHTTPRequestHandler):
   try:n=int(self.headers.get('Content-Length','0'))
   except ValueError:raise Problem('Ongeldige verzoeklengte.')
   limit=max(1000000,min(10000000,max(1024,int(os.environ.get('ROEFS_UPLOAD_MAX_BYTES','600000'))))*4//3+10000) if urllib.parse.urlsplit(self.path).path=='/api/v5/files' else 1000000
+  if urllib.parse.urlsplit(self.path).path=='/api/v5/migration/uploads':limit=14*1024*1024
   if not 0<=n<=limit:raise Problem('Verzoek te groot of ongeldig.',413)
   try:b=json.loads(self.rfile.read(n) or b'{}',parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
   except (ValueError,UnicodeDecodeError):raise Problem('Ongeldige JSON-invoer.')
   if not isinstance(b,dict):raise Problem('Verwacht een JSON-object.')
+  if scopes.ACTOR.get():scopes.check_payload(conn(),scopes.ACTOR.get(),b)
   return b
  def actor(self):
   token,_=authentication.session_token(self)
   r=conn().execute('SELECT u.id,u.username,u.role,u.employee_id FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>? AND u.active=1',(hashlib.sha256(token.encode()).hexdigest(),datetime.datetime.now().isoformat())).fetchone() if token else None
   if r and not security_v6.session_active(conn(),hashlib.sha256(token.encode()).hexdigest()):return None
-  return dict(r) if r else None
+  return scopes.attach(conn(),dict(r)) if r else None
  def route(self,method):
   if method!='GET':
    origin=self.headers.get('Origin')
@@ -261,6 +264,8 @@ class Handler(BaseHTTPRequestHandler):
   user=self.actor()
   if not user:return self.respond({'error':'Log eerst in'},401)
   c=conn();uid=user['id'];admin=user['role']!='employee'
+  scopes.ACTOR.set(user)
+  scopes.guard(c,user,path,method)
   authentication.check_csrf(self,method)
   if path.startswith('/api/v5/'):
    return dispatch(self,c,user,path[8:],method,MODULES,DB)
@@ -338,13 +343,14 @@ class Handler(BaseHTTPRequestHandler):
    for m in ('customers','objects','contracts','employees','shifts'):
     source=rows(m) if admin and access.permitted(user,m) else scoped_rows(c,m,user)
     if (not admin or not access.permitted(user,m)) and m=='employees':source=[dict(x) for x in c.execute('SELECT id,name FROM employees WHERE id=?',(user['employee_id'],))]
+    source=scopes.filter_rows(c,user,m,source)
     result[m]=[{'id':x['id'],'name':x.get('name') or (x.get('date','')+' '+x.get('start_time','')+' #'+str(x['id']))} for x in source]
    return self.respond(result)
   if path=='/api/modules' and method=='GET':
    return self.respond({m:{'label':v[0],'fields':v[1],'required':REQUIRED[m],'statuses':STATUSES[m],'references':{f:REFERENCES[f] for f in v[1] if f in REFERENCES},'numbers':{f:NUMBERS[f] for f in v[1] if f in NUMBERS}} for m,v in MODULES.items() if (admin and access.permitted(user,m)) or (not admin and m in allowed_employee)})
   if path=='/api/dashboard' and user['role'] not in access.ADMIN:
    if user['role']!='employee':
-    return self.respond({'counts':{m:c.execute('SELECT COUNT(*) FROM '+m).fetchone()[0] for m in MODULES if access.permitted(user,m)}})
+    return self.respond({'counts':{m:scopes.count(c,user,m) for m in MODULES if access.permitted(user,m)}})
   if path=='/api/dashboard' and not admin:
    own={m:scoped_rows(c,m,user) for m in MODULES if m in allowed_employee}
    return self.respond({'counts':{m:len(v) for m,v in own.items()},'open_workorders':sum(x['status'] not in ('Afgerond','Geannuleerd') for x in own['workorders']),'pending_hours':sum(x['status']=='Ingediend' for x in own['hours'])})
@@ -357,8 +363,9 @@ class Handler(BaseHTTPRequestHandler):
    shifts=[dict(r) for r in c.execute('SELECT * FROM shifts WHERE date BETWEEN ? AND ? ORDER BY date,start_time,id',(str(week),str(end)))]
    if not admin:
     shifts=[sh for sh in shifts if sh['employee_id']==str(user['employee_id'])]
-   employees={str(r['id']):dict(r) for r in c.execute('SELECT * FROM employees')}
-   objects={str(r['id']):dict(r) for r in c.execute('SELECT * FROM objects')}
+   shifts=scopes.filter_rows(c,user,'shifts',shifts)
+   employees={str(r['id']):r for r in scopes.select(c,user,'employees')}
+   objects={str(r['id']):r for r in scopes.select(c,user,'objects')}
    conflicts=[];unassigned=[];bad_times=[];weekly={}
    for sh in shifts:
     eid=sh['employee_id'];sid=sh['id'];daystr=sh['date']
@@ -387,7 +394,7 @@ class Handler(BaseHTTPRequestHandler):
    except ValueError:return self.respond({'error':'Vul een geldige datum en tijden in; einde moet na begin liggen'},400)
    interval({'date':date,'start_time':start,'end_time':end})
    candidates=[]
-   for emp in c.execute("SELECT * FROM employees WHERE status='Actief' ORDER BY name"):
+   for emp in scopes.select(c,user,'employees',"status='Actief'",order='name'):
     busy=c.execute("SELECT 1 FROM shifts WHERE employee_id=? AND date=? AND status!='Geannuleerd' AND id!=? AND start_time<? AND end_time>? LIMIT 1",(str(emp['id']),date,exclude or '-1',end,start)).fetchone()
     away=c.execute("SELECT 1 FROM leave WHERE employee_id=? AND status IN ('Goedgekeurd','Ziek','Ziekgemeld') AND start_date<=? AND end_date>=? LIMIT 1",(str(emp['id']),date,date)).fetchone()
     candidate={'date':date,'start_time':start,'end_time':end,'employee_id':str(emp['id']),'status':'Gepland'}
@@ -694,7 +701,7 @@ class Handler(BaseHTTPRequestHandler):
    if rid:
     c.execute('UPDATE '+m+' SET '+','.join(f+'=?' for f in fields)+',updated_at=CURRENT_TIMESTAMP WHERE id=?',[row[f] for f in fields]+[rid]);action='update'
    else:
-    cur=c.execute('INSERT INTO '+m+'('+','.join(fields)+') VALUES('+','.join('?' for _ in fields)+')',[row[f] for f in fields]);rid=cur.lastrowid;action='create'
+    cur=c.execute('INSERT INTO '+m+'('+','.join(fields)+') VALUES('+','.join('?' for _ in fields)+')',[row[f] for f in fields]);rid=cur.lastrowid;scopes.classify_created(c,m,rid,row);action='create'
    if m in ('leave','availability'):
     from services.common import notify
     saved=c.execute('SELECT version FROM '+m+' WHERE id=?',(rid,)).fetchone()
@@ -707,6 +714,7 @@ class Handler(BaseHTTPRequestHandler):
  def do_DELETE(self):self.handle_request('DELETE')
  def handle_request(self,m):
   self.connection.settimeout(15)
+  scope_token=scopes.ACTOR.set(None)
   try:self.route(m)
   except Problem as e:self.respond({'error':str(e)},e.status)
   except (ValueError,TypeError,KeyError,ArithmeticError):self.respond({'error':'Ongeldige invoer. Controleer de velden.'},400)
@@ -715,6 +723,7 @@ class Handler(BaseHTTPRequestHandler):
   except (BrokenPipeError,ConnectionResetError,TimeoutError):pass
   except Exception:logging.exception('Onverwachte serverfout');self.respond({'error':'Interne serverfout'},500)
   finally:
+   scopes.ACTOR.reset(scope_token)
    if hasattr(CONN,'db'):
     if CONN.db.in_transaction:CONN.db.rollback()
     CONN.db.close();del CONN.db

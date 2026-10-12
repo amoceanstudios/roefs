@@ -1,3 +1,5 @@
+> Historisch meetpunt. Actuele migratieversie: zie V6-FINAL-FUNCTIEMATRIX.md, V6-FINAL-TESTRAPPORT.md en V6-MIGRATION-REPORT.md.
+
 # V6 prestatiemetingen — ontwikkelstand
 
 12 oktober 2026. Geen productie-SLA of bewijs voor 250 gelijktijdige gebruikers.

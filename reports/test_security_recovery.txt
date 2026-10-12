@@ -4,6 +4,6 @@ test_restore_rejects_traversal_and_corruption (test_security_recovery.SecurityRe
 test_weak_password_and_inactive_connectors (test_security_recovery.SecurityRecovery.test_weak_password_and_inactive_connectors) ... ok
 
 ----------------------------------------------------------------------
-Ran 4 tests in 3.022s
+Ran 4 tests in 2.726s
 
 OK

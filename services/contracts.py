@@ -5,7 +5,10 @@ from .access import require
 
 def detail(c,user,cid):
     require(user,'contracts');row=record(c,'contracts',cid)
-    return {'contract':row,'locations':[dict(x) for x in c.execute('SELECT l.*,o.name FROM contract_locations l JOIN objects o ON o.id=l.object_id WHERE contract_id=? ORDER BY o.name',(cid,))],'events':[dict(x) for x in c.execute('SELECT * FROM contract_events WHERE contract_id=? ORDER BY id DESC LIMIT 100',(cid,))],'workorders':[dict(x) for x in c.execute('SELECT id,description,date,workflow,status FROM workorders WHERE contract_id=? ORDER BY date DESC LIMIT 100',(cid,))]}
+    result={'contract':row,'locations':[dict(x) for x in c.execute('SELECT l.*,o.name FROM contract_locations l JOIN objects o ON o.id=l.object_id WHERE contract_id=? ORDER BY o.name',(cid,))],'events':[dict(x) for x in c.execute('SELECT * FROM contract_events WHERE contract_id=? ORDER BY id DESC LIMIT 100',(cid,))],'workorders':[dict(x) for x in c.execute('SELECT id,description,date,workflow,status FROM workorders WHERE contract_id=? ORDER BY date DESC LIMIT 100',(cid,))]}
+    from . import scopes
+    result['locations']=scopes.filter_rows(c,user,'contract_locations',result['locations']);result['workorders']=scopes.filter_rows(c,user,'workorders',result['workorders'])
+    return result
 
 def locations(c,user,cid,body):
     require(user,'contracts',True);row=record(c,'contracts',cid);version(row,body.get('version'));items=body.get('locations')
@@ -18,6 +21,8 @@ def locations(c,user,cid,body):
         ids.add(obj['id']);text(item.get('frequency',''),100,True)
     assigned={int(x[0]) for x in c.execute('SELECT DISTINCT object_id FROM workorders WHERE contract_id=?',(cid,))}
     if assigned-ids:raise Problem('Locatie heeft gekoppelde opdrachten en kan niet uit het contract worden verwijderd.',409)
+    from . import scopes
+    for current in c.execute('SELECT object_id FROM contract_locations WHERE contract_id=?',(cid,)):scopes.require_record(c,user,'objects',current['object_id'])
     c.execute('DELETE FROM contract_locations WHERE contract_id=?',(cid,))
     for item in items:insert(c,'contract_locations',{'contract_id':cid,'object_id':int(item['object_id']),'frequency':text(item['frequency'],100,True)})
     update(c,'contracts',cid,{'version':row['version']+1});audit(c,user,'locations','contracts',cid);return detail(c,user,cid)

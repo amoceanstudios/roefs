@@ -1,43 +1,11 @@
-# V6 hervatpunt
+# V6 huidig overdrachtspunt — migratiepakket
 
-12 oktober 2026. Werk is NIET klaar. Geen V6-FINAL.zip gemaakt of als afgerond aangeboden.
+De oorspronkelijke tussenstand `42362d9fa716b433ab539169ae7d3f9f1b1bcdff` is behouden en uitgebreid op `roefs-one-enterprise-v6`. Lees nu de **V6-FINAL-*.md**-rapporten en V6-MIGRATION-REPORT.md. Oudere V6- en V5-rapporten blijven historische meetpunten; hun open-puntenlijst is niet de actuele status.
 
-Commit: ed516d1ce3550fc113994731b18001a4eaf07622, branch roefs-one-enterprise-v6, gepusht naar origin. V5 blijft 619db082438051d45b76d7f29615486cfc1b6536 op roefs-one-enterprise-v5. Zie V6-VOORTGANG en V6-ISSUEREGISTER; begin niet opnieuw.
+Gereed in bron: native CSV/XLSX-migratie met echte databasewrites, 26 categorieën, templates, fictieve volumeproef, expliciete schooldiensten, onboarding, actieve scopehandhaving en boekhoudinterface. De scopekern is niet meer inactief. Nieuwe modellen/migraties zijn additief. De bestaande Python/SQLite-app en oorspronkelijke Amocean-startscherm blijven staan.
 
-## Afgerond in code
+Actuele code: services/data_migration.py, migration_registry.py, spreadsheets.py, migration_models.py, service_plans.py, onboarding.py, accounting.py en scopes.py; integratie in server/routes/common en bestaande processen. UI en expliciete CSP-eventhandlers staan in enterprise.js/events.js.
 
-MFA/herstel/sessionhardening; script-CSP + events.js; auditchain; Fernet-backups; ClamAV-interface/quarantaine/retentie; planningsregels/series/resize; tijdklok; contractlocaties/lifecycle/koppelingen; conceptnummering; managementrapportage; paginering oorspronkelijke CRUD; syncuitval/credentialpause/deltacursors. Broncode en gerichte tests staan in Git.
+Reproduceer tests met `python run_tests.py --load` en `python tests/migration_volume.py`. De bron-ZIP kan schoon worden gecontroleerd met `python tools/verify_package.py <zip> --report <extern-pad>/controle.json`.
 
-## Tests
-
-Laatste volledige ontwikkelrun: `python3 run_tests.py --load` → 106 tests OK (165,295 s), 65 legacy API, 18 legacy planning, logo en twee loadproeven geslaagd. Daarna quarantaineherstart- en resizetests toegevoegd: tests/test_v6_integrity.py 5 OK, tests/test_v6_planning.py 6 OK. Specifieke nieuwe browserresize/contractbediening nog toevoegen. Geen finale bronstand- of schone V6-ZIP-claim.
-
-Trapsgewijze load 1/8/16/32 gelijktijdig: nul fouten, p95 circa 152/1592/2004/3765 ms. JSON onder reports/. Geen 250 gelijktijdige gebruikers, duurtest of productie-SLA. pip-audit: geen bekende meldingen in opgeloste Pythonpakketten. WebKit-download 403 Domain forbidden; fysieke toestellen en onafhankelijke pentest niet uitgevoerd. ClamAV ontbreekt: binary uploads blijven in quarantaine.
-
-## Eerstvolgende implementatie
-
-1. Resterende configureerbare afdeling-/rayonscope architectuur en volledige routecontrole uitwerken; geen fictieve Roefs-rechtenregels activeren. Dit is nog intern werk, niet enkel een klantblokkade.
-2. Tests en UX voor nieuwe contract-, resize-, klok-, retentie-, herstel- en rapportknoppen afronden; actionallowlist in events.js bij elke nieuwe functie expliciet aanvullen. Gebruik data-roefs-attributes, geen inline handlers/eval.
-3. Evalueren: veilige PDF-preview na geslaagde scan, bredere rapport-/CRM-compleetheid, resterende paginering/keuzelijsten, nacht-/meerdaagse planning, contractworkflowconfiguratie en volledige Nederlandse controlsaudit. Registreer echte grenzen; presenteer onvoltooid intern werk niet als externe blokkade.
-4. Schone V5→V6-migratie, laatste Docker/start/backuprestore, finale regressie/load en echte ZIP-uitpakvalidatie uitvoeren.
-5. Finaliseer verplichte V6-docs, manifest en ROEFS-ONE-ENTERPRISE-V6-FINAL.zip; push dezelfde V6-branch en verifieer download. Werk cloud-startconfiguratie bij naar de geteste commit en scripts.
-
-## Aandachtspunten voor vervolgstappen
-
-- requirements-dev.txt neemt requirements-security.txt op voor daadwerkelijke Fernet-tests; Linux-app blijft stdlib, encryptie optioneel.
-- Docker kopieert events.js/manage.py; optionele dependency via WITH_BACKUP_ENCRYPTION=1. Laatste Dockerbuild was V5; V6 nog testen.
-- security_v6.migrate is additief/idempotent; scankolommen krijgen alleen bij eerste toevoeging een tekststatus. Een quarantaine mag niet bij herstart worden vrijgegeven.
-- Eindtijdresize wijzigt de opdracht en alle actieve teamdiensten atomair met versies; afgesloten opdrachten zijn vergrendeld.
-- Oude volledige lijst-API blijft voor compatibiliteit; oorspronkelijke CRUD-schermen gebruiken limit/offset/q. Andere ondersteunende keuzelijsten niet allemaal begrensd.
-- Oude lopende lokale ontwikkelserver is niet automatisch herstart naar V6. Stop uitsluitend eigen processen; start.py maakt vooraf backup. Tests gebruiken eigen tijdelijke databases.
-- Geen echte credentials, productiegegevens of publieke appdeployment. GitHub-broncode/ZIP-publicatie is wel door gebruiker geautoriseerd.
-
-## Nieuw hervatpunt (na bovenstaande checkpoint)
-
-De huidige bronstand bevat HTTP-workerbegrenzing, inactieve scopes.py met 10 kern-tests, fix voor navigatie na mislukte klokstart, Nederlandse managementexport en 3 extra V6-browsertests. Laatste volledige run: **123 tests, 0 mislukt (168,362 s)**, plus oorspronkelijke 65/18 controles, logo en twee loadproeven. V5-migratieproef (51 tabellen), Dockerbasis en encrypted containerrestore geslaagd. Zie V6-TESTRAPPORT.md voor beperkingen.
-
-**Eerste volgende taak blijft SEC-05:** scopes.py is NIET aangesloten op server.actor, migratie, routes, lijsten, exports of UI. Activeer geen beleid voordat ook joins, afgeleide rapportages, dashboardcounts, lookups, notificaties, documenten en directe mutaties dezelfde grenzen afdwingen en negatieve HTTP-tests slagen. ContextVar moet per request worden gereset. Let op contract_locations: samengestelde sleutel, geen id-kolom. Maak classificaties en policyversies zichtbaar voor beheer.
-
-V6-INSTALLATIE.md en tools/verify_package.py beschrijven/verifiëren de TUSSENSTAND; build_package.py noemt deze bewust niet FINAL. De vereiste definitieve V6-acceptatie blijft open.
-
-Schone tussenstand-ZIP is ook getest: nieuwe venv, echte installatie, 123 tests/0 fouten (211,580 s), 65 API/18 planning/logo/load geslaagd. Bronpakket: ROEFS-ONE-ENTERPRISE-V6-TUSSENSTAND.zip, met startscript en V6-INSTALLATIE.md. Definitieve V6-FINAL blijft open. De bronbestanden in de leverings-ZIP zijn bytegelijk aan de schoon geteste versie; alleen rapporten/documentatie zijn daarna aangevuld.
+Vervolg dat Roefs/externe validatie vereist: representatieve goedgekeurde exports en veldbetekenis, definitieve recordindeling/rechten, inhoudelijke aansluiting en procesacceptatie, providerkeuze/API-contract en echte boekhoudadapter, beveiligde persistente doelomgeving, onafhankelijke pentest, fysieke mobiele acceptatie en duurbelasting. Zie ROEFS-NODIG.md. Geen automatische klantgoedkeuring of go-live.

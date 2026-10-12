@@ -196,6 +196,7 @@ def run_connection(db,cid,modules,force=False):
 def start_worker(db,modules,stop=None):
     stop=stop or threading.Event()
     def loop():
+        accounting_due=0
         while not stop.is_set():
             try:
                 with connect(db) as c:
@@ -205,6 +206,12 @@ def start_worker(db,modules,stop=None):
                     retention(c,db)
                     ids=[x[0] for x in c.execute('SELECT id FROM sync_connections WHERE enabled=1 AND (next_run IS NULL OR next_run<=?) ORDER BY id',(stamp(),))]
                 c.close()
+                if time.monotonic()>=accounting_due:
+                    accounting_due=time.monotonic()+60
+                    from . import accounting
+                    accounting_connection=connect(db)
+                    try:accounting.cycle(accounting_connection,SYSTEM)
+                    finally:accounting_connection.close()
                 for cid in ids:
                     if stop.is_set():break
                     run_connection(db,cid,modules)

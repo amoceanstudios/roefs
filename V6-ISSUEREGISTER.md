@@ -53,3 +53,9 @@ Open regels in het oorspronkelijke register zijn geen actuele eindstatusclaim; V
 | BIZ-01 | PASS voor contractlocaties en verlengbesluit via mobiele Chromium; overige scope blijft PARTIAL | tests/test_v6_browser.py |
 | BIZ-04 | PASS voor Nederlandse management-CSV/PDF en formulebescherming; financiële acceptatie blijft open | tests/test_v6_operations.py |
 | REL-01 | PASS voor V5-demomigratie en Dockerbasis/versleuteld herstel; FINAL blijft OPEN | reports/v6-migration.json, v6-docker-runtime.json, v6-docker-encrypted-restore.txt |
+
+## Actuele migratiesprint — vervangt bovenstaande openstatus waar vermeld
+
+SEC-05 is technisch aangesloten: actorbinding/reset, scopebeleid en indelingen in beheer, lijsten/tellingen/lookups, directe mutaties, gekoppelde payloads, planning, exports/rapporten/documenten en negatieve HTTP-proeven. Klantspecifieke recordindeling en onafhankelijke securityacceptatie blijven nodig. Zie V6-FINAL-SECURITY.md en tests/test_scope_http.py.
+
+Het centrale CSV/XLSX-migratiecentrum, nieuwe operationele doelmodellen, templates, onboarding en providerneutrale boekhoudvoorbereiding zijn geïmplementeerd. NoCore is geen blijvende operationele afhankelijkheid. Zie V6-MIGRATION-REPORT.md voor bewijzen en grenzen. De finale testuitslag staat in V6-FINAL-TESTRAPPORT.md; oude meetpunten hierboven blijven historisch.

@@ -1,3 +1,5 @@
+> Historisch meetpunt. Actuele migratieversie: zie V6-FINAL-FUNCTIEMATRIX.md, V6-FINAL-TESTRAPPORT.md en V6-MIGRATION-REPORT.md.
+
 # V6 beveiligingsrapport — tussentijdse stand
 
 Geen onafhankelijke pentest of productiegeschiktheid vastgesteld. Zie V6-ISSUEREGISTER.md voor open intern werk.

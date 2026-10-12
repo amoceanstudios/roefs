@@ -1,3 +1,5 @@
+> Historisch meetpunt. Actuele migratieversie: zie V6-FINAL-FUNCTIEMATRIX.md, V6-FINAL-TESTRAPPORT.md en V6-MIGRATION-REPORT.md.
+
 # Testrapport — V5 en automatische synchronisatie
 
 12 oktober 2026. Alleen fictieve gegevens. Tests gebruiken eigen tijdelijke databases en lokale HTTP-servers. Ruwe uitvoer: `reports/all-tests.txt` en afzonderlijke rapporten. Distributiecontrole: `reports/package-check.txt`.

@@ -74,7 +74,9 @@ def schedule_issues(c, row, exclude=0, extended=True):
     if not emp: return ['Medewerker ontbreekt of is niet actief.']
     args=(eid,row['date'],exclude,row['end_time'],row['start_time'])
     clash=c.execute("SELECT id FROM shifts WHERE employee_id=? AND date=? AND id!=? AND status!='Geannuleerd' AND start_time<? AND end_time>?",args).fetchone()
-    if clash: issues.append('Roosterconflict met dienst #'+str(clash['id']))
+    if clash:
+        from services import scopes
+        issues.append('Roosterconflict met dienst #'+str(clash['id']) if scopes.allowed(c,scopes.ACTOR.get(),'shifts',clash['id']) else 'Medewerker is al ingepland buiten je toegangsbereik.')
     if c.execute("SELECT 1 FROM leave WHERE employee_id=? AND status IN ('Goedgekeurd','Ziek','Ziekgemeld') AND start_date<=? AND end_date>=?",(eid,row['date'],row['date'])).fetchone():
         issues.append('Medewerker heeft goedgekeurd verlof of geregistreerd verzuim.')
     entries=c.execute('SELECT * FROM availability WHERE employee_id=? AND date=?',(eid,row['date'])).fetchall()
@@ -93,7 +95,7 @@ def schedule_issues(c, row, exclude=0, extended=True):
         return extended_issues(c,row,exclude,issues)
     return issues
 
-def scoped_predicate(module,user):
+def role_predicate(module,user):
     from services.access import permitted
     if permitted(user,module):return '1=1',[]
     eid=str(user.get('employee_id') or -1)
@@ -103,6 +105,11 @@ def scoped_predicate(module,user):
     if module in ('logbook','orders','assets','inspections'):return 'object_id IN ('+objects+')',[eid,eid]
     if module=='documents':return "status='Actief'",[]
     return '0=1',[]
+
+def scoped_predicate(module,user):
+    from services.scopes import sql
+    clause,args=role_predicate(module,user);scope,params=sql(user,module)
+    return '('+clause+') AND ('+scope+')',args+params
 
 def scoped_rows(c,module,user,rid=None):
     clause,args=scoped_predicate(module,user)
@@ -173,6 +180,7 @@ def validate(c, module, body, fields, previous=None):
     return row
 
 def protect_delete(c,module,rid,modules):
+    if c.execute("SELECT 1 FROM sqlite_master WHERE name='migration_links'").fetchone() and c.execute('SELECT 1 FROM migration_links WHERE category=? AND local_id=?',(module,rid)).fetchone():raise Problem('Record heeft een migratie-identiteit. Archiveer via de status; verwijderen verbreekt bronrelaties.',409)
     if c.execute("SELECT 1 FROM sqlite_master WHERE name='sync_links'").fetchone() and c.execute('SELECT 1 FROM sync_links WHERE category=? AND local_id=?',(module,rid)).fetchone():
         raise Problem('Dit record is extern gekoppeld. Archiveer via de status; verwijder de gegevens niet.',409)
     for source,(_,fields) in modules.items():

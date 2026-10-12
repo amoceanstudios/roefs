@@ -8,6 +8,9 @@ from .workorders import visible
 MAX_BYTES=min(10_000_000,max(1024,int(os.environ.get('ROEFS_UPLOAD_MAX_BYTES','600000'))))
 
 def authorized(c,user,row,write=False):
+    from . import scopes
+    scopes.check_payload(c,user,row)
+    if row.get('id'):scopes.require_record(c,user,'files',row['id'])
     if user['role']=='employee':
         if row.get('employee_id') and row['employee_id']!=user.get('employee_id'):raise Problem('Bestand niet gevonden.',404)
         if row.get('workorder_id'):visible(c,user,row['workorder_id']);return

@@ -3,6 +3,8 @@ from decimal import Decimal,InvalidOperation,ROUND_HALF_UP
 from domain import Problem,date_value
 
 def record(c,table,rid):
+    from .scopes import ACTOR,require_record
+    if table not in ('notifications',):require_record(c,ACTOR.get(),table,rid)
     r=c.execute('SELECT * FROM '+table+' WHERE id=?',(rid,)).fetchone()
     if not r:raise Problem('Gegevens niet gevonden.',404)
     return dict(r)
@@ -25,9 +27,16 @@ def audit(c,user,action,module,rid,detail=''):
     from .audit_integrity import append
     append(c,user['username'],action,module,rid,text(detail,10000),dt.datetime.now(dt.timezone.utc).isoformat())
 def update(c,table,rid,values):
+    from .scopes import ACTOR,require_record,check_payload
+    user=ACTOR.get()
+    if user and table!='notifications':require_record(c,user,table,rid);check_payload(c,user,values)
     c.execute('UPDATE '+table+' SET '+','.join(k+'=?' for k in values)+' WHERE id=?',list(values.values())+[rid])
 def insert(c,table,values):
-    return c.execute('INSERT INTO '+table+'('+','.join(values)+') VALUES('+','.join('?' for _ in values)+')',list(values.values())).lastrowid
+    from .scopes import ACTOR,check_payload,classify_created
+    if ACTOR.get():check_payload(c,ACTOR.get(),values)
+    rid=c.execute('INSERT INTO '+table+'('+','.join(values)+') VALUES('+','.join('?' for _ in values)+')',list(values.values())).lastrowid
+    classify_created(c,table,rid,values)
+    return rid
 def notify(c,event,title,target,employee_id=None,roles=None):
     for u in c.execute('SELECT id,role,employee_id FROM users WHERE active=1').fetchall():
         if employee_id is not None and str(u['employee_id'])!=str(employee_id):continue

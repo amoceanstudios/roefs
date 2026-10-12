@@ -2,6 +2,7 @@
 from collections import defaultdict
 from decimal import Decimal
 from .access import permitted
+from . import scopes
 from .common import eur,money
 from domain import interval,date_value
 
@@ -34,7 +35,7 @@ def build(c,user,report):
             cid=contract_by_work.get(hour['workorder_id'])
             if cid in contracts:contracts[cid]['approved_hours']+=money(hour['hours'])
     for row in c.execute('SELECT r.*,a.name FROM reservations r JOIN assets a ON a.id=r.asset_id WHERE r.date BETWEEN ? AND ?',(report['from'],report['to'])):
-        if row['workorder_id'] not in work_ids:continue
+        if row['workorder_id'] not in work_ids or not scopes.allowed(c,user,'assets',row['asset_id']):continue
         item=equipment.setdefault(row['asset_id'],{'asset_id':row['asset_id'],'name':row['name'],'reserved_hours':0.0,'reservations':0});item['reserved_hours']+=interval(dict(row));item['reservations']+=1
     for row in employees.values():row.update(approved_hours=str(row['approved_hours']),planned_hours=round(row['planned_hours'],2),contract_capacity=round(row['contract_capacity'],2));row['planned_capacity_percent']=round(row['planned_hours']/row['contract_capacity']*100,2) if row['contract_capacity'] else None
     for collection in (customers,contracts):
@@ -42,7 +43,7 @@ def build(c,user,report):
     for row in equipment.values():row['calendar_utilization_percent']=round(row['reserved_hours']/(24*days)*100,2);row['reserved_hours']=round(row['reserved_hours'],2)
     result={'employees':list(employees.values()),'customers':list(customers.values()),'contracts':list(contracts.values()),'equipment':list(equipment.values()),'definitions':{'employees':'Geplande uren na pauze / contracturen per week × kalenderdagen/7. Indicatief; geen verzuim- of cao-capaciteit.','equipment':'Gereserveerde uren / 24 uur per kalenderdag; geen gemeten draaiuren.','contracts':'Opdrachten en goedgekeurde uren met expliciete contractkoppeling.','finance':'Concept- en creditbedragen van de geselecteerde opdrachten; geen geboekte omzet of bankontvangsten.'}}
     if permitted(user,'invoices'):
-        invoices=[dict(r) for r in c.execute('SELECT i.* FROM invoices i JOIN workorders w ON w.id=i.workorder_id WHERE w.date BETWEEN ? AND ?',(report['from'],report['to'])) if r['workorder_id'] in work_ids]
+        invoices=[dict(r) for r in c.execute('SELECT i.* FROM invoices i JOIN workorders w ON w.id=i.workorder_id WHERE w.date BETWEEN ? AND ?',(report['from'],report['to'])) if r['workorder_id'] in work_ids and scopes.allowed(c,user,'invoices',r['id'])]
         result['finance']={'invoices':invoices,'net':eur(sum((money(x['net_amount'] or '0',True) for x in invoices),Decimal(0))),'vat':eur(sum((money(x['vat_amount'] or '0',True) for x in invoices),Decimal(0))),'total':eur(sum((money(x['amount'],True) for x in invoices),Decimal(0)))}
     return result
 

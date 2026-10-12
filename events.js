@@ -65,3 +65,7 @@ for(const action of ['v6LegacyPage','v6LegacySearch'])ROEFS_ACTIONS.add(action);
 ROEFS_ACTIONS.add('v6RetentionToggle');
 
 for(const action of ['v6ResizeDialog','v6ResizePreview','v6ResizeSave'])ROEFS_ACTIONS.add(action);
+for(const action of ['v6Services','v6ServiceForm','v6ServiceSave','v6ServiceGenerateForm','v6ServiceGenerate','v6SchoolDemo'])ROEFS_ACTIONS.add(action);
+for(const action of ['v6MigrationHome','v6MigrationNew','v6MigrationCategory','v6MigrationTemplate','v6MigrationUpload','v6MigrationView','v6MigrationPreview','v6MigrationConfirm','v6MigrationResume','v6MigrationStop'])ROEFS_ACTIONS.add(action);
+for(const action of ['v6Onboarding','v6OnboardingEdit','v6OnboardingSave'])ROEFS_ACTIONS.add(action);
+for(const action of ['v6Accounting','v6AccountingSave','v6AccountingAction','v6AccountingQueue','v6AccountingRetry','v6Scopes','v6ScopeEdit','v6ScopeSave','v6Classify'])ROEFS_ACTIONS.add(action);

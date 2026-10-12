@@ -54,6 +54,8 @@ def transition(c,user,wid,body):
     if state in ('Correctie','Geannuleerd') or old=='Geannuleerd':
         if not reason:raise Problem('Een reden is verplicht.')
     if c.execute('SELECT 1 FROM invoices WHERE workorder_id=?',(wid,)).fetchone():raise Problem('Gefactureerde opdracht is vergrendeld. Maak een creditcorrectie.',409)
+    from . import scopes
+    for related in c.execute('SELECT id FROM shifts WHERE workorder_id=?',(wid,)):scopes.require_record(c,user,'shifts',related['id'])
     shifts=[dict(x) for x in c.execute("SELECT * FROM shifts WHERE workorder_id=? AND status!='Geannuleerd'",(wid,))]
     if state in ('Toegewezen','In uitvoering'):
         if len({x['employee_id'] for x in shifts if x['employee_id']})<work['capacity']:raise Problem('Onvoldoende teamleden ingepland.',409)

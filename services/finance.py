@@ -11,6 +11,8 @@ def prepare(c,user,body):
     if work['workflow']!='Factureerbaar':raise Problem('Werkopdracht is nog niet factureerbaar.',409)
     if c.execute('SELECT 1 FROM invoices WHERE workorder_id=? AND credit_of IS NULL',(work['id'],)).fetchone():raise Problem('Deze opdracht is al voorbereid voor facturatie.',409)
     hours=c.execute("SELECT * FROM hours WHERE workorder_id=? AND status IN ('Goedgekeurd','Akkoord')",(work['id'],)).fetchall()
+    from . import scopes
+    for hour in hours:scopes.require_record(c,user,'hours',hour['id'])
     if not hours:raise Problem('Geen goedgekeurde uren gevonden.',409)
     quantity=sum((money(x['hours']) for x in hours),Decimal(0));rate=money(body.get('hourly_rate','0'))
     if rate<=0:raise Problem('Een positief uurtarief is verplicht.')

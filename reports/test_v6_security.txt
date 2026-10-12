@@ -1,0 +1,10 @@
+test_account_limit_persisted_in_database (test_v6_security.V6Security.test_account_limit_persisted_in_database) ... ok
+test_idle_session_expiry_and_security_headers (test_v6_security.V6Security.test_idle_session_expiry_and_security_headers) ... ok
+test_lost_authenticator_requires_recovery_and_can_be_reenrolled (test_v6_security.V6Security.test_lost_authenticator_requires_recovery_and_can_be_reenrolled) ... ok
+test_recovery_hashed_one_time_concurrent_and_persistent (test_v6_security.V6Security.test_recovery_hashed_one_time_concurrent_and_persistent) ... ok
+test_recovery_requires_password_and_rotation_invalidates_old_codes (test_v6_security.V6Security.test_recovery_requires_password_and_rotation_invalidates_old_codes) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 6.148s
+
+OK

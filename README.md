@@ -1,6 +1,10 @@
-> **V6 ontwikkeltussenstand:** zie [V6-INSTALLATIE.md](V6-INSTALLATIE.md), [V6-FUNCTIEMATRIX.md](V6-FUNCTIEMATRIX.md) en [V6-CONTINUATION.md](V6-CONTINUATION.md). De onderstaande V5-beschrijving is de behouden basis; open V6-werk is geen eindacceptatie.
+# ROEFS ONE — V6 migratiepakket
 
-# ROEFS ONE — V5 + automatische synchronisatie
+Voortzetting van de bestaande applicatie. Begin bij [ROEFS-MIGRATIEHANDLEIDING.md](ROEFS-MIGRATIEHANDLEIDING.md). De [migratierapportage](V6-MIGRATION-REPORT.md), [finale functiematrix](V6-FINAL-FUNCTIEMATRIX.md), [tests](V6-FINAL-TESTRAPPORT.md), [beveiligingscontrole](V6-FINAL-SECURITY.md) en [metingen](V6-FINAL-PERFORMANCE.md) beschrijven wat werkelijk is getest en wat nog klantacceptatie vereist. **Geen productiegeschiktheidsclaim.**
+
+Nieuw: native CSV/XLSX-datamigratie, 26 categorieën/52 templates, 24.050 fictieve volumerecords, schoolafspraken, Roefs onboarding, afdeling/rayonhandhaving en providerneutrale boekhoudvoorbereiding. NoCore is een eenmalige migratiebron, geen permanente operationele afhankelijkheid.
+
+## Behouden basis
 
 Voortgebouwd op de aangeleverde ROEFS ONE-broncode. De Python-backend, SQLite, bestaande modules, Amocean-logo en eerste scherm **‘Hoi Beheerder. Wat wil je doen?’** blijven behouden. Dit pakket gebruikt uitsluitend fictieve demonstratiegegevens.
 

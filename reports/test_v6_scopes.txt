@@ -1,0 +1,15 @@
+test_admin_routes_reject_non_admin (test_v6_scopes.ScopePolicy.test_admin_routes_reject_non_admin) ... ok
+test_children_inherit_parent_scope (test_v6_scopes.ScopePolicy.test_children_inherit_parent_scope) ... ok
+test_created_record_inherits_and_context_resets (test_v6_scopes.ScopePolicy.test_created_record_inherits_and_context_resets) ... ok
+test_deleted_classification_cannot_be_inherited_by_reused_id (test_v6_scopes.ScopePolicy.test_deleted_classification_cannot_be_inherited_by_reused_id) ... ok
+test_migration_repeatable_and_unstructured_logs_fail_closed (test_v6_scopes.ScopePolicy.test_migration_repeatable_and_unstructured_logs_fail_closed) ... ok
+test_nested_references_cannot_cross_boundary (test_v6_scopes.ScopePolicy.test_nested_references_cannot_cross_boundary) ... ok
+test_policy_requires_explicit_consistent_defaults (test_v6_scopes.ScopePolicy.test_policy_requires_explicit_consistent_defaults) ... ok
+test_scope_intersection_and_unclassified_denied (test_v6_scopes.ScopePolicy.test_scope_intersection_and_unclassified_denied) ... ok
+test_sql_parameterizes_names_and_rejects_alias_injection (test_v6_scopes.ScopePolicy.test_sql_parameterizes_names_and_rejects_alias_injection) ... ok
+test_unknown_tables_fail_closed (test_v6_scopes.ScopePolicy.test_unknown_tables_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.006s
+
+OK

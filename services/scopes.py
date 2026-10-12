@@ -1,13 +1,14 @@
 """Optionele recordclassificatie boven op rollen; ongeclassificeerd is afgeschermd.
-Voorbereide, INACTIEVE beleidskern: nog niet gekoppeld aan HTTP-routes.
+Requestgebonden beleid voor HTTP-routes, bedrijfsoperaties en rapportages.
 Geen bedrijfsspecifieke indeling wordt automatisch verzonnen.
 """
 import contextvars,json
 from domain import Problem
 ACTOR=contextvars.ContextVar('roefs_scope_actor',default=None)
-BASE={'customers','objects','contracts','employees','shifts','workorders','hours','assets','vehicles','invoices','quotes','ledger','payroll','leave','availability','inspections','logbook','orders','keys','alerts','documents','teams','articles','files','planning_series','time_clocks'}
+BASE={'customers','objects','contracts','employees','shifts','workorders','hours','assets','vehicles','invoices','quotes','ledger','payroll','leave','availability','inspections','logbook','orders','keys','alerts','documents','teams','articles','files','planning_series','time_clocks','service_types'}
 CHILDREN={'contacts':('customer_id','customers'),'communications':('customer_id','customers'),'certifications':('employee_id','employees'),'checklist':('workorder_id','workorders'),'workorder_events':('workorder_id','workorders'),'schedule_history':('shift_id','shifts'),'reservations':('workorder_id','workorders'),'invoice_lines':('invoice_id','invoices'),'contract_events':('contract_id','contracts'),'contract_locations':('contract_id','contracts')}
-REFERENCES={'customer_id':'customers','object_id':'objects','employee_id':'employees','workorder_id':'workorders','contract_id':'contracts','shift_id':'shifts','asset_id':'assets','invoice_id':'invoices','team_id':'teams','manager_id':'employees','from_object':'objects','to_object':'objects'}
+CHILDREN.update({'rooms':('object_id','objects'),'work_programs':('object_id','objects'),'work_instructions':('program_id','work_programs'),'contract_services':('contract_id','contracts')})
+REFERENCES={'program_id':'work_programs','room_id':'rooms','service_type_id':'service_types','customer_id':'customers','object_id':'objects','employee_id':'employees','workorder_id':'workorders','contract_id':'contracts','shift_id':'shifts','asset_id':'assets','invoice_id':'invoices','team_id':'teams','manager_id':'employees','from_object':'objects','to_object':'objects'}
 
 def migrate(c):
     c.execute('CREATE TABLE IF NOT EXISTS access_scopes(user_id INTEGER PRIMARY KEY REFERENCES users(id),policy TEXT NOT NULL,version INTEGER NOT NULL DEFAULT 1)')
@@ -19,6 +20,7 @@ def migrate(c):
 
 def attach(c,user):
     row=c.execute('SELECT policy FROM access_scopes WHERE user_id=?',(user['id'],)).fetchone()
+    user.pop('scope',None)
     if row:
         policy=json.loads(row[0])
         if policy['enabled']:user['scope']=policy
@@ -50,7 +52,39 @@ def allowed(c,user,table,rid):
 def require_record(c,user,table,rid):
     if not allowed(c,user,table,rid):raise Problem('Gegevens vallen buiten je ingestelde afdeling of rayon.',404)
 
-def filter_rows(c,user,table,rows):return [r for r in rows if allowed(c,user,table,r['id'])]
+def filter_rows(c,user,table,rows):
+    if not user or not user.get('scope'):return list(rows)
+    if table=='contract_locations':return [r for r in rows if allowed(c,user,'contracts',r['contract_id']) and allowed(c,user,'objects',r['object_id'])]
+    return [r for r in rows if allowed(c,user,table,r['id']) and references_allowed(c,user,dict(r))]
+
+def references_allowed(c,user,row):
+    return all(not row.get(field) or allowed(c,user,parent,row[field]) for field,parent in REFERENCES.items())
+
+def count(c,user,table):
+    clause,args=sql(user,table)
+    return c.execute('SELECT COUNT(*) FROM '+table+' WHERE '+clause,args).fetchone()[0]
+
+def select(c,user,table,where='1=1',args=(),order='id DESC',limit=None):
+    clause,scope_args=sql(user,table)
+    query='SELECT * FROM '+table+' WHERE ('+where+') AND '+clause+' ORDER BY '+order
+    params=list(args)+scope_args
+    if limit is not None:query+=' LIMIT ?';params.append(limit)
+    return filter_rows(c,user,table,[dict(r) for r in c.execute(query,params)])
+
+def notification_visible(c,user,row):
+    if not user.get('scope'):return True
+    # Meldingen bevatten vrije tekst: toon alleen expliciet herleidbare doelen.
+    event=row.get('event_key','').split(':')
+    module={'work':'workorders','shift':'shifts','contract-decision':'contracts'}.get(event[0])
+    if module and len(event)>1 and event[1].isdigit():
+        if module=='shifts':return allowed(c,user,module,int(event[1]))
+        table,field=('workorder_events','workorder_id') if module=='workorders' else ('contract_events','contract_id')
+        entry=c.execute('SELECT '+field+' FROM '+table+' WHERE id=?',(int(event[1]),)).fetchone()
+        return bool(entry and allowed(c,user,module,entry[0]))
+    target=row.get('target','');parts=target.strip('/').split('/')
+    if len(parts)==2 and parts[0] in BASE and parts[1].isdigit():return allowed(c,user,parts[0],int(parts[1]))
+    return False
+
 
 def check_payload(c,user,body):
     if not user.get('scope'):return
@@ -58,7 +92,9 @@ def check_payload(c,user,body):
         for row in body:check_payload(c,user,row)
     elif isinstance(body,dict):
         for field,value in body.items():
-            if field in REFERENCES and value not in ('',None):
+            if field=='object_ids' and isinstance(value,list):
+                for rid in value:require_record(c,user,'objects',rid)
+            elif field in REFERENCES and value not in ('',None):
                 if isinstance(value,bool) or not str(value).isdigit():raise Problem('Ongeldig gekoppeld recordnummer.')
                 require_record(c,user,REFERENCES[field],int(value))
             elif field=='required_assets' and value:
@@ -81,7 +117,7 @@ def classify_created(c,table,rid,values):
 def guard(c,user,path,method,body=None):
     if not user.get('scope'):return
     # Deze organisatiebrede logboeken bevatten ongestructureerde details. Fail closed.
-    if path.startswith('/api/v5/sync') or path in ('/api/audit','/api/v5/audit') or path.endswith('/timeline'):raise Problem('Dit organisatiebrede overzicht is niet beschikbaar binnen een afdelings- of rayonbeperking.',403)
+    if path in ('/api/v5/reminders/run','/api/v5/settings','/api/v5/security/audit-integrity') or path.startswith('/api/v5/sync') or path in ('/api/audit','/api/v5/audit') or path.endswith('/timeline'):raise Problem('Dit organisatiebrede overzicht is niet beschikbaar binnen een afdelings- of rayonbeperking.',403)
     parts=path.strip('/').split('/')
     if len(parts)>=4 and parts[:2]==['api','records'] and parts[2] in BASE and parts[3].isdigit():require_record(c,user,parts[2],int(parts[3]))
     if method!='GET':check_payload(c,user,body)
@@ -109,6 +145,7 @@ def route(c,user,parts,method,body):
         previous=c.execute('SELECT version FROM access_scopes WHERE user_id=?',(uid,)).fetchone();old=dict(previous) if previous else {'version':0};version(old,body.get('version'));policy=validate({k:v for k,v in body.items() if k!='version'})
         c.execute('INSERT INTO access_scopes(user_id,policy,version) VALUES(?,?,1) ON CONFLICT(user_id) DO UPDATE SET policy=excluded.policy,version=access_scopes.version+1',(uid,json.dumps(policy)))
         c.execute('DELETE FROM sessions WHERE user_id=?',(uid,));audit(c,user,'scope_policy','users',uid);return {'ok':True}
+    if parts==['security','classifications'] and method=='GET':return {'items':[dict(r) for r in c.execute('SELECT * FROM record_scopes ORDER BY module,record_id')]}
     if parts==['security','classifications'] and method=='POST':
         module=body.get('module');ids=body.get('ids');department=body.get('department','');region=body.get('region','')
         if module not in BASE or not isinstance(ids,list) or not 1<=len(ids)<=1000 or any(type(x)!=int or x<=0 for x in ids):raise Problem('Kies een bekende module en 1–1000 recordnummers.')

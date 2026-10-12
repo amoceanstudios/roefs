@@ -51,6 +51,8 @@ def _report(c,user,query):
     works=[dict(x) for x in c.execute('SELECT w.*,o.customer_id FROM workorders w JOIN objects o ON o.id=w.object_id WHERE w.date BETWEEN ? AND ?'+(' AND o.customer_id=?' if customer else ''),[start,end]+([customer] if customer else []))]
     if department:works=[w for w in works if any(s['workorder_id']==w['id'] for s in shifts)]
     hours=[dict(x) for x in c.execute('SELECT h.*,e.name employee_name,e.department,o.customer_id FROM hours h JOIN employees e ON e.id=h.employee_id LEFT JOIN workorders w ON w.id=h.workorder_id LEFT JOIN shifts s ON s.id=h.shift_id LEFT JOIN objects o ON o.id=COALESCE(w.object_id,s.object_id) WHERE h.date BETWEEN ? AND ?'+(' AND o.customer_id=?' if customer else '')+(' AND e.department=?' if department else ''),[start,end]+([customer] if customer else [])+([department] if department else []))]
+    from . import scopes
+    shifts=scopes.filter_rows(c,user,'shifts',shifts);works=scopes.filter_rows(c,user,'workorders',works);hours=scopes.filter_rows(c,user,'hours',hours)
     approved=sum((Decimal(x['hours']) for x in hours if x['status'] in ('Akkoord','Goedgekeurd')),Decimal(0))
     planned=sum(interval(s) for s in shifts if s['status']!='Geannuleerd')
     from .planning import assess_many

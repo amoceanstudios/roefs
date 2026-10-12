@@ -1,6 +1,6 @@
 import json,unittest,os
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright,expect
 from support import LiveServer,ROOT
 
 class EnterpriseBrowser(unittest.TestCase):
@@ -36,7 +36,7 @@ class EnterpriseBrowser(unittest.TestCase):
   self.page.locator('.v5-shift').first.click();self.page.get_by_role('button',name='Wekelijks kopiëren').click();self.page.locator('input[name=count]').fill('2');self.page.get_by_role('button',name='Kopieën opslaan').click();self.page.locator('#modalbg').wait_for(state='detached')
   rows=self.s.request('/api/records/shifts',token=self.admin)[1];self.assertEqual(len([s for s in rows if s['date'] in ('2030-04-08','2030-04-15')]),2)
  def test_workorder_checklist_and_file_upload_real_storage(self):
-  self.login();self.open('workorders');self.page.get_by_role('button',name='Nieuw toevoegen',exact=True).click();self.page.locator('#v5-object_id').select_option('1');self.page.locator('#v5-description').fill('Fictieve mobiele opdracht');self.page.locator('#v5-date').fill('2030-04-02');self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.locator('#modalbg').wait_for(state='detached');self.page.locator('.v5-item').filter(has_text='Fictieve mobiele opdracht').get_by_role('button',name='Opdracht openen').click();self.page.locator('input[name=title]').fill('Vloer controleren');self.page.get_by_role('button',name='Taak toevoegen').click();self.page.get_by_label('Vloer controleren',exact=True).check();self.page.get_by_role('button',name='Foto of bestand toevoegen').click();self.page.locator('#v5file').set_input_files({'name':'fictief-verslag.txt','mimeType':'text/plain','buffer':b'Fictief verslag vanuit browsertest.'});self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.locator('#modalbg').wait_for(state='detached');self.assertIn('fictief-verslag.txt',self.page.locator('#v5body').inner_text())
+  self.login();self.open('workorders');self.page.get_by_role('button',name='Nieuw toevoegen',exact=True).click();self.page.locator('#v5-object_id').select_option('1');self.page.locator('#v5-description').fill('Fictieve mobiele opdracht');self.page.locator('#v5-date').fill('2030-04-02');self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.locator('#modalbg').wait_for(state='detached');self.page.locator('.v5-item').filter(has_text='Fictieve mobiele opdracht').get_by_role('button',name='Opdracht openen').click();self.page.locator('input[name=title]').fill('Vloer controleren');self.page.get_by_role('button',name='Taak toevoegen').click();self.page.get_by_label('Vloer controleren',exact=True).check();self.page.get_by_role('button',name='Foto of bestand toevoegen').click();self.page.locator('#v5file').set_input_files({'name':'fictief-verslag.txt','mimeType':'text/plain','buffer':b'Fictief verslag vanuit browsertest.'});self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.locator('#modalbg').wait_for(state='detached');expect(self.page.locator('#v5body')).to_contain_text('fictief-verslag.txt')
   files=self.s.request('/api/v5/files',token=self.admin)[1];self.assertEqual(len(files),1);self.assertEqual(files[0]['name'],'fictief-verslag.txt')
 
  def test_inactive_integration_saved_and_visible(self):

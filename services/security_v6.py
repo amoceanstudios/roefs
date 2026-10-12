@@ -3,6 +3,16 @@ import time,os,datetime as dt
 from domain import Problem
 
 def migrate(c):
+    from .service_plans import migrate as migrate_service_plans
+    migrate_service_plans(c)
+    from .migration_models import migrate as migrate_models
+    migrate_models(c)
+    from .data_migration import migrate as migrate_imports
+    migrate_imports(c)
+    from .onboarding import migrate as migrate_onboarding
+    migrate_onboarding(c)
+    from .accounting import migrate as migrate_accounting
+    migrate_accounting(c)
     c.execute('CREATE TABLE IF NOT EXISTS auth_attempts (username TEXT PRIMARY KEY, window_start REAL NOT NULL, attempts INTEGER NOT NULL)')
     if 'break_minutes' not in {r[1] for r in c.execute('PRAGMA table_info(shifts)')}:c.execute('ALTER TABLE shifts ADD COLUMN break_minutes INTEGER NOT NULL DEFAULT 0')
     c.execute("CREATE TABLE IF NOT EXISTS planning_series (id INTEGER PRIMARY KEY,title TEXT NOT NULL,definition TEXT NOT NULL,version INTEGER NOT NULL DEFAULT 1,status TEXT NOT NULL DEFAULT 'Actief',snapshot TEXT NOT NULL DEFAULT '[]')")
@@ -20,6 +30,8 @@ def migrate(c):
     c.execute('CREATE INDEX IF NOT EXISTS workorder_contract ON workorders(contract_id,date)')
     c.execute('CREATE TABLE IF NOT EXISTS sync_cursors(connection_id INTEGER NOT NULL REFERENCES sync_connections(id),category TEXT NOT NULL,cursor TEXT NOT NULL,PRIMARY KEY(connection_id,category))')
     c.execute('CREATE TABLE IF NOT EXISTS session_activity(token TEXT PRIMARY KEY REFERENCES sessions(token) ON DELETE CASCADE,last_seen REAL NOT NULL)')
+    from .scopes import migrate as migrate_scopes
+    migrate_scopes(c)
     c.execute('INSERT OR IGNORE INTO schema_migrations(version) VALUES(9)')
 
 def attempt(c,username):

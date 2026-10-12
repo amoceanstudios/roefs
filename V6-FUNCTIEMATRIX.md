@@ -1,3 +1,5 @@
+> Historisch meetpunt. Actuele migratieversie: zie V6-FINAL-FUNCTIEMATRIX.md, V6-FINAL-TESTRAPPORT.md en V6-MIGRATION-REPORT.md.
+
 # V6 functiematrix — nog geen eindacceptatie
 
 PASS betekent een concreet genoemd scenario is uitgevoerd. PARTIAL betekent verdere implementatie/validatie open. BLOCKED BY CUSTOMER is alleen voor echte klantafhankelijkheden; onafhankelijke en omgevingscontroles hebben eigen status.
