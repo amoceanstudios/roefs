@@ -6,9 +6,9 @@
   "concurrency": 4,
   "passed": 24,
   "failed": 0,
-  "median_ms": 386.8,
-  "max_ms": 1484.6,
-  "elapsed_seconds": 2.93,
+  "median_ms": 346.0,
+  "max_ms": 1409.9,
+  "elapsed_seconds": 3.18,
   "sqlite_integrity": "ok",
   "limitations": "Korte lokale leesproef. Geen duurtest, 250 gelijktijdige gebruikers, productie-infrastructuur of extern tunnelverkeer."
 }

@@ -10,7 +10,7 @@ assert 'popstate' in html
 assert 'async function refreshSmart()' in html
 assert (D/'assets'/'amocean-mark.png').read_bytes()[:8]==b'\x89PNG\r\n\x1a\n'
 with tempfile.TemporaryDirectory() as tmp:
- env={**os.environ,'PORT':'19895','ROEFS_DB':tmp+'/roefs.db','ROEFS_DEMO_GATE':''}
+ env={**os.environ, 'ROEFS_ADMIN_PASSWORD':'Amocean1!', 'ROEFS_EMPLOYEE_PASSWORD':'Amocean2!','PORT':'19895','ROEFS_DB':tmp+'/roefs.db','ROEFS_DEMO_GATE':''}
  proc=subprocess.Popen(['python3',str(D/'server.py')],env=env,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
  try:
   for i in range(30):

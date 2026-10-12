@@ -8,6 +8,23 @@ test_mobile_tablet_desktop_layout (test_browser.Browser.test_mobile_tablet_deskt
 test_planner_suggestion_to_saved_shift (test_browser.Browser.test_planner_suggestion_to_saved_shift) ... ok
 test_server_validation_inline (test_browser.Browser.test_server_validation_inline) ... ok
 test_tour_uses_live_screens (test_browser.Browser.test_tour_uses_live_screens) ... ok
+test_batch_report_detects_same_absence_conflict (test_enterprise.Enterprise.test_batch_report_detects_same_absence_conflict) ... ok
+test_concurrent_assignment_exactly_one_success (test_enterprise.Enterprise.test_concurrent_assignment_exactly_one_success) ... ok
+test_cookie_csrf_and_session_invalidation (test_enterprise.Enterprise.test_cookie_csrf_and_session_invalidation) ... ok
+test_customer_import_all_or_nothing_and_number (test_enterprise.Enterprise.test_customer_import_all_or_nothing_and_number) ... ok
+test_full_role_chain_persists_restart (test_enterprise.Enterprise.test_full_role_chain_persists_restart) ... ok
+test_home_counts_and_drilldown_scope (test_enterprise.Enterprise.test_home_counts_and_drilldown_scope) ... ok
+test_mandatory_certification_equipment_and_capacity (test_enterprise.Enterprise.test_mandatory_certification_equipment_and_capacity) ... ok
+test_rbac_every_role_and_legacy_bypass (test_enterprise.Enterprise.test_rbac_every_role_and_legacy_bypass) ... ok
+test_restricted_roles_cannot_read_admin_messages_or_approve_hours (test_enterprise.Enterprise.test_restricted_roles_cannot_read_admin_messages_or_approve_hours) ... ok
+test_stale_versions_and_transactional_bulk (test_enterprise.Enterprise.test_stale_versions_and_transactional_bulk) ... ok
+test_time_dst_midnight_duplicates (test_enterprise.Enterprise.test_time_dst_midnight_duplicates) ... ok
+test_upload_path_type_scope_and_deduplicated_notifications (test_enterprise.Enterprise.test_upload_path_type_scope_and_deduplicated_notifications) ... ok
+test_all_viewports_real_pages_cookie_and_reload (test_enterprise_browser.EnterpriseBrowser.test_all_viewports_real_pages_cookie_and_reload) ... ok
+test_customer_form_persistence_validation_and_timeline (test_enterprise_browser.EnterpriseBrowser.test_customer_form_persistence_validation_and_timeline) ... ok
+test_inactive_integration_saved_and_visible (test_enterprise_browser.EnterpriseBrowser.test_inactive_integration_saved_and_visible) ... ok
+test_planning_copy_and_conflict_keyboard_alternative (test_enterprise_browser.EnterpriseBrowser.test_planning_copy_and_conflict_keyboard_alternative) ... ok
+test_workorder_checklist_and_file_upload_real_storage (test_enterprise_browser.EnterpriseBrowser.test_workorder_checklist_and_file_upload_real_storage) ... ok
 test_gate_basic_cookie_and_bearer (test_regression.Gate.test_gate_basic_cookie_and_bearer) ... ok
 test_account_deactivation_and_last_admin (test_regression.Regression.test_account_deactivation_and_last_admin) ... ok
 test_admin_endpoints_deny_employee (test_regression.Regression.test_admin_endpoints_deny_employee) ... ok
@@ -45,12 +62,26 @@ test_session_hash_expiry_and_logout (test_regression.Regression.test_session_has
 test_widgets_refresh_after_mutation (test_regression.Regression.test_widgets_refresh_after_mutation) ... ok
 test_workflow_approve_once (test_regression.Regression.test_workflow_approve_once) ... ok
 test_workorder_employee_completion (test_regression.Regression.test_workorder_employee_completion) ... ok
+test_full_backup_files_restore_private_and_sessions_revoked (test_security_recovery.SecurityRecovery.test_full_backup_files_restore_private_and_sessions_revoked) ... ok
+test_mfa_enrollment_login_replay_session_invalidation (test_security_recovery.SecurityRecovery.test_mfa_enrollment_login_replay_session_invalidation) ... ok
+test_restore_rejects_traversal_and_corruption (test_security_recovery.SecurityRecovery.test_restore_rejects_traversal_and_corruption) ... ok
+test_weak_password_and_inactive_connectors (test_security_recovery.SecurityRecovery.test_weak_password_and_inactive_connectors) ... ok
 test_occupied_port_fails_without_stopping_existing_server (test_startup.Startup.test_occupied_port_fails_without_stopping_existing_server) ... ok
 test_original_database_migration (test_startup.Startup.test_original_database_migration) ... ok
 test_repeatable_start_and_backup (test_startup.Startup.test_repeatable_start_and_backup) ... ok
 test_tunnel_start_check_reuses_existing_gate (test_startup.Startup.test_tunnel_start_check_reuses_existing_gate) ... ok
+test_automatic_worker_without_manual_run_and_restart (test_sync.Sync.test_automatic_worker_without_manual_run_and_restart) ... ok
+test_bidirectional_and_simultaneous_changes_conflict (test_sync.Sync.test_bidirectional_and_simultaneous_changes_conflict) ... ok
+test_conditional_update_refuses_external_overwrite (test_sync.Sync.test_conditional_update_refuses_external_overwrite) ... ok
+test_deleted_and_duplicate_records_preserved (test_sync.Sync.test_deleted_and_duplicate_records_preserved) ... ok
+test_dependency_order_external_ids_and_hours_materials_invoice (test_sync.Sync.test_dependency_order_external_ids_and_hours_materials_invoice) ... ok
+test_durable_outbox_retry_after_remote_commit_no_duplicate (test_sync.Sync.test_durable_outbox_retry_after_remote_commit_no_duplicate) ... ok
+test_import_repeat_and_updates_no_duplicates (test_sync.Sync.test_import_repeat_and_updates_no_duplicates) ... ok
+test_lease_only_one_worker_and_recovery (test_sync.Sync.test_lease_only_one_worker_and_recovery) ... ok
+test_outage_history_backoff_and_conflict_resolution (test_sync.Sync.test_outage_history_backoff_and_conflict_resolution) ... ok
+test_prepared_connector_inactive_missing_api_and_ssrf (test_sync.Sync.test_prepared_connector_inactive_missing_api_and_ssrf) ... ok
 
 ----------------------------------------------------------------------
-Ran 51 tests in 61.303s
+Ran 82 tests in 153.866s
 
 OK

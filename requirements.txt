@@ -1,0 +1,2 @@
+# Windows heeft doorgaans geen systeem-IANA-tijdzonedatabase.
+tzdata==2025.2; sys_platform == "win32"

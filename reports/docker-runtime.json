@@ -1,19 +1,50 @@
 {
-  "health": {
-    "ok": true,
-    "database": "connected",
-    "modules": 21
+  "image": "roefs-one:v5",
+  "uid": "10001",
+  "health": true,
+  "login": true,
+  "static_files": {
+    "/": {
+      "status": 200,
+      "bytes": 815
+    },
+    "/app.js": {
+      "status": 200,
+      "bytes": 42697
+    },
+    "/ui.js": {
+      "status": 200,
+      "bytes": 24780
+    },
+    "/nl.js": {
+      "status": 200,
+      "bytes": 2246
+    },
+    "/enterprise.js": {
+      "status": 200,
+      "bytes": 43222
+    },
+    "/integrations.js": {
+      "status": 200,
+      "bytes": 8970
+    },
+    "/styles.css": {
+      "status": 200,
+      "bytes": 30476
+    },
+    "/ui.css": {
+      "status": 200,
+      "bytes": 3215
+    },
+    "/enterprise.css": {
+      "status": 200,
+      "bytes": 1914
+    },
+    "/assets/amocean-mark.png": {
+      "status": 200,
+      "bytes": 38521
+    }
   },
-  "static_paths_verified": [
-    "/",
-    "/app.js",
-    "/ui.js",
-    "/styles.css",
-    "/ui.css",
-    "/assets/amocean-mark.png"
-  ],
-  "login": "passed",
-  "bind": "0.0.0.0:8080 in container; bereikbaar via hostpoort",
-  "container": "gestart en verwijderd na controle",
-  "user": "appuser (10001)"
+  "external_connections": 0,
+  "public_deployment": false
 }

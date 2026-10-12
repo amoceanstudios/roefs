@@ -1,47 +1,32 @@
-# ROEFS ONE — bijgewerkte demonstratie
+# ROEFS ONE — V5 + automatische synchronisatie
 
-Voortgebouwd op **ROEFS-ONE-NL-MOBIEL-FIX (2).zip**. De oorspronkelijke Python-backend, SQLite-database, twintig bedrijfsmodules en Amocean-dagstart zijn behouden. Beschikbaarheid is als extra module toegevoegd. Na inloggen blijft het eerste scherm **‘Hoi Beheerder. Wat wil je doen?’**.
-
-## Starten
-
-Python 3.10 of nieuwer is voldoende; de applicatie heeft geen externe Python-pakketten nodig.
+Voortgebouwd op de aangeleverde ROEFS ONE-broncode. De Python-backend, SQLite, bestaande modules, Amocean-logo en eerste scherm **‘Hoi Beheerder. Wat wil je doen?’** blijven behouden. Dit pakket gebruikt uitsluitend fictieve demonstratiegegevens.
 
 ```bash
 python3 start.py
 ```
 
-Op macOS kan ook `bash START.command`; op Windows `py -3 start.py` of `START.bat`. Het script toont het lokale adres en de nieuw gegenereerde demoaccountwachtwoorden in je eigen terminal. Gebruik uitsluitend fictieve gegevens.
+Python 3.10+; getest met 3.12 op Linux. Het startscript maakt willekeurige demoaccountwachtwoorden en toont ze uitsluitend lokaal. `--quiet` onderdrukt deze uitvoer. Windows: installeer eerst `py -3 -m pip install -r requirements.txt`, daarna `py -3 start.py`.
 
-Voor de bestaande gratis tijdelijke Cloudflare-link:
+De **Werkruimte** voegt een gekoppelde procesketen toe: klant met locaties → contract → werkopdracht → gekwalificeerde medewerker en materieel → checklist en bestand → uren → goedkeuring → decimale conceptfactuur en PDF/CSV. Planning heeft dag/week/maand, groepering, suggestieredenen, versiecontrole, batchkopieën en veilig terugdraaien. De bestaande eenvoudige schermen blijven beschikbaar.
 
-```bash
-bash START-GRATIS-24U.command
-```
+**Integraties & synchronisatie** ondersteunt een geconfigureerde JSON-API automatisch op een interval, inclusief recordkoppelingen, import/export, systeemvoorrang per categorie, conflicten, foutgeschiedenis, herhaalpogingen en een duurzame verzendwachtrij. Er zijn geen echte ERP-accounts gekoppeld. AFAS, Exact en Dynamics staan zichtbaar als nog niet actieve providerprofielen; hun leverancierspecifieke adapters vereisen toegang en schema’s. Zie [INTEGRATIES.md](INTEGRATIES.md).
 
-Hiervoor moet `cloudflared` geïnstalleerd zijn. De link blijft afhankelijk van een draaiende computer, internet en Cloudflare; de historische bestandsnaam “24U” garandeert geen 24 uur beschikbaarheid.
+## Documentatie
 
-## Wat is verbeterd
-
-- Vaste account–medewerkerkoppeling, servercontrole van eigen dossiers en objecten, instelbare extra inzage en blokkeren/resetten van accounts.
-- Validatie van alle 21 CRUD-modules, beschermde verwijdering van gekoppelde gegevens, unieke factuurnummers en controle op dubbele of onmogelijke urenregistraties.
-- Transactionele roostercontrole: overlap, verlof/verzuim en opgeslagen beschikbaarheid gelden ook bij SOS en goedgekeurde werkstromen.
-- Weekplanning met beschikbaarheidsmeldingen en medewerkerssuggesties; een suggestie kan een echt dienstformulier voorbereiden.
-- Medewerkers kunnen eigen uren indienen, beschikbaarheid/verlof vastleggen, logboekmeldingen toevoegen en werkbonnen bijwerken. Beheer keurt uren en verlof goed.
-- Nederlandse formulieren en keuzevelden, actuele widgets, beveiligde CSV-export, verbeterde mobiele navigatie, toetsenbordfocus en interactieve rondleiding in echte schermen.
-- Startscript met gereedheidscontrole, automatische SQLite-reservekopie en verbeterde Docker-start als gebruiker zonder rootrechten.
-
-## Documentatie en tests
-
-- [INSTALLATIE.md](INSTALLATIE.md): starten, bijwerken, backups, tunnel en Docker.
-- [ARCHITECTUUR.md](ARCHITECTUUR.md): bronanalyse, bestanden, modules, rechten en API's.
-- [TESTRAPPORT.md](TESTRAPPORT.md): uitsluitend daadwerkelijk uitgevoerde controles, fouten en beperkingen.
-- [MOBIEL-TESTPLAN.md](MOBIEL-TESTPLAN.md): aanvullende acceptatie op echte telefoons.
-- [BEVEILIGING.md](BEVEILIGING.md): herstelde fouten en nog noodzakelijke productiecontroles.
+- [INSTALLATIE.md](INSTALLATIE.md): starten, upgrade, Docker, gratis Cloudflare en tests.
+- [GEBRUIKERSHANDLEIDING.md](GEBRUIKERSHANDLEIDING.md): dagelijkse bediening en procesketen.
+- [PLANNING.md](PLANNING.md): controles, suggesties en beperkingen.
+- [ARCHITECTUUR.md](ARCHITECTUUR.md), [DATABASE.md](DATABASE.md), [API.md](API.md): technische werking.
+- [BEVEILIGING.md](BEVEILIGING.md): beveiliging, rechten en herstel.
+- [TESTRAPPORT.md](TESTRAPPORT.md): uitgevoerde tests en metingen.
+- [FUNCTIEMATRIX.md](FUNCTIEMATRIX.md), [BEKENDE-PROBLEMEN.md](BEKENDE-PROBLEMEN.md): expliciete dekking en resterende scope.
+- [PRODUCTIE-CHECKLIST.md](PRODUCTIE-CHECKLIST.md): voorwaarden vóór een eventuele productiebeoordeling.
 
 ```bash
 python3 run_tests.py --backend-only
-# Met Playwright en Chromium geïnstalleerd:
+# Met Playwright en Chromium:
 python3 run_tests.py --load
 ```
 
-Dit pakket is een ontwikkel- en demonstratieversie. Het is **niet als productiegeschikt vastgesteld**. De externe tunnelverbinding kon in de bouwomgeving niet worden gevalideerd door een DNS/netwerkbeperking. De lokale applicatie en Docker-container zijn afzonderlijk getest. Een iPhone-emulatie in Chromium is geen test met een fysieke iPhone of Safari.
+Er wordt niets automatisch gefactureerd, betaald, gemaild of publiek gepubliceerd. Externe synchronisatie staat standaard uit en vereist expliciete configuratie. Deze versie is niet als productiegeschikt vastgesteld. De masteropdracht is breder dan de geverifieerde dekking; zie de functiematrix voor PARTIAL/BLOCKED/NOT TESTED.

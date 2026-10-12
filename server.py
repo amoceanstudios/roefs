@@ -1,4 +1,6 @@
 import time,logging,re
+from services import migrations,access,authentication,sync_migrations,synchronization,mfa,operational_migrations
+from services.routes import dispatch
 from domain import Problem, REFERENCES, REQUIRED, STATUSES, NUMBERS, LABELS, date_value, interval, schedule_issues, scoped_rows, validate, protect_delete
 import json,sqlite3,os,hashlib,hmac,secrets,threading,datetime,csv,io,urllib.parse,base64
 from http.server import ThreadingHTTPServer,BaseHTTPRequestHandler
@@ -51,10 +53,14 @@ def init():
   c.execute('ALTER TABLE users ADD COLUMN employee_id INTEGER')
   c.execute('ALTER TABLE users ADD COLUMN active INTEGER NOT NULL DEFAULT 1')
  if fresh:
-  pw=os.environ.get('ROEFS_ADMIN_PASSWORD','Amocean1!');salt=secrets.token_hex(16);ph=hashlib.pbkdf2_hmac('sha256',pw.encode(),bytes.fromhex(salt),250000).hex()
+  pw=os.environ.get('ROEFS_ADMIN_PASSWORD')
+  if not pw:raise RuntimeError('Start via start.py of stel ROEFS_ADMIN_PASSWORD en ROEFS_EMPLOYEE_PASSWORD in.')
+  salt=secrets.token_hex(16);ph=hashlib.pbkdf2_hmac('sha256',pw.encode(),bytes.fromhex(salt),250000).hex()
   c.execute('INSERT INTO users(username,salt,password_hash,role) VALUES(?,?,?,?)',('Roefs',salt,ph,'admin'))
  if fresh:
-  salt=secrets.token_hex(16);pw=os.environ.get('ROEFS_EMPLOYEE_PASSWORD','Amocean2!');ph=hashlib.pbkdf2_hmac('sha256',pw.encode(),bytes.fromhex(salt),250000).hex()
+  salt=secrets.token_hex(16);pw=os.environ.get('ROEFS_EMPLOYEE_PASSWORD')
+  if not pw:raise RuntimeError('ROEFS_EMPLOYEE_PASSWORD ontbreekt. Start via start.py.')
+  ph=hashlib.pbkdf2_hmac('sha256',pw.encode(),bytes.fromhex(salt),250000).hex()
   c.execute('INSERT INTO users(username,salt,password_hash,role) VALUES(?,?,?,?)',('Bart van Aalde',salt,ph,'employee'))
  if fresh and not c.execute('SELECT 1 FROM customers LIMIT 1').fetchone():
   today=datetime.date.today(); examples={
@@ -90,6 +96,10 @@ def init():
   c.execute('CREATE INDEX IF NOT EXISTS idx_'+table+'_employee ON '+table+'(employee_id)')
  c.execute('CREATE INDEX IF NOT EXISTS idx_shifts_date ON shifts(date,employee_id)')
  c.execute('DELETE FROM sessions WHERE expires<?',(datetime.datetime.now().isoformat(),))
+ migrations.migrate(c,MODULES)
+ sync_migrations.migrate(c)
+ mfa.migrate(c)
+ operational_migrations.migrate(c)
  c.commit()
 def rows(m):return [dict(r) for r in conn().execute('SELECT * FROM '+m+' ORDER BY id DESC')]
 def number(v):
@@ -175,7 +185,7 @@ class Handler(BaseHTTPRequestHandler):
   if not isinstance(b,dict):raise Problem('Verwacht een JSON-object.')
   return b
  def actor(self):
-  token=self.headers.get('Authorization','').removeprefix('Bearer ').strip()
+  token,_=authentication.session_token(self)
   r=conn().execute('SELECT u.id,u.username,u.role,u.employee_id FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>? AND u.active=1',(hashlib.sha256(token.encode()).hexdigest(),datetime.datetime.now().isoformat())).fetchone() if token else None
   return dict(r) if r else None
  def route(self,method):
@@ -202,7 +212,7 @@ class Handler(BaseHTTPRequestHandler):
     return
    self._gate_cookie=valid_basic
   path=urllib.parse.urlsplit(self.path).path
-  if path in ('/app.js','/ui.js','/styles.css','/ui.css') and method=='GET':
+  if path in ('/app.js','/ui.js','/styles.css','/ui.css','/enterprise.js','/enterprise.css','/nl.js','/integrations.js') and method=='GET':
    data=(ROOT/path[1:]).read_bytes();self.send_response(200);self.send_header('Content-Type','text/javascript; charset=utf-8' if path.endswith('.js') else 'text/css; charset=utf-8');self.send_header('Content-Length',str(len(data)));self.send_header('Cache-Control','no-cache');self.end_headers();self.wfile.write(data);return
   if path=='/assets/amocean-mark.png':
    data=(ROOT/'assets'/'amocean-mark.png').read_bytes();self.send_response(200);self.send_header('Content-Type','image/png');self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data);return
@@ -221,19 +231,29 @@ class Handler(BaseHTTPRequestHandler):
     if len(LOGIN_ATTEMPTS)>10000:raise Problem('Te veel verzoeken. Probeer later opnieuw.',429)
     LOGIN_ATTEMPTS[key]=(attempts[0],attempts[1]+1)
    r=conn().execute('SELECT * FROM users WHERE username=? AND active=1',(username,)).fetchone()
-   good=r and hmac.compare_digest(hashlib.pbkdf2_hmac('sha256',str(b.get('password','')).encode(),bytes.fromhex(r['salt']),250000).hex(),r['password_hash'])
+   good=r and hmac.compare_digest(hashlib.pbkdf2_hmac('sha256',str(b.get('password','')).encode(),bytes.fromhex(r['salt']),r['password_iterations']).hex(),r['password_hash'])
    if not good:return self.respond({'error':'Ongeldige inloggegevens'},401)
+   if r['mfa_secret']:
+    conn().execute('BEGIN IMMEDIATE')
+    current=conn().execute('SELECT mfa_secret,mfa_counter FROM users WHERE id=?',(r['id'],)).fetchone()
+    counter=mfa.verify(current['mfa_secret'],b.get('code',''),current['mfa_counter']);conn().execute('UPDATE users SET mfa_counter=? WHERE id=?',(counter,r['id']))
+   if r['password_iterations']<600000:
+    hashed=hashlib.pbkdf2_hmac('sha256',str(b.get('password','')).encode(),bytes.fromhex(r['salt']),600000).hex();conn().execute('UPDATE users SET password_hash=?,password_iterations=600000 WHERE id=?',(hashed,r['id']))
    with LOGIN_LOCK:LOGIN_ATTEMPTS.pop(key,None)
-   token=secrets.token_urlsafe(36);exp=(datetime.datetime.now()+datetime.timedelta(hours=8)).isoformat();conn().execute('INSERT INTO sessions VALUES(?,?,?)',(hashlib.sha256(token.encode()).hexdigest(),r['id'],exp));conn().commit();return self.respond({'token':token,'username':r['username'],'role':r['role']})
+   token=secrets.token_urlsafe(36);exp=(datetime.datetime.now()+datetime.timedelta(hours=8)).isoformat();conn().execute('INSERT INTO sessions VALUES(?,?,?)',(hashlib.sha256(token.encode()).hexdigest(),r['id'],exp));conn().commit();return self.respond({'token':token,'csrf':authentication.csrf(token),'username':r['username'],'role':r['role']},headers={'Set-Cookie':authentication.cookie(self,token)})
   user=self.actor()
   if not user:return self.respond({'error':'Log eerst in'},401)
-  c=conn();uid=user['id'];admin=user['role']=='admin'
+  c=conn();uid=user['id'];admin=user['role']!='employee'
+  authentication.check_csrf(self,method)
+  if path.startswith('/api/v5/'):
+   return dispatch(self,c,user,path[8:],method,MODULES,DB)
+  if user['role']!='employee':access.legacy_access(user,path,method,MODULES)
   if path=='/api/me' and method=='GET':
-   return self.respond({'username':user['username'],'role':user['role'],'employee_id':user['employee_id'],'permissions':[r['module'] for r in c.execute('SELECT module FROM permissions WHERE user_id=?',(uid,))]})
+   return self.respond({'username':user['username'],'role':user['role'],'employee_id':user['employee_id'],'csrf':authentication.csrf(authentication.session_token(self)[0]),'permissions':[r['module'] for r in c.execute('SELECT module FROM permissions WHERE user_id=?',(uid,))]})
   if path=='/api/logout' and method=='POST':
-   tok=self.headers.get('Authorization','').removeprefix('Bearer ').strip();c.execute('DELETE FROM sessions WHERE token=?',(hashlib.sha256(tok.encode()).hexdigest(),));c.commit();return self.respond({'ok':True})
+   tok,_=authentication.session_token(self);c.execute('DELETE FROM sessions WHERE token=?',(hashlib.sha256(tok.encode()).hexdigest(),));c.commit();return self.respond({'ok':True},headers={'Set-Cookie':authentication.cookie(self,'',True)})
   if path=='/api/messages' and method=='GET':
-   if admin:return self.respond([dict(r) for r in c.execute('SELECT m.*,u.username AS sender FROM messages m JOIN users u ON u.id=m.sender_id ORDER BY m.id DESC LIMIT 100')])
+   if user['role'] in access.ADMIN:return self.respond([dict(r) for r in c.execute('SELECT m.*,u.username AS sender FROM messages m JOIN users u ON u.id=m.sender_id ORDER BY m.id DESC LIMIT 100')])
    return self.respond([dict(r) for r in c.execute('SELECT m.*,u.username AS sender FROM messages m JOIN users u ON u.id=m.sender_id WHERE sender_id=? ORDER BY m.id DESC LIMIT 100',(uid,))])
   if path=='/api/messages' and method=='POST':
    b=self.body();subject=str(b.get('subject','')).strip()[:120];body=str(b.get('body','')).strip()[:1500]
@@ -250,7 +270,7 @@ class Handler(BaseHTTPRequestHandler):
   if path=='/api/users' and method=='POST':
    if not admin:return self.respond({'error':'Alleen beheerder'},403)
    b=self.body();username=str(b.get('username','')).strip()[:80];pw=str(b.get('password',''));role=b.get('role','employee')
-   if not username or len(pw)<9 or role not in ('admin','employee'):return self.respond({'error':'Gebruikersnaam, wachtwoord van minimaal 9 tekens en geldige rol vereist'},400)
+   if not username or not 12<=len(pw)<=200 or role not in access.ROLES:return self.respond({'error':'Gebruikersnaam, wachtwoord van 12 tot 200 tekens en geldige rol vereist'},400)
    eid=b.get('employee_id') or None
    if eid and not c.execute('SELECT 1 FROM employees WHERE id=?',(eid,)).fetchone():raise Problem('Medewerker niet gevonden.')
    salt=secrets.token_hex(16);ph=hashlib.pbkdf2_hmac('sha256',pw.encode(),bytes.fromhex(salt),250000).hex()
@@ -263,15 +283,15 @@ class Handler(BaseHTTPRequestHandler):
    old=c.execute('SELECT * FROM users WHERE id=?',(target,)).fetchone()
    if not old:raise Problem('Gebruiker niet gevonden.',404)
    role=b.get('role',old['role']);active=b.get('active',bool(old['active']))
-   if role not in ('admin','employee') or not isinstance(active,bool):raise Problem('Ongeldige rol of accountstatus.')
+   if role not in access.ROLES or not isinstance(active,bool):raise Problem('Ongeldige rol of accountstatus.')
    if old['role']=='admin' and old['active'] and (role!='admin' or not active):
     if c.execute("SELECT COUNT(*) FROM users WHERE role='admin' AND active=1").fetchone()[0]<=1:raise Problem('Het laatste actieve beheerdersaccount moet behouden blijven.',409)
    password=b.get('password','')
-   if password and (not isinstance(password,str) or not 9<=len(password)<=200):raise Problem('Gebruik een wachtwoord van 9 tot 200 tekens.')
+   if password and (not isinstance(password,str) or not 12<=len(password)<=200):raise Problem('Gebruik een wachtwoord van 12 tot 200 tekens.')
    c.execute('UPDATE users SET role=?,active=? WHERE id=?',(role,int(active),target))
    if password:
     salt=secrets.token_hex(16);ph=hashlib.pbkdf2_hmac('sha256',password.encode(),bytes.fromhex(salt),250000).hex()
-    c.execute('UPDATE users SET salt=?,password_hash=? WHERE id=?',(salt,ph,target))
+    c.execute('UPDATE users SET salt=?,password_hash=?,password_iterations=250000 WHERE id=?',(salt,ph,target))
    if password or not active or role!=old['role']:c.execute('DELETE FROM sessions WHERE user_id=?',(target,))
    log(user['username'],'update','users',target,'Accountrechten of wachtwoord bijgewerkt');c.commit();return self.respond({'ok':True})
   if path=='/api/users/permissions' and method=='POST':
@@ -299,12 +319,15 @@ class Handler(BaseHTTPRequestHandler):
   if path=='/api/lookups' and method=='GET':
    result={}
    for m in ('customers','objects','contracts','employees','shifts'):
-    source=rows(m) if admin else scoped_rows(c,m,user)
-    if not admin and m=='employees':source=[dict(x) for x in c.execute('SELECT id,name FROM employees WHERE id=?',(user['employee_id'],))]
+    source=rows(m) if admin and access.permitted(user,m) else scoped_rows(c,m,user)
+    if (not admin or not access.permitted(user,m)) and m=='employees':source=[dict(x) for x in c.execute('SELECT id,name FROM employees WHERE id=?',(user['employee_id'],))]
     result[m]=[{'id':x['id'],'name':x.get('name') or (x.get('date','')+' '+x.get('start_time','')+' #'+str(x['id']))} for x in source]
    return self.respond(result)
   if path=='/api/modules' and method=='GET':
-   return self.respond({m:{'label':v[0],'fields':v[1],'required':REQUIRED[m],'statuses':STATUSES[m],'references':{f:REFERENCES[f] for f in v[1] if f in REFERENCES},'numbers':{f:NUMBERS[f] for f in v[1] if f in NUMBERS}} for m,v in MODULES.items() if admin or m in allowed_employee})
+   return self.respond({m:{'label':v[0],'fields':v[1],'required':REQUIRED[m],'statuses':STATUSES[m],'references':{f:REFERENCES[f] for f in v[1] if f in REFERENCES},'numbers':{f:NUMBERS[f] for f in v[1] if f in NUMBERS}} for m,v in MODULES.items() if (admin and access.permitted(user,m)) or (not admin and m in allowed_employee)})
+  if path=='/api/dashboard' and user['role'] not in access.ADMIN:
+   if user['role']!='employee':
+    return self.respond({'counts':{m:c.execute('SELECT COUNT(*) FROM '+m).fetchone()[0] for m in MODULES if access.permitted(user,m)}})
   if path=='/api/dashboard' and not admin:
    own={m:scoped_rows(c,m,user) for m in MODULES if m in allowed_employee}
    return self.respond({'counts':{m:len(v) for m,v in own.items()},'open_workorders':sum(x['status'] not in ('Afgerond','Geannuleerd') for x in own['workorders']),'pending_hours':sum(x['status']=='Ingediend' for x in own['hours'])})
@@ -337,7 +360,7 @@ class Handler(BaseHTTPRequestHandler):
     sh['employee_name']=employees.get(sh['employee_id'],{}).get('name','Niet toegewezen')
     sh['object_name']=objects.get(sh['object_id'],{}).get('name','Onbekend object')
    unavailable=[{'id':sh['id'],'reasons':schedule_issues(c,sh,sh['id'])} for sh in shifts if sh['id'] not in bad_times and sh['status']!='Geannuleerd']
-   return self.respond({'availability_conflicts':[x for x in unavailable if x['reasons']], 'week_start':str(week),'week_end':str(end),'shifts':shifts,'employees':list(employees.values()) if admin else [],'objects':list(objects.values()) if admin else [],'conflicts':conflicts,'unassigned':unassigned,'invalid_times':sorted(set(bad_times)),'weekly_hours':weekly if admin else {}})
+   return self.respond({'availability_conflicts':[x for x in unavailable if x['reasons']], 'week_start':str(week),'week_end':str(end),'shifts':shifts,'employees':list(employees.values()) if admin and access.permitted(user,'employees') else [],'objects':list(objects.values()) if admin else [],'conflicts':conflicts,'unassigned':unassigned,'invalid_times':sorted(set(bad_times)),'weekly_hours':weekly if admin else {}})
   if path=='/api/planning/suggest' and method=='POST':
    if not admin:return self.respond({'error':'Alleen beheerder'},403)
    b=self.body();date=str(b.get('date',''));start=str(b.get('start_time',''));end=str(b.get('end_time',''));exclude=str(b.get('exclude_shift_id',''))
@@ -465,15 +488,15 @@ class Handler(BaseHTTPRequestHandler):
     sh=c.execute('SELECT * FROM shifts WHERE id=?',(source,)).fetchone()
     emp=c.execute("SELECT * FROM employees WHERE id=? AND status='Actief'",(candidate,)).fetchone()
     if not sh or not emp or sh['status']=='Geannuleerd':return self.respond({'error':'Dienst of medewerker ongeldig'},400)
-    payload={'shift_id':source,'employee_id':candidate,'employee':emp['name'],'date':sh['date'],'time':sh['start_time']+'–'+sh['end_time']}
+    payload={'source_version':sh['version'],'shift_id':source,'employee_id':candidate,'employee':emp['name'],'date':sh['date'],'time':sh['start_time']+'–'+sh['end_time']}
    elif kind=='workorder_from_log':
     row=c.execute('SELECT * FROM logbook WHERE id=?',(source,)).fetchone()
     if not row or row['status']!='Open':return self.respond({'error':'Kies een open logboekmelding'},400)
-    payload={'logbook_id':source,'object_id':row['object_id'],'description':row['message'],'date':datetime.date.today().isoformat()}
+    payload={'source_version':row['version'],'logbook_id':source,'object_id':row['object_id'],'description':row['message'],'date':datetime.date.today().isoformat()}
    else:
     row=c.execute('SELECT * FROM contracts WHERE id=?',(source,)).fetchone()
     if not row or row['status']!='Actief' or number(row['monthly_value'])<=0:return self.respond({'error':'Actief contract met geldig bedrag vereist'},400)
-    payload={'contract_id':source,'customer_id':row['customer_id'],'amount':row['monthly_value'],'number':'CONCEPT-AUTO-'+str(source)+'-'+datetime.datetime.now().strftime('%Y%m%d%H%M%S')+'-'+secrets.token_hex(3)}
+    payload={'source_version':row['version'],'contract_id':source,'customer_id':row['customer_id'],'amount':row['monthly_value'],'number':'CONCEPT-AUTO-'+str(source)+'-'+datetime.datetime.now().strftime('%Y%m%d%H%M%S')+'-'+secrets.token_hex(3)}
    cur=c.execute('INSERT INTO autopilot_jobs(kind,source_id,candidate_id,status,payload,created_by) VALUES(?,?,?,?,?,?)',(kind,source,candidate,'Wacht op goedkeuring',json.dumps(payload,ensure_ascii=False),user['username']))
    log(user['username'],'propose','autopilot_jobs',cur.lastrowid,kind);c.commit()
    return self.respond({'id':cur.lastrowid,'status':'Wacht op goedkeuring','preview':payload},201)
@@ -489,6 +512,9 @@ class Handler(BaseHTTPRequestHandler):
      c.execute("UPDATE autopilot_jobs SET status='Afgewezen',approved_by=?,executed_at=CURRENT_TIMESTAMP WHERE id=?",(user['username'],int(jid)))
      log(user['username'],'reject','autopilot_jobs',int(jid));c.commit();return self.respond({'ok':True,'status':'Afgewezen'})
     d=json.loads(job['payload']);kind=job['kind']
+    source_table={'shift_replacement':'shifts','workorder_from_log':'logbook','invoice_from_contract':'contracts'}[kind]
+    source_row=c.execute('SELECT version FROM '+source_table+' WHERE id=?',(job['source_id'],)).fetchone()
+    if not source_row or source_row['version']!=d.get('source_version'):raise ValueError('Brongegevens zijn gewijzigd. Beoordeel een nieuw voorstel.')
     if kind=='shift_replacement':
      sh=c.execute('SELECT * FROM shifts WHERE id=?',(d['shift_id'],)).fetchone()
      emp=c.execute("SELECT * FROM employees WHERE id=? AND status='Actief'",(d['employee_id'],)).fetchone()
@@ -610,6 +636,10 @@ class Handler(BaseHTTPRequestHandler):
    c.execute('BEGIN IMMEDIATE')
    previous=dict(c.execute('SELECT * FROM '+m+' WHERE id=?',(rid,)).fetchone() or {}) if rid else {}
    if rid and not previous:raise Problem('Record niet gevonden.',404)
+   if previous and (previous.get('workflow') or previous.get('workorder_id')):raise Problem('Gebruik de gekoppelde werkopdrachtfunctie voor dit record.',409)
+   if previous and self.headers.get('If-Match') is not None:
+    from services.common import version
+    version(previous,self.headers.get('If-Match').strip('"'))
    if not admin:
     visible={x['id'] for x in scoped_rows(c,m,user)}
     if rid and rid not in visible:raise Problem('Record niet gevonden.',404)
@@ -644,6 +674,10 @@ class Handler(BaseHTTPRequestHandler):
     c.execute('UPDATE '+m+' SET '+','.join(f+'=?' for f in fields)+',updated_at=CURRENT_TIMESTAMP WHERE id=?',[row[f] for f in fields]+[rid]);action='update'
    else:
     cur=c.execute('INSERT INTO '+m+'('+','.join(fields)+') VALUES('+','.join('?' for _ in fields)+')',[row[f] for f in fields]);rid=cur.lastrowid;action='create'
+   if m in ('leave','availability'):
+    from services.common import notify
+    saved=c.execute('SELECT version FROM '+m+' WHERE id=?',(rid,)).fetchone()
+    notify(c,f'{m}:{rid}:{saved[0]}','Beschikbaarheid gewijzigd; controleer de planning.','shifts',roles={'admin','company_admin','operations','planner'})
    log(user['username'],action,m,rid);c.commit();return self.respond({'ok':True,'id':rid},201 if method=='POST' else 200)
   return self.respond({'error':'Route niet gevonden'},404)
  def do_GET(self):self.handle_request('GET')
@@ -665,4 +699,4 @@ class Handler(BaseHTTPRequestHandler):
     CONN.db.close();del CONN.db
  def log_message(self,*args):pass
 if __name__=='__main__':
- init();print(f'ROEFS ONE: http://localhost:{PORT}');ThreadingHTTPServer((os.environ.get('ROEFS_HOST','127.0.0.1'),PORT),Handler).serve_forever()
+ init();synchronization.start_worker(DB,MODULES);print(f'ROEFS ONE: http://localhost:{PORT}');ThreadingHTTPServer((os.environ.get('ROEFS_HOST','127.0.0.1'),PORT),Handler).serve_forever()

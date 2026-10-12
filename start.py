@@ -15,7 +15,11 @@ def main():
     parser.add_argument('--quiet',action='store_true',help='Toon geen inloggegevens in de uitvoer')
     args=parser.parse_args()
     if sys.version_info<(3,10):parser.error('Python 3.10 of nieuwer is vereist.')
-    env=os.environ.copy();env['ROEFS_INSTANCE_ID']=secrets.token_hex(16);env.setdefault('PORT','8765');env.setdefault('ROEFS_HOST','127.0.0.1');env.setdefault('ROEFS_DB',str(ROOT/'data'/'roefs.db'))
+    try:
+        from zoneinfo import ZoneInfo
+        ZoneInfo('Europe/Amsterdam')
+    except (ImportError,KeyError):parser.error('Tijdzonedata ontbreken. Installeer requirements.txt met Python/pip.')
+    env=os.environ.copy();env['ROEFS_INSTANCE_ID']=secrets.token_hex(16);env.setdefault('PORT','8765');env.setdefault('ROEFS_COOKIE_SECURE','1' if args.tunnel else '0');env.setdefault('ROEFS_HOST','127.0.0.1');env.setdefault('ROEFS_DB',str(ROOT/'data'/'roefs.db'))
     db=Path(env['ROEFS_DB']).resolve();db.parent.mkdir(parents=True,exist_ok=True)
     if os.name!='nt':db.parent.chmod(0o700)
     credentials=db.parent/'demo-accounts.json';fresh=not db.exists()

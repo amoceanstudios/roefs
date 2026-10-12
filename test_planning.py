@@ -2,7 +2,7 @@ import os,sys,tempfile,subprocess,time,json,urllib.request,urllib.error
 from pathlib import Path
 root=Path(__file__).resolve().parent
 with tempfile.TemporaryDirectory() as t:
- env={**os.environ,'PORT':'19591','ROEFS_DB':t+'/test.db','ROEFS_DEMO_GATE':''}
+ env={**os.environ, 'ROEFS_ADMIN_PASSWORD':'Amocean1!', 'ROEFS_EMPLOYEE_PASSWORD':'Amocean2!','PORT':'19591','ROEFS_DB':t+'/test.db','ROEFS_DEMO_GATE':''}
  p=subprocess.Popen([sys.executable,str(root/'server.py')],env=env,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
  try:
   def req(path,method='GET',body=None,token=None):

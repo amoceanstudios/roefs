@@ -64,7 +64,7 @@ def interval(row):
     if end<=start: raise Problem('Een dienst of beschikbaarheid moet dezelfde dag na de begintijd eindigen.')
     return (end-start)/60
 
-def schedule_issues(c, row, exclude=0):
+def schedule_issues(c, row, exclude=0, extended=True):
     """Dezelfde regels gelden voor CRUD, suggesties, SOS en werkstromen."""
     interval(row)
     eid=str(row.get('employee_id',''))
@@ -86,10 +86,14 @@ def schedule_issues(c, row, exclude=0):
         for start,end in windows:
             if start<=covered: covered=max(covered,end)
         if covered<row['end_time']: issues.append('Dienst valt buiten de opgegeven beschikbaarheid.')
+    if extended and row.get('workorder_id'):
+        from services.planning import issues as extended_issues
+        return extended_issues(c,row,exclude,issues)
     return issues
 
 def scoped_rows(c, module, user):
-    if user['role']=='admin': return [dict(x) for x in c.execute('SELECT * FROM '+module+' ORDER BY id DESC')]
+    from services.access import permitted
+    if permitted(user,module): return [dict(x) for x in c.execute('SELECT * FROM '+module+' ORDER BY id DESC')]
     eid=str(user.get('employee_id') or -1)
     if module in ('shifts','hours','workorders','leave','availability'):
         return [dict(x) for x in c.execute('SELECT * FROM '+module+' WHERE employee_id=? ORDER BY id DESC',(eid,))]
@@ -155,6 +159,8 @@ def validate(c, module, body, fields, previous=None):
     return row
 
 def protect_delete(c,module,rid,modules):
+    if c.execute("SELECT 1 FROM sqlite_master WHERE name='sync_links'").fetchone() and c.execute('SELECT 1 FROM sync_links WHERE category=? AND local_id=?',(module,rid)).fetchone():
+        raise Problem('Dit record is extern gekoppeld. Archiveer via de status; verwijder de gegevens niet.',409)
     for source,(_,fields) in modules.items():
         for field,target in REFERENCES.items():
             if target==module and field in fields and c.execute('SELECT 1 FROM '+source+' WHERE '+field+'=?',(str(rid),)).fetchone():

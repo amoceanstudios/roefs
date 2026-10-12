@@ -2,7 +2,7 @@ import os,subprocess,tempfile,time,json,urllib.request,urllib.error,sqlite3
 root=os.path.dirname(os.path.abspath(__file__))
 checks=[]
 with tempfile.TemporaryDirectory() as tmp:
- env={**os.environ,'PORT':'19874','ROEFS_DB':tmp+'/test.db','ROEFS_DEMO_GATE':''}
+ env={**os.environ, 'ROEFS_ADMIN_PASSWORD':'Amocean1!', 'ROEFS_EMPLOYEE_PASSWORD':'Amocean2!','PORT':'19874','ROEFS_DB':tmp+'/test.db','ROEFS_DEMO_GATE':''}
  p=subprocess.Popen(['python3',root+'/server.py'],env=env,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
  try:
   for _ in range(70):

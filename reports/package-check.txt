@@ -1,6 +1,1 @@
-ZIP-integriteit: geslaagd.
-Alle manifestcontroles: geslaagd.
-Geen database, accountbestand, toegangswachtwoord of Python-cache meegeleverd.
-Uitgepakte ZIP: python start.py --check --quiet geslaagd.
-ROEFS ONE: http://localhost:19774
-Gereed: Python-server, database en startpagina gecontroleerd.
+12 oktober 2026 — schone kandidaat-ZIP uitgepakt. Alle applicatie- en testbronbestanden bytegelijk aan definitieve bron. python3 run_tests.py --load: exit 0; 82 tests OK, 65 API, 18 planning, logo en twee belastingproeven geslaagd. PORT=19790 python3 start.py --check --quiet tweemaal: exit 0; tweede start maakt reservekopie. Definitieve distributie verschilt uitsluitend in rapporten/documentatie/manifest. Runtimegegevens en accountgeheimen worden uitgesloten.

@@ -8,7 +8,7 @@ class LiveServer:
   self.url=f'http://127.0.0.1:{self.port}';self.start()
  def start(self):
   self.log=open(Path(self.temp.name)/'server.log','a+')
-  self.proc=subprocess.Popen([sys.executable,str(ROOT/'server.py')],env={**os.environ,'PORT':str(self.port),'ROEFS_HOST':'127.0.0.1','ROEFS_DB':str(self.db),'ROEFS_DEMO_GATE':self.gate,'ROEFS_ADMIN_PASSWORD':'Amocean1!','ROEFS_EMPLOYEE_PASSWORD':'Amocean2!'},stdout=self.log,stderr=self.log)
+  self.proc=subprocess.Popen([sys.executable,str(ROOT/'server.py')],env={**os.environ,'PORT':str(self.port),'ROEFS_HOST':'127.0.0.1','ROEFS_COOKIE_SECURE':'0','ROEFS_DB':str(self.db),'ROEFS_DEMO_GATE':self.gate,'ROEFS_ADMIN_PASSWORD':'Amocean1!','ROEFS_EMPLOYEE_PASSWORD':'Amocean2!'},stdout=self.log,stderr=self.log)
   for _ in range(100):
    if self.proc.poll() is not None:raise RuntimeError('Server gestopt: '+Path(self.log.name).read_text())
    try:self.request('/api/health');return
