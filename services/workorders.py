@@ -6,7 +6,7 @@ from .access import require,permitted
 from .planning import issues,asset_ids
 STATES=['Concept','Gepland','Toegewezen','In uitvoering','Voltooid','Goedgekeurd','Factureerbaar','Geannuleerd','Correctie']
 TRANSITIONS={'Concept':{'Gepland','Geannuleerd'},'Gepland':{'Toegewezen','Geannuleerd','Concept'},'Toegewezen':{'In uitvoering','Geannuleerd','Gepland'},'In uitvoering':{'Voltooid','Geannuleerd'},'Voltooid':{'Goedgekeurd','Correctie'},'Correctie':{'In uitvoering','Geannuleerd'},'Goedgekeurd':{'Factureerbaar','Correctie'},'Factureerbaar':{'Correctie'},'Geannuleerd':{'Concept'}}
-FIELDS={'object_id','employee_id','description','date','hours','signed_by','priority','service','team_id','required_skills','required_certifications','required_assets','capacity','start_time','end_time','completion_notes'}
+FIELDS={'contract_id','object_id','employee_id','description','date','hours','signed_by','priority','service','team_id','required_skills','required_certifications','required_assets','capacity','start_time','end_time','completion_notes'}
 def visible(c,user,wid):
     work=record(c,'workorders',wid)
     if permitted(user,'workorders'):return work
@@ -21,12 +21,18 @@ def save(c,user,body,rid=None):
         if c.execute("SELECT 1 FROM shifts WHERE workorder_id=? AND status!='Geannuleerd'",(rid,)).fetchone():raise Problem('Annuleer eerst de gekoppelde diensten voordat je opdrachtgegevens wijzigt.',409)
     if set(body)-FIELDS-{'version'}:raise Problem('Onbekend opdrachtveld.')
     row={k:body.get(k,old.get(k,'')) for k in FIELDS}
-    for k in FIELDS-{'team_id','capacity'}:row[k]=text(row[k] or '')
+    for k in FIELDS-{'team_id','capacity','contract_id'}:row[k]=text(row[k] or '')
     row['capacity']=int(row['capacity'] or 1)
     if not 1<=row['capacity']<=100:raise Problem('Teamcapaciteit moet tussen 1 en 100 liggen.')
     row['team_id']=int(row['team_id']) if row['team_id'] else None
     if row['team_id']:record(c,'teams',row['team_id'])
-    record(c,'objects',row['object_id'])
+    obj=record(c,'objects',row['object_id'])
+    row['contract_id']=int(row['contract_id']) if row['contract_id'] else None
+    if row['contract_id']:
+        contract=record(c,'contracts',row['contract_id'])
+        if str(contract['customer_id'])!=str(obj['customer_id']) or contract['status']!='Actief':raise Problem('Contract moet actief zijn en bij de locatieklant horen.',409)
+        if not contract['start_date']<=row['date'] or contract['end_date'] and row['date']>contract['end_date']:raise Problem('Opdrachtdatum valt buiten de contractduur.',409)
+        if str(contract['object_id'])!=str(obj['id']) and not c.execute('SELECT 1 FROM contract_locations WHERE contract_id=? AND object_id=?',(contract['id'],obj['id'])).fetchone():raise Problem('Locatie is niet aan dit contract gekoppeld.',409)
     if row['employee_id']:record(c,'employees',row['employee_id'])
     if not row['description']:raise Problem('Omschrijving is verplicht.')
     date_value(row['date']);interval(row)

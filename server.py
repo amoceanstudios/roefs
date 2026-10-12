@@ -171,11 +171,12 @@ class Handler(BaseHTTPRequestHandler):
   self.send_header('X-Frame-Options','DENY')
   self.send_header('Referrer-Policy','no-referrer')
   self.send_header('Permissions-Policy','camera=(), microphone=(), geolocation=()')
-  self.send_header('Content-Security-Policy',"default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'")
+  if os.environ.get('ROEFS_COOKIE_SECURE','1')!='0':self.send_header('Strict-Transport-Security','max-age=31536000')
+  self.send_header('Content-Security-Policy',"default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'")
   if getattr(self,'_gate_cookie',False):
    self.send_header('Set-Cookie','roefs_demo_gate='+hashlib.sha256(os.environ.get('ROEFS_DEMO_GATE','').encode()).hexdigest()+'; HttpOnly; Secure; SameSite=Lax; Path=/')
  def respond(self,obj,status=200,headers=None):
-  data=json.dumps(obj,ensure_ascii=False).encode();self.send_response(status);self.send_header('Content-Type','application/json; charset=utf-8');self.send_header('Content-Length',str(len(data)));self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');self.send_header('X-Frame-Options','DENY');self.send_header('Referrer-Policy','no-referrer');self.send_header('Content-Security-Policy',"default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'");
+  data=json.dumps(obj,ensure_ascii=False).encode();self.send_response(status);self.send_header('Content-Type','application/json; charset=utf-8');self.send_header('Content-Length',str(len(data)));self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');self.send_header('X-Frame-Options','DENY');self.send_header('Referrer-Policy','no-referrer');self.send_header('Content-Security-Policy',"default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'");
   for k,v in (headers or {}).items():self.send_header(k,v)
   self.end_headers();self.wfile.write(data)
  def body(self):
@@ -191,6 +192,7 @@ class Handler(BaseHTTPRequestHandler):
  def actor(self):
   token,_=authentication.session_token(self)
   r=conn().execute('SELECT u.id,u.username,u.role,u.employee_id FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>? AND u.active=1',(hashlib.sha256(token.encode()).hexdigest(),datetime.datetime.now().isoformat())).fetchone() if token else None
+  if r and not security_v6.session_active(conn(),hashlib.sha256(token.encode()).hexdigest()):return None
   return dict(r) if r else None
  def route(self,method):
   if method!='GET':
@@ -216,7 +218,7 @@ class Handler(BaseHTTPRequestHandler):
     return
    self._gate_cookie=valid_basic
   path=urllib.parse.urlsplit(self.path).path
-  if path in ('/app.js','/ui.js','/styles.css','/ui.css','/enterprise.js','/enterprise.css','/nl.js','/integrations.js') and method=='GET':
+  if path in ('/app.js','/ui.js','/styles.css','/ui.css','/enterprise.js','/enterprise.css','/nl.js','/integrations.js','/events.js') and method=='GET':
    data=(ROOT/path[1:]).read_bytes();self.send_response(200);self.send_header('Content-Type','text/javascript; charset=utf-8' if path.endswith('.js') else 'text/css; charset=utf-8');self.send_header('Content-Length',str(len(data)));self.send_header('Cache-Control','no-cache');self.end_headers();self.wfile.write(data);return
   if path=='/assets/amocean-mark.png':
    data=(ROOT/'assets'/'amocean-mark.png').read_bytes();self.send_response(200);self.send_header('Content-Type','image/png');self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data);return
@@ -242,12 +244,15 @@ class Handler(BaseHTTPRequestHandler):
    current=conn().execute('SELECT * FROM users WHERE id=? AND active=1',(r['id'],)).fetchone()
    if not current or current['password_hash']!=r['password_hash'] or current['role']!=r['role'] or current['mfa_secret']!=r['mfa_secret']:raise Problem('Account gewijzigd. Log opnieuw in.',401)
    if current['mfa_secret']:
-    mfa.authenticate(conn(),dict(current),b.get('code',''))
+    factor=mfa.authenticate(conn(),dict(current),b.get('code',''))
+    if b.get('reset_mfa') is True:
+     if factor!='recovery':raise Problem('Authenticatorherstel vereist een ongebruikte herstelcode.',401)
+     conn().execute('UPDATE users SET mfa_secret=NULL,mfa_pending=NULL,mfa_counter=-1 WHERE id=?',(r['id'],));conn().execute('DELETE FROM mfa_recovery_codes WHERE user_id=?',(r['id'],));log(r['username'],'mfa_recovered','users',r['id'])
    if r['password_iterations']<600000:
     hashed=hashlib.pbkdf2_hmac('sha256',str(b.get('password','')).encode(),bytes.fromhex(r['salt']),600000).hex();conn().execute('UPDATE users SET password_hash=?,password_iterations=600000 WHERE id=?',(hashed,r['id']))
    conn().execute('DELETE FROM auth_attempts WHERE username=?',(username,))
    with LOGIN_LOCK:LOGIN_ATTEMPTS.pop(key,None)
-   token=secrets.token_urlsafe(36);exp=(datetime.datetime.now()+datetime.timedelta(hours=8)).isoformat();conn().execute('INSERT INTO sessions VALUES(?,?,?)',(hashlib.sha256(token.encode()).hexdigest(),r['id'],exp));conn().commit();return self.respond({'token':token,'csrf':authentication.csrf(token),'username':r['username'],'role':r['role']},headers={'Set-Cookie':authentication.cookie(self,token)})
+   token=secrets.token_urlsafe(36);exp=(datetime.datetime.now()+datetime.timedelta(hours=8)).isoformat();conn().execute('INSERT INTO sessions VALUES(?,?,?)',(hashlib.sha256(token.encode()).hexdigest(),r['id'],exp));conn().execute('INSERT INTO session_activity VALUES(?,?)',(hashlib.sha256(token.encode()).hexdigest(),time.time()));conn().commit();return self.respond({'token':token,'csrf':authentication.csrf(token),'username':r['username'],'role':r['role']},headers={'Set-Cookie':authentication.cookie(self,token)})
   user=self.actor()
   if not user:return self.respond({'error':'Log eerst in'},401)
   c=conn();uid=user['id'];admin=user['role']!='employee'
@@ -632,7 +637,11 @@ class Handler(BaseHTTPRequestHandler):
    if len(parts)==4 and not parts[3].isdigit():raise Problem('Ongeldig recordnummer.')
    rid=int(parts[3]) if len(parts)==4 else None
    if method=='GET':
-    data=scoped_rows(c,m,user)
+    query=urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
+    if rid is None and 'limit' in query:
+     from domain import scoped_page
+     return self.respond(scoped_page(c,m,user,fields,query))
+    data=scoped_rows(c,m,user,rid)
     if rid is not None:
      found=next((x for x in data if x['id']==rid),None)
      if found is None:raise Problem('Record niet gevonden.',404)

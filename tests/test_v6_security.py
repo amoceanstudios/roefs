@@ -40,3 +40,17 @@ class V6Security(unittest.TestCase):
   self.s.stop();self.s.start()
   self.assertEqual(self.request('login',{'username':'Roefs','password':'Amocean1!'})[0],429)
   with sqlite3.connect(self.s.db) as c:self.assertEqual(c.execute('SELECT attempts FROM auth_attempts WHERE username=?',('Roefs',)).fetchone()[0],10)
+ def test_idle_session_expiry_and_security_headers(self):
+  import hashlib
+  token_hash=hashlib.sha256(self.token.encode()).hexdigest()
+  with sqlite3.connect(self.s.db) as c:c.execute('UPDATE session_activity SET last_seen=? WHERE token=?',(time.time()-1900,token_hash))
+  self.assertEqual(self.request('me',token=self.token)[0],401)
+  with sqlite3.connect(self.s.db) as c:self.assertEqual(c.execute('SELECT COUNT(*) FROM sessions WHERE token=?',(token_hash,)).fetchone()[0],0)
+  _,_,headers=self.s.request('/');self.assertIn('Permissions-Policy',headers);self.assertNotIn("script-src 'self' 'unsafe-inline'",headers['Content-Security-Policy'])
+ def test_lost_authenticator_requires_recovery_and_can_be_reenrolled(self):
+  setup,codes=self.enroll()
+  status,_,_=self.request('login',{**self.login_body(mfa.code(setup['secret'],int(time.time()//30)+1)),'reset_mfa':True});self.assertEqual(status,401)
+  status,result,_=self.request('login',{**self.login_body(codes[0]),'reset_mfa':True});self.assertEqual(status,200,result)
+  state=self.request('v5/security/mfa/status',token=result['token'])[1];self.assertFalse(state['enabled']);self.assertEqual(state['recovery_remaining'],0)
+  with sqlite3.connect(self.s.db) as c:self.assertEqual(c.execute("SELECT COUNT(*) FROM audit WHERE action='mfa_recovered'").fetchone()[0],1)
+  self.assertEqual(self.request('v5/security/mfa/setup',{'password':'Amocean1!'},result['token'])[0],200)

@@ -7,7 +7,7 @@ Start: 12 oktober 2026. V5-rollback: `619db082438051d45b76d7f29615486cfc1b6536`,
 | SEC-01 | MFA / hoog | Verlies authenticator blokkeert herstel → eenmalige herstelcodes; ontbrekende opslag/route | mfa.py, server.py, enterprise.js; 128-bit codes, alleen hashes, atomair verbruik, rotatie | Twee gelijktijdige logins, hergebruik, onjuist wachtwoord, sessie-intrekking | PASS gerichte tests; volledige eindtest volgt |
 | SEC-02 | Login / hoog | Begrenzing alleen RAM/IP → persistent per account; herstart/distributie omzeilt oude teller | security_v6.py, server.py; SQLite teller, begrensd venster | Tien fouten, correcte login geweigerd, persistentie/herstart | PASS gerichte tests; volledige eindtest volgt |
 | SEC-03 | Login / hoog | Wachtwoordcontrole vóór transactie → account kan tussentijds geblokkeerd/gewijzigd zijn | server.py; actieve gebruiker, hash/rol/MFA opnieuw vergelijken onder schrijflock | Gelijktijdige accountwijziging en login | IMPLEMENTED, specifieke racetest OPEN |
-| SEC-04 | Web / hoog | script-src unsafe-inline → geen onnodige inline uitvoering; bestaande HTML-eventhandlers | server.py, app.js, ui.js, enterprise.js, integrations.js; handlers migreren | CSP + XSS + browserregressie | OPEN |
+| SEC-04 | Web / hoog | script-src unsafe-inline → centrale toegestane UI-acties; bestaande HTML-eventhandlers | server.py, events.js en JS-schermen; geen eval/Function | CSP + XSS + volledige Chromiumregressie | PASS ontwikkelrun; onafhankelijke review open |
 | SEC-05 | Autorisatie / hoog | Organisatiebrede rolmatrix → configureerbare object-/afdelingsscope | access.py, routes.py, legacy routes; centraal beleid | Alle routes en horizontale/verticale negatieve tests | OPEN; uiteindelijke beleidskeuze klant |
 | SEC-06 | Opslag / middel | Onversleutelde bestanden/backups → onderhouden optionele encryptie met sleutelherstel | manage.py, documents.py, deploymentdocs | Versleutelen/herstellen, verkeerde sleutel, beschadiging | OPEN |
 | SEC-07 | Audit / middel | Auditrijen wijzigbaar → aantoonbare integriteitscontrole | common.py, server.py, migratie; integriteitsketen/verificatie | Wijziging/verwijdering detecteren | OPEN |
@@ -30,3 +30,14 @@ Start: 12 oktober 2026. V5-rollback: `619db082438051d45b76d7f29615486cfc1b6536`,
 - V5-rapporten gelezen en vergeleken met MFA/login/planning/documentcode; bestaande werkende architectuur behouden.
 - SEC-01/02/03 geïmplementeerd; geen eindacceptatie vóór tests.
 - V5 kende 82 tests; dit is historische baseline, geen V6-testuitslag.
+
+## Aanvullende bevindingen tijdens V6
+
+| ID | Module / ernst | Huidig → verwacht / oorzaak | Bestanden / implementatie | Teststrategie | Verificatie |
+|---|---|---|---|---|---|
+| SEC-08 | Bestandsmigratie / hoog | Nieuwe quarantaine kon bij herstart voor tekst opnieuw worden vrijgegeven → scannerstatus behouden; initialisatie draaide te breed | security_v6.py; alleen bij eerste toevoeging van scankolommen initialiseren | Tekst in quarantaine, herstart, download blijft 423 | PASS gerichte test |
+| SEC-09 | Planning / hoog | Dienst van goedgekeurd werk kon via planning worden geannuleerd → afgesloten werk vergrendeld | planning.py; vorige opdrachtstatus controleren vóór mutatie | Goedgekeurde opdracht annuleren via shift-API → 409 | PASS gerichte test |
+| SEC-10 | Sessies / middel | Geen inactiviteitslimiet → persistente last_seen naast absolute levensduur | security_v6.py, server.py, manage.py | Verlopen idle-sessie → 401 en verwijdering; restore zonder verweesde sessiedata | PASS gerichte test; laatste totale run 106 tests |
+| PLN-04 | Teamplanning / middel | Gekoppelde eindtijd alleen na annuleren wijzigen → atomair oudertijdvak en alle teamdiensten aanpassen | planning.resize, routes, schuifbediening | Conflict draait ouder+diensten terug; versieconflict geweigerd | PASS 6 planningtests; browserresize nog open |
+
+Open regels in het oorspronkelijke register zijn geen actuele eindstatusclaim; V6-FUNCTIEMATRIX en V6-VOORTGANG beschrijven de inmiddels gerealiseerde deelimplementaties. Bij afronding moeten alle regels een afzonderlijke eindstatus krijgen.

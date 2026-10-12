@@ -53,6 +53,7 @@ def restore(archive,target):
         # Herstelde koppelingen starten gepauzeerd; voorkom onbedoelde replay naar externe systemen.
         with sqlite3.connect(target/'roefs.db') as c:
             if c.execute("SELECT 1 FROM sqlite_master WHERE name='sync_connections'").fetchone():c.execute('UPDATE sync_connections SET enabled=0,lease_owner=NULL,lease_until=NULL')
+            if c.execute("SELECT 1 FROM sqlite_master WHERE name='session_activity'").fetchone():c.execute('DELETE FROM session_activity')
             c.execute('DELETE FROM sessions')
     except Exception:
         import shutil

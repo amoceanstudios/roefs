@@ -75,3 +75,9 @@ Bij gelijktijdige lokale wijzigingen weigert de conflictoplossing een verouderde
 Retries gebruiken exponentiële vertraging tot maximaal één uur. De outbox bewaart payload en idempotentiesleutel vóór verzending. Na een mogelijk verloren antwoord wordt eerst de oude poging afgemaakt, ook als lokaal inmiddels opnieuw is gewijzigd. Daarna kan de nieuwere versie volgen. Er is een werklease, periodiek vernieuwd tijdens verwerking; een verlopen lease kan na een procesuitval worden overgenomen.
 
 Na backupherstel staan koppelingen uit en zijn gebruikerssessies ingetrokken. Bekijk extern verwerkte opdrachten, open outbox en conflicten voordat je weer activeert. Er zijn geen automatische fysieke verwijderingen, verborgen betaalacties of externe factuurverzendingen buiten de expliciet geconfigureerde gegevenssynchronisatie.
+
+## V6-aanvullingen (generiek contract)
+
+Een leverancier met `delta_tokens: true` in capabilities kan een `checkpoint` (1–2000 tekens) op de laatste recordpagina retourneren. ROEFS bewaart dit pas nadat alle pagina’s zijn verwerkt en stuurt het de volgende keer als queryparameter `since`. `cursor` blijft uitsluitend paginering binnen dezelfde ronde. Bij een fout blijft het vorige controlepunt staan; herhaalde records blijven door mapping/versies beschermd. Dit is een uitbreiding van het eigen roefs-sync-contract, geen onbewezen AFAS/Exact/Dynamics-specificatie.
+
+HTTP 401/403 pauzeert de koppeling; een bevoegde beheerder moet toegang herstellen en opnieuw activeren. Permanente verzendfouten (behalve versieconflicten) of tien mislukte verzendpogingen komen in Uitval. De interface laat de fout zien en vraagt een reden voor hervatten. Payload en idempotentiesleutel blijven behouden. Een uitvalbericht veroorzaakt geen nieuw duplicaatbericht voor een inmiddels gewijzigd lokaal record. Controleer eerst de externe administratie wanneer ontvangst onzeker is.

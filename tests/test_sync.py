@@ -1,5 +1,5 @@
 """Connectorcontract tegen een echte lokale HTTP-testserver; geen echte ERP-claims."""
-import copy,json,os,sqlite3,threading,time,unittest
+import copy,json,os,sqlite3,threading,time,unittest,urllib.parse
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 from unittest.mock import patch
 from support import LiveServer
@@ -7,17 +7,18 @@ from services import synchronization as sync
 
 class ExternalAPI:
  def __init__(self):
-  self.records={k:{} for k in sync.CATEGORIES};self.idempotency={};self.writes=0;self.fail_after_write=False;self.fail_get=False;self.reject_revision=False;self.lock=threading.Lock();parent=self
+  self.delta=False;self.checkpoint="1";self.queries=[];self.records={k:{} for k in sync.CATEGORIES};self.idempotency={};self.writes=0;self.fail_after_write=False;self.fail_get=False;self.reject_revision=False;self.lock=threading.Lock();parent=self
   class Handler(BaseHTTPRequestHandler):
    def log_message(self,*args):pass
    def response(self,data,code=200):
     raw=json.dumps(data).encode();self.send_response(code);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw)
    def do_GET(self):
     if self.headers.get('Authorization')!='Bearer fictief-test-token':return self.response({'error':'unauthorized'},401)
-    if self.path=='/capabilities':return self.response({'protocol':'roefs-sync-v1','categories':list(sync.CATEGORIES),'write':True,'conditional_updates':True,'idempotency':True})
+    if self.path=='/capabilities':return self.response({'protocol':'roefs-sync-v1','categories':list(sync.CATEGORIES),'write':True,'conditional_updates':True,'idempotency':True,'delta_tokens':parent.delta})
     if parent.fail_get:return self.response({'error':'fictieve storing'},503)
     category=self.path.split('/')[2].split('?')[0]
-    with parent.lock:self.response({'items':list(parent.records[category].values()),'next_cursor':None})
+    query=urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query);parent.queries.append(query)
+    with parent.lock:self.response({'items':[] if parent.delta and query.get('since')==[parent.checkpoint] else list(parent.records[category].values()),'next_cursor':None,**({'checkpoint':parent.checkpoint} if parent.delta else {})})
    def do_POST(self):self.write_record()
    def do_PUT(self):self.write_record()
    def write_record(self):
@@ -112,3 +113,28 @@ class Sync(unittest.TestCase):
   with sync.connect(self.db) as c:
    c.execute('BEGIN IMMEDIATE');sync.resolve(c,{'id':1,'username':'Roefs','role':'admin'},conflict['id'],{'action':'external','local_version':conflict['local_version'],'reason':'Extern is leidend; fictieve correctie beoordeeld.'},self.modules);c.commit()
   self.assertEqual(self.rows('customers')[-1]['city'],'Teststad');self.external.fail_get=True;self.assertEqual(self.run_sync(cid)['status'],'Mislukt');connection=self.rows('sync_connections')[0];self.assertEqual(connection['failures'],1);self.assertGreater(connection['next_run'],connection['last_run']);self.assertEqual(self.rows('sync_runs')[-1]['status'],'Mislukt')
+
+ def test_dead_letter_preserves_key_and_manual_retry(self):
+  from services.connectors.generic import RemoteError
+  cid=self.config({'customers':'roefs'})
+  with patch('services.synchronization.Connector.put',side_effect=RemoteError('Fictieve permanente contractfout.',False,422)):
+   self.assertEqual(self.run_sync(cid)['status'],'Mislukt')
+  job=self.rows('sync_outbox')[0];self.assertEqual(job['status'],'Uitval');key=job['idempotency_key']
+  self.assertEqual(self.run_sync(cid)['status'],'Uitval');self.assertEqual(self.external.writes,0)
+  self.server.start();token=self.server.login()
+  code,result,_=self.server.request('/api/v5/sync/outbox/'+str(job['id'])+'/retry','POST',{'reason':'Fictieve API hersteld'},token);self.assertEqual(code,200,result)
+  self.server.stop();self.assertEqual(self.rows('sync_outbox')[0]['idempotency_key'],key)
+  self.assertEqual(self.run_sync(cid)['status'],'Geslaagd');self.assertEqual(self.external.writes,1)
+ def test_invalid_credentials_pause_connection(self):
+  cid=self.config({'customers':'external'})
+  with patch.dict(os.environ,{'ROEFS_SYNC_TOKEN_TEST':'fictief-onjuist-token'}):self.assertEqual(self.run_sync(cid)['status'],'Mislukt')
+  self.assertEqual(self.rows('sync_connections')[0]['enabled'],0)
+  self.assertIn('token',self.rows('sync_connections')[0]['last_error'])
+
+ def test_incremental_cursor_committed_only_after_successful_pull(self):
+  self.external.delta=True;self.external.add('customers','delta-c',self.customer());cid=self.config({'customers':'external'})
+  self.assertEqual(self.run_sync(cid)['imported'],1);self.assertEqual(self.rows('sync_cursors')[0]['cursor'],'1')
+  self.assertEqual(self.run_sync(cid)['imported'],0);self.assertEqual(self.external.queries[-1]['since'],['1'])
+  self.external.modify('customers','delta-c',city='Fictieve wijziging');self.external.checkpoint='2';self.external.fail_get=True
+  self.assertEqual(self.run_sync(cid)['status'],'Mislukt');self.assertEqual(self.rows('sync_cursors')[0]['cursor'],'1')
+  self.external.fail_get=False;self.assertEqual(self.run_sync(cid)['imported'],1);self.assertEqual(self.rows('sync_cursors')[0]['cursor'],'2');self.assertEqual(self.rows('customers')[-1]['city'],'Fictieve wijziging')

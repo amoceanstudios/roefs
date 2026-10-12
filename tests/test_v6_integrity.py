@@ -32,3 +32,24 @@ class V6Integrity(unittest.TestCase):
   self.assertEqual(self.s.request('/api/v5/files/'+str(txt['id']),'DELETE',body,self.token)[0],200)
   self.assertEqual(self.s.request('/api/v5/files/'+str(txt['id']),token=self.token)[0],410)
   self.assertEqual(self.s.request('/api/v5/files/'+str(txt['id']),'DELETE',body,self.token)[0],409)
+ def test_retention_opt_in_expiry_and_future_file_preserved(self):
+  import time
+  for name,day in [('verlopen.txt','2000-01-01'),('bewaren.txt','2099-01-01')]:
+   code,_,_=self.s.request('/api/v5/files','POST',{'name':name,'customer_id':1,'retention_until':day,'content':base64.b64encode(b'Fictief').decode()},self.token);self.assertEqual(code,200)
+  self.assertEqual(len(self.s.request('/api/v5/files',token=self.token)[1]),2)
+  code,_,_=self.s.request('/api/v5/settings','PUT',{'document_retention_auto':True},self.token);self.assertEqual(code,200)
+  deadline=time.monotonic()+6
+  while time.monotonic()<deadline:
+   remaining=self.s.request('/api/v5/files',token=self.token)[1]
+   if len(remaining)==1:break
+   time.sleep(.1)
+  self.assertEqual([r['name'] for r in remaining],['bewaren.txt'])
+  with sqlite3.connect(self.s.db) as c:
+   key=c.execute("SELECT storage_key FROM files WHERE name='verlopen.txt'").fetchone()[0]
+  self.assertFalse((self.s.db.parent/'uploads'/key).exists())
+
+ def test_restart_does_not_release_quarantined_text(self):
+  code,file,_=self.s.request('/api/v5/files','POST',{'name':'quarantaine.txt','customer_id':1,'content':base64.b64encode(b'Fictieve tekst').decode()},self.token);self.assertEqual(code,200)
+  with sqlite3.connect(self.s.db) as c:c.execute("UPDATE files SET scan_status='Quarantaine',scan_detail='Fictieve scannerstoring' WHERE id=?",(file['id'],))
+  self.s.stop();self.s.start()
+  self.assertEqual(self.s.request('/api/v5/files/'+str(file['id']),token=self.token)[0],423)

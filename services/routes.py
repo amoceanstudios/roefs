@@ -141,6 +141,13 @@ def dispatch(h,c,user,path,method,modules,db):
         else:raise Problem('Ongeldige methode.',405)
     elif parts[0]=='customers' and len(parts)==3 and parts[2]=='timeline' and method=='GET':
         require(user,'customers');rid=int(parts[1]);result={'customer':record(c,'customers',rid),'locations':[dict(x) for x in c.execute('SELECT * FROM objects WHERE customer_id=?',(str(rid),))],'contacts':[dict(x) for x in c.execute('SELECT * FROM contacts WHERE customer_id=?',(rid,))],'contracts':[dict(x) for x in c.execute('SELECT * FROM contracts WHERE customer_id=?',(str(rid),))],'workorders':[dict(x) for x in c.execute('SELECT w.* FROM workorders w JOIN objects o ON o.id=w.object_id WHERE o.customer_id=?',(str(rid),))],'communications':[dict(x) for x in c.execute('SELECT * FROM communications WHERE customer_id=? ORDER BY date DESC,id DESC',(rid,))],'audit':[dict(x) for x in c.execute("SELECT * FROM audit WHERE module='customers' AND record_id=? ORDER BY id DESC",(rid,))]}
+    elif parts[0]=='contracts' and len(parts) in (2,3):
+        from . import contracts
+        cid=int(parts[1])
+        if len(parts)==2 and method=='GET':result=contracts.detail(c,user,cid)
+        elif len(parts)==3 and parts[2]=='locations' and method=='PUT':result=contracts.locations(c,user,cid,body)
+        elif len(parts)==3 and parts[2]=='decision' and method=='POST':result=contracts.decide(c,user,cid,body)
+        else:raise Problem('Ongeldige contracthandeling.',405)
     elif path=='customers/import' and method=='POST':
         rows=body.get('rows')
         if not isinstance(rows,list) or not 1<=len(rows)<=200:raise Problem('Importeer 1 tot 200 klanten per batch.')
@@ -168,6 +175,7 @@ def dispatch(h,c,user,path,method,modules,db):
         rows=body.get('shifts')
         if not isinstance(rows,list) or not 1<=len(rows)<=100:raise Problem('Een batch bevat 1 tot 100 diensten.')
         result={'items':[planning.save(c,user,{k:v for k,v in row.items() if k!='id'},row.get('id')) for row in rows]}
+    elif len(parts)==3 and parts[:2]==['planning','resize'] and method=='POST':result=planning.resize(c,user,int(parts[2]),body)
     elif path=='planning/undo' and method=='POST':result=planning.undo(c,user,body)
     elif parts[0]=='workorders' and len(parts)<=3:
         rid=int(parts[1]) if len(parts)>=2 else None
@@ -230,6 +238,14 @@ def dispatch(h,c,user,path,method,modules,db):
             row.pop('storage_key');result.append(row)
     elif parts[0]=='files' and len(parts)==2 and method=='GET':
         row,data=documents.download(c,user,int(parts[1]),db);return send_binary(h,data,row['mime'],row['name'])
+    elif path in ('reports/management','reports/management/csv','reports/management/pdf') and method=='GET':
+        from .management_reporting import build
+        base=reporting.report(c,user,query);result=build(c,user,base)
+        section=query.get('section','employees')
+        if section not in ('employees','customers','contracts','equipment'):raise Problem('Onbekend rapportonderdeel.')
+        rows=result[section]
+        if path.endswith('/csv'):return send_binary(h,reporting.csv_bytes(rows,list(rows[0]) if rows else ['Geen gegevens']),'text/csv; charset=utf-8','management-'+section+'.csv')
+        if path.endswith('/pdf'):return send_binary(h,reporting.pdf('Managementrapport '+{'employees':'Medewerkers','customers':'Klanten','contracts':'Contracten','equipment':'Materieel'}[section],[result['definitions'].get(section,'')]+[' | '.join(str(v) for v in row.values()) for row in rows]),'application/pdf','management-'+section+'.pdf')
     elif path=='reports' and method=='GET':result=reporting.report(c,user,query)
     elif path in ('reports/csv','reports/pdf') and method=='GET':
         r=reporting.report(c,user,query)
@@ -253,12 +269,14 @@ def dispatch(h,c,user,path,method,modules,db):
         from .notifications import deadlines
         deadlines(c,user);result={'ok':True,'external_delivery':'Niet geconfigureerd; uitsluitend interne meldingen.'}
     elif path=='settings' and method in ('GET','PUT'):
-        require(user,'settings',method!='GET');keys={'organization','services','departments','planning_weights','retention_days','labor_rules','invoice_numbering'}
+        require(user,'settings',method!='GET');keys={'organization','services','departments','planning_weights','retention_days','labor_rules','invoice_numbering','document_retention_auto'}
         if method=='PUT':
             if set(body)-keys:raise Problem('Onbekende instelling.')
             for key,value in body.items():
                 if key=='planning_weights':
                     if not isinstance(value,dict) or set(value)-{'availability','workload','familiarity','region','skills'} or any(not isinstance(v,(int,float)) or isinstance(v,bool) or not 0<=v<=100 for v in value.values()):raise Problem('Planningsgewichten: getallen tussen 0 en 100.')
+                elif key=='document_retention_auto':
+                    if not isinstance(value,bool):raise Problem('Kies expliciet aan of uit voor automatische documentverwijdering.')
                 elif key=='invoice_numbering':finance.validate_numbering(value)
                 elif key=='labor_rules':
                     from .labor_rules import validate

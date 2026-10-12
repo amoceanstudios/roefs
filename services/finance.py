@@ -25,7 +25,7 @@ def prepare(c,user,body):
         computed.append({'description':text(line['description'],500,True),'quantity':str(q),'rate':str(r),'vat_rate':str(v),'net':str(net),'vat':str(vat)})
     net=sum((Decimal(x['net']) for x in computed),Decimal(0));vat=sum((Decimal(x['vat']) for x in computed),Decimal(0))
     obj=record(c,'objects',work['object_id']);number=draft_number(c,work['id'])
-    rid=insert(c,'invoices',{'number':number,'customer_id':obj['customer_id'],'contract_id':'','amount':eur(net+vat),'due_date':str(dt.date.today()+dt.timedelta(days=30)),'status':'Concept','net_amount':eur(net),'vat_amount':eur(vat),'workorder_id':work['id'],'review_status':'Te beoordelen'})
+    rid=insert(c,'invoices',{'number':number,'customer_id':obj['customer_id'],'contract_id':str(work.get('contract_id') or ''),'amount':eur(net+vat),'due_date':str(dt.date.today()+dt.timedelta(days=30)),'status':'Concept','net_amount':eur(net),'vat_amount':eur(vat),'workorder_id':work['id'],'review_status':'Te beoordelen'})
     for line in computed:insert(c,'invoice_lines',{'invoice_id':rid,**line})
     audit(c,user,'prepare','invoices',rid);return record(c,'invoices',rid)
 def review(c,user,rid,body):

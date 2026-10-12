@@ -19,3 +19,10 @@ class V6Browser(unittest.TestCase):
   self.assertEqual(self.s.request('/api/v5/settings',token=self.admin)[1]['labor_rules']['label'],'Fictief testprofiel')
   self.page.get_by_role('button',name='Conceptnummerprofiel').click();self.page.locator('#v5-prefix').fill('DEMO');self.page.locator('input[name=enabled]').check();self.page.get_by_role('button',name='Opslaan',exact=True).click();self.page.locator('#modalbg').wait_for(state='detached')
   self.assertEqual(self.s.request('/api/v5/settings',token=self.admin)[1]['invoice_numbering']['prefix'],'DEMO')
+ def test_script_csp_blocks_inline_handlers_and_command_injection(self):
+  response=self.page.goto(self.s.url);policy=response.headers['content-security-policy'];self.assertIn("script-src 'self'",policy);self.assertNotIn("script-src 'self' 'unsafe-inline'",policy)
+  self.page.evaluate("""() => {window.inlineExecuted=false;const button=document.createElement('button');button.id='unsafe-test';button.setAttribute('onclick','window.inlineExecuted=true');document.body.append(button);button.click()}""")
+  self.assertFalse(self.page.evaluate('window.inlineExecuted'))
+  self.page.evaluate("""() => {const button=document.createElement('button');button.id='command-test';button.setAttribute('data-roefs-click',"eval('window.inlineExecuted=true')");document.body.append(button);button.click()}""")
+  self.assertFalse(self.page.evaluate('window.inlineExecuted'))
+  self.login();self.open('calendar');self.assertEqual(self.page.locator('[onclick],[onsubmit],[onchange]').count(),0)

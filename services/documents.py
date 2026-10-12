@@ -63,6 +63,7 @@ def download(c,user,rid,db):
     if not re.fullmatch('[a-f0-9]{64}',row['storage_key']):raise Problem('Ongeldige opslagreferentie.',409)
     target=Path(db).parent/'uploads'/row['storage_key']
     if not target.is_file() or target.is_symlink():raise Problem('Bestand ontbreekt in de opslag.',404)
+    if target.stat().st_size!=row['size']:raise Problem('Bestandsgrootte wijkt af van de opslagregistratie.',409)
     data=target.read_bytes()
     if hashlib.sha256(data).hexdigest()!=row['sha256']:raise Problem('Integriteitscontrole van bestand mislukt.',409)
     audit(c,user,'download','files',rid);c.commit();return row,data
@@ -73,7 +74,7 @@ def rescan(c,user,rid,db):
     if row.get('deleted_at'):raise Problem('Bestand is verwijderd.',410)
     if not re.fullmatch('[a-f0-9]{64}',row['storage_key']):raise Problem('Ongeldige opslagreferentie.',409)
     path=Path(db).parent/'uploads'/row['storage_key']
-    if path.is_symlink() or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest()!=row['sha256']:raise Problem('Bestandsintegriteit mislukt.',409)
+    if path.is_symlink() or not path.is_file() or path.stat().st_size!=row['size'] or hashlib.sha256(path.read_bytes()).hexdigest()!=row['sha256']:raise Problem('Bestandsintegriteit mislukt.',409)
     from .file_scanning import scan
     status,detail=scan(path,row['mime']);update(c,'files',rid,{'scan_status':status,'scan_detail':detail,'version':row['version']+1});audit(c,user,'rescan','files',rid,status)
     return {'scan_status':status,'scan_detail':detail,'version':row['version']+1}
@@ -87,3 +88,17 @@ def delete(c,user,rid,body,db):
     # Tombstone eerst duurzaam: een onderbroken verwijdering maakt nooit een verdwenen actief record.
     (Path(db).parent/'uploads'/row['storage_key']).unlink(missing_ok=True)
     return {'ok':True}
+
+def retention(c,db):
+    """Opt-in bewaarbeleid, begrensde batches; metadata/audit blijven behouden."""
+    enabled=c.execute("SELECT value FROM settings WHERE key='document_retention_auto'").fetchone()
+    if not enabled or json.loads(enabled[0]) is not True:return 0
+    due=[dict(x) for x in c.execute('SELECT id,version FROM files WHERE deleted_at IS NULL AND retention_until IS NOT NULL AND retention_until<=? ORDER BY id LIMIT 25',(str(dt.date.today()),))]
+    system={'id':0,'username':'Automatische documentretentie','role':'admin'}
+    for row in due:
+        c.execute('BEGIN IMMEDIATE')
+        delete(c,system,row['id'],{'version':row['version'],'reason':'Ingeschakeld bewaarbeleid: opgeslagen bewaartermijn verstreken.'},db)
+    # Hervat fysieke opruiming wanneer een vorige poging na de tombstone onderbrak.
+    for row in c.execute('SELECT storage_key FROM files WHERE deleted_at IS NOT NULL ORDER BY id'):
+        if re.fullmatch('[a-f0-9]{64}',row['storage_key']):(Path(db).parent/'uploads'/row['storage_key']).unlink(missing_ok=True)
+    return len(due)

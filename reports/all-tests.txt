@@ -73,25 +73,39 @@ test_tunnel_start_check_reuses_existing_gate (test_startup.Startup.test_tunnel_s
 test_automatic_worker_without_manual_run_and_restart (test_sync.Sync.test_automatic_worker_without_manual_run_and_restart) ... ok
 test_bidirectional_and_simultaneous_changes_conflict (test_sync.Sync.test_bidirectional_and_simultaneous_changes_conflict) ... ok
 test_conditional_update_refuses_external_overwrite (test_sync.Sync.test_conditional_update_refuses_external_overwrite) ... ok
+test_dead_letter_preserves_key_and_manual_retry (test_sync.Sync.test_dead_letter_preserves_key_and_manual_retry) ... ok
 test_deleted_and_duplicate_records_preserved (test_sync.Sync.test_deleted_and_duplicate_records_preserved) ... ok
 test_dependency_order_external_ids_and_hours_materials_invoice (test_sync.Sync.test_dependency_order_external_ids_and_hours_materials_invoice) ... ok
 test_durable_outbox_retry_after_remote_commit_no_duplicate (test_sync.Sync.test_durable_outbox_retry_after_remote_commit_no_duplicate) ... ok
 test_import_repeat_and_updates_no_duplicates (test_sync.Sync.test_import_repeat_and_updates_no_duplicates) ... ok
+test_incremental_cursor_committed_only_after_successful_pull (test_sync.Sync.test_incremental_cursor_committed_only_after_successful_pull) ... ok
+test_invalid_credentials_pause_connection (test_sync.Sync.test_invalid_credentials_pause_connection) ... ok
 test_lease_only_one_worker_and_recovery (test_sync.Sync.test_lease_only_one_worker_and_recovery) ... ok
 test_outage_history_backoff_and_conflict_resolution (test_sync.Sync.test_outage_history_backoff_and_conflict_resolution) ... ok
 test_prepared_connector_inactive_missing_api_and_ssrf (test_sync.Sync.test_prepared_connector_inactive_missing_api_and_ssrf) ... ok
+test_rules_settings_saved_without_leaving_settings_and_numbering (test_v6_browser.V6Browser.test_rules_settings_saved_without_leaving_settings_and_numbering) ... ok
+test_script_csp_blocks_inline_handlers_and_command_injection (test_v6_browser.V6Browser.test_script_csp_blocks_inline_handlers_and_command_injection) ... ok
+test_series_form_persists_and_cancellation (test_v6_browser.V6Browser.test_series_form_persists_and_cancellation) ... ok
 test_audit_modification_detected_and_unauthorized_check_denied (test_v6_integrity.V6Integrity.test_audit_modification_detected_and_unauthorized_check_denied) ... ok
 test_encrypted_backup_restore_wrong_key_and_corruption (test_v6_integrity.V6Integrity.test_encrypted_backup_restore_wrong_key_and_corruption) ... ok
 test_pdf_quarantine_text_delete_version_and_backup (test_v6_integrity.V6Integrity.test_pdf_quarantine_text_delete_version_and_backup) ... ok
+test_retention_opt_in_expiry_and_future_file_preserved (test_v6_integrity.V6Integrity.test_retention_opt_in_expiry_and_future_file_preserved) ... ok
+test_clock_persistence_ownership_duplicate_and_actual_hours (test_v6_operations.V6Operations.test_clock_persistence_ownership_duplicate_and_actual_hours) ... ok
+test_configurable_draft_numbers_rollback_collision_and_no_fiscal_activation (test_v6_operations.V6Operations.test_configurable_draft_numbers_rollback_collision_and_no_fiscal_activation) ... ok
+test_contract_locations_renewal_and_workorder_constraints (test_v6_operations.V6Operations.test_contract_locations_renewal_and_workorder_constraints) ... ok
+test_legacy_pagination_search_and_employee_scope (test_v6_operations.V6Operations.test_legacy_pagination_search_and_employee_scope) ... ok
+test_closed_workorder_shift_cannot_be_cancelled_via_planning (test_v6_planning.V6Planning.test_closed_workorder_shift_cannot_be_cancelled_via_planning) ... ok
 test_configured_rules_daily_weekly_rest_break_and_legacy (test_v6_planning.V6Planning.test_configured_rules_daily_weekly_rest_break_and_legacy) ... ok
 test_series_all_or_nothing_conflict_and_safe_restore (test_v6_planning.V6Planning.test_series_all_or_nothing_conflict_and_safe_restore) ... ok
 test_series_employee_denied (test_v6_planning.V6Planning.test_series_employee_denied) ... ok
 test_series_exceptions_cancel_restore_versions_restart (test_v6_planning.V6Planning.test_series_exceptions_cancel_restore_versions_restart) ... ok
 test_account_limit_persisted_in_database (test_v6_security.V6Security.test_account_limit_persisted_in_database) ... ok
+test_idle_session_expiry_and_security_headers (test_v6_security.V6Security.test_idle_session_expiry_and_security_headers) ... ok
+test_lost_authenticator_requires_recovery_and_can_be_reenrolled (test_v6_security.V6Security.test_lost_authenticator_requires_recovery_and_can_be_reenrolled) ... ok
 test_recovery_hashed_one_time_concurrent_and_persistent (test_v6_security.V6Security.test_recovery_hashed_one_time_concurrent_and_persistent) ... ok
 test_recovery_requires_password_and_rotation_invalidates_old_codes (test_v6_security.V6Security.test_recovery_requires_password_and_rotation_invalidates_old_codes) ... ok
 
 ----------------------------------------------------------------------
-Ran 92 tests in 133.457s
+Ran 106 tests in 165.295s
 
 OK

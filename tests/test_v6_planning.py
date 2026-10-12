@@ -32,3 +32,18 @@ class V6Planning(unittest.TestCase):
   code,_,_=self.s.request('/api/records/shifts','POST',{**self.template(),'date':'2030-02-07'},self.token);self.assertEqual(code,409)
  def test_series_employee_denied(self):
   self.token=self.s.login('Bart van Aalde','Amocean2!');self.req('planning/series',self.series(),status=403)
+
+ def test_closed_workorder_shift_cannot_be_cancelled_via_planning(self):
+  work=self.req('workorders',{'object_id':1,'description':'Fictieve afgesloten opdracht','date':'2030-08-05','start_time':'08:00','end_time':'12:00'})
+  shift=self.req('shifts',{**self.template(),'date':work['date'],'workorder_id':work['id']})
+  with sqlite3.connect(self.s.db) as c:c.execute("UPDATE workorders SET workflow='Goedgekeurd' WHERE id=?",(work['id'],))
+  self.req('shifts/'+str(shift['id']),{'version':shift['version'],'status':'Geannuleerd'},'PUT',409)
+ def test_linked_resize_atomic_parent_and_shift_conflict_rollback(self):
+  work=self.req('workorders',{'object_id':1,'description':'Fictief resizewerk','date':'2030-09-02','start_time':'08:00','end_time':'12:00'})
+  shift=self.req('shifts',{**self.template(),'date':work['date'],'workorder_id':work['id']})
+  self.req('shifts',{**self.template(),'date':work['date'],'start_time':'12:30','end_time':'14:00'})
+  body={'version':shift['version'],'work_version':work['version'],'versions':{str(shift['id']):shift['version']},'end_time':'13:00'}
+  self.req('planning/resize/'+str(shift['id']),body,status=409)
+  self.assertEqual(self.req('workorders/'+str(work['id']))['workorder']['end_time'],'12:00')
+  result=self.req('planning/resize/'+str(shift['id']),{**body,'end_time':'12:15'});self.assertEqual(result['items'][0]['end_time'],'12:15');self.assertEqual(result['workorder']['end_time'],'12:15')
+  self.req('planning/resize/'+str(shift['id']),body,status=409)

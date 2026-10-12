@@ -1,0 +1,9 @@
+test_audit_modification_detected_and_unauthorized_check_denied (test_v6_integrity.V6Integrity.test_audit_modification_detected_and_unauthorized_check_denied) ... ok
+test_encrypted_backup_restore_wrong_key_and_corruption (test_v6_integrity.V6Integrity.test_encrypted_backup_restore_wrong_key_and_corruption) ... ok
+test_pdf_quarantine_text_delete_version_and_backup (test_v6_integrity.V6Integrity.test_pdf_quarantine_text_delete_version_and_backup) ... ok
+test_retention_opt_in_expiry_and_future_file_preserved (test_v6_integrity.V6Integrity.test_retention_opt_in_expiry_and_future_file_preserved) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 4.088s
+
+OK

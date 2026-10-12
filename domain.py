@@ -93,18 +93,30 @@ def schedule_issues(c, row, exclude=0, extended=True):
         return extended_issues(c,row,exclude,issues)
     return issues
 
-def scoped_rows(c, module, user):
+def scoped_predicate(module,user):
     from services.access import permitted
-    if permitted(user,module): return [dict(x) for x in c.execute('SELECT * FROM '+module+' ORDER BY id DESC')]
+    if permitted(user,module):return '1=1',[]
     eid=str(user.get('employee_id') or -1)
-    if module in ('shifts','hours','workorders','leave','availability'):
-        return [dict(x) for x in c.execute('SELECT * FROM '+module+' WHERE employee_id=? ORDER BY id DESC',(eid,))]
-    objects={x[0] for x in c.execute("SELECT object_id FROM shifts WHERE employee_id=? AND status!='Geannuleerd' UNION SELECT object_id FROM workorders WHERE employee_id=? AND status!='Geannuleerd'",(eid,eid))}
-    if module=='objects': return [dict(x) for x in c.execute('SELECT * FROM objects ORDER BY id DESC') if str(x['id']) in objects]
-    if module in ('logbook','orders','assets','inspections'):
-        return [dict(x) for x in c.execute('SELECT * FROM '+module+' ORDER BY id DESC') if x['object_id'] in objects]
-    if module=='documents': return [dict(x) for x in c.execute("SELECT * FROM documents WHERE status='Actief' ORDER BY id DESC")]
-    return []
+    if module in ('shifts','hours','workorders','leave','availability'):return 'employee_id=?',[eid]
+    objects="SELECT object_id FROM shifts WHERE employee_id=? AND status!='Geannuleerd' UNION SELECT object_id FROM workorders WHERE employee_id=? AND status!='Geannuleerd'"
+    if module=='objects':return 'CAST(id AS TEXT) IN ('+objects+')',[eid,eid]
+    if module in ('logbook','orders','assets','inspections'):return 'object_id IN ('+objects+')',[eid,eid]
+    if module=='documents':return "status='Actief'",[]
+    return '0=1',[]
+
+def scoped_rows(c,module,user,rid=None):
+    clause,args=scoped_predicate(module,user)
+    if rid is not None:clause+=' AND id=?';args.append(rid)
+    return [dict(x) for x in c.execute('SELECT * FROM '+module+' WHERE '+clause+' ORDER BY id DESC',args)]
+
+def scoped_page(c,module,user,fields,query):
+    clause,args=scoped_predicate(module,user)
+    limit=min(100,max(1,int(query.get('limit',['25'])[0])));offset=max(0,int(query.get('offset',['0'])[0]));q=query.get('q',[''])[0]
+    if len(q)>200:raise Problem('Zoektekst maximaal 200 tekens.')
+    if q:
+        clause+=' AND ('+' OR '.join('instr(lower(COALESCE('+f+",'')),lower(?))>0" for f in fields)+')';args.extend([q]*len(fields))
+    total=c.execute('SELECT COUNT(*) FROM '+module+' WHERE '+clause,args).fetchone()[0]
+    return {'items':[dict(x) for x in c.execute('SELECT * FROM '+module+' WHERE '+clause+' ORDER BY id DESC LIMIT ? OFFSET ?',args+[limit,offset])],'total':total,'limit':limit,'offset':offset}
 
 def validate(c, module, body, fields, previous=None):
     previous=previous or {}

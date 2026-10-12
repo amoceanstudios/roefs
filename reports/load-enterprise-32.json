@@ -1,0 +1,41 @@
+{
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "logical_cpus": 5,
+    "network": "Loopback HTTP, geen tunnel of externe ERP"
+  },
+  "data": {
+    "employees": 250,
+    "customers": 820,
+    "objects": 1600,
+    "workorders": 5001,
+    "shifts": 5001,
+    "hours": 5001
+  },
+  "requests": 100,
+  "concurrency": 32,
+  "read_percent": 80,
+  "write_percent": 20,
+  "elapsed_seconds": 5.156,
+  "requests_per_second": 19.39,
+  "median_ms": 212.29,
+  "p95_ms": 3764.51,
+  "p99_ms": 3862.63,
+  "max_ms": 3866.33,
+  "failed": 0,
+  "error_rate_percent": 0.0,
+  "http_503_database_unavailable": 0,
+  "server_peak_sampled_rss_mb": 98.7,
+  "server_cpu_seconds": 7.046,
+  "sqlite_integrity": "ok",
+  "foreign_key_violations": 0,
+  "limitations": [
+    "Korte lokale proef met 32 gelijktijdige verzoeken; geen 250 gelijktijdige gebruikers of duurtest.",
+    "CPU is gemeten over de gehele serverlevensduur, inclusief opstart en fixtures.",
+    "Contention gemeten via zichtbare HTTP 503; interne SQLite-wachttijd niet afzonderlijk ge\u00efnstrumenteerd.",
+    "RSS periodiek bemonsterd; echte piek kan hoger zijn.",
+    "Geen echte mobiele hardware, externe ERP of productie-infrastructuur."
+  ],
+  "errors": []
+}

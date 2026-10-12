@@ -1,6 +1,7 @@
 """Duurzame pull/push met leases, outbox, versies en expliciete conflicten.
 Netwerkverzoeken vinden buiten SQLite-schrijftransacties plaats.
 """
+import logging
 import datetime as dt,hashlib,json,os,re,sqlite3,threading,time,uuid
 from domain import Problem,validate
 from .common import record,insert,update,audit,text,notify
@@ -166,15 +167,19 @@ def run_connection(db,cid,modules,force=False):
             if policy in ('roefs','both') and not all(caps.get(k) is True for k in ('idempotency','conditional_updates','write')):raise RemoteError('Externe API mist veilige tweerichtingsvoorwaarden: schrijfondersteuning, idempotentie of versiecontrole.',False)
             # Een mogelijk wel verwerkte vorige verzending wordt met dezelfde sleutel hervat vóór import.
             if policy in ('roefs','both'):counts['exported']+=push_pending(c,cid,run,category,adapter,modules,owner)
-            for items in adapter.list_records(category):
+            saved_cursor=c.execute('SELECT cursor FROM sync_cursors WHERE connection_id=? AND category=?',(cid,category)).fetchone()
+            incremental=caps.get('delta_tokens') is True
+            for items in adapter.list_records(category,saved_cursor[0] if saved_cursor and incremental else None):
                 c.execute('UPDATE sync_connections SET lease_until=? WHERE id=? AND lease_owner=?',(stamp(now()+dt.timedelta(seconds=120)),cid,owner));c.commit()
                 for item in items:
                     result=pull_item(c,cid,run,category,policy,item,modules)
                     if result:counts[result]+=1
+            if incremental and adapter.checkpoint is not None:
+                c.execute('INSERT INTO sync_cursors VALUES(?,?,?) ON CONFLICT(connection_id,category) DO UPDATE SET cursor=excluded.cursor',(cid,category,adapter.checkpoint));c.commit()
             if policy in ('roefs','both'):
                 enqueue(c,cid,category,modules);counts['exported']+=push_pending(c,cid,run,category,adapter,modules,owner)
         c.execute('BEGIN IMMEDIATE');finished=stamp();open_count=c.execute("SELECT COUNT(*) FROM sync_conflicts WHERE connection_id=? AND status='Open'",(cid,)).fetchone()[0];dead=c.execute("SELECT COUNT(*) FROM sync_outbox WHERE connection_id=? AND status='Uitval'",(cid,)).fetchone()[0];status='Uitval' if dead else 'Conflicten' if open_count else 'Geslaagd'
-        update(c,'sync_runs',run,{**counts,'status':status,'finished_at':finished});c.execute('UPDATE sync_connections SET last_run=?,last_success=?,last_error=NULL,failures=0,next_run=?,lease_owner=NULL,lease_until=NULL WHERE id=? AND lease_owner=?',(finished,finished,stamp(now()+dt.timedelta(seconds=config['interval_seconds'])),cid,owner));c.commit();return {'status':status,**counts}
+        update(c,'sync_runs',run,{**counts,'status':status,'finished_at':finished});c.execute('UPDATE sync_connections SET last_run=?,last_success=?,last_error=NULL,failures=0,next_run=?,lease_owner=NULL,lease_until=NULL WHERE id=? AND lease_owner=?',(finished,finished if status in ('Geslaagd','Conflicten') else config['last_success'],stamp(now()+dt.timedelta(seconds=config['interval_seconds'])),cid,owner));c.commit();return {'status':status,**counts}
     except Exception as exc:
         c.rollback()
         # Geen externe responsebody, toegangsgegevens of stacktrace in het gebruikerslogboek.
@@ -196,12 +201,14 @@ def start_worker(db,modules,stop=None):
                 with connect(db) as c:
                     from .notifications import daily
                     daily(c)
+                    from .documents import retention
+                    retention(c,db)
                     ids=[x[0] for x in c.execute('SELECT id FROM sync_connections WHERE enabled=1 AND (next_run IS NULL OR next_run<=?) ORDER BY id',(stamp(),))]
                 c.close()
                 for cid in ids:
                     if stop.is_set():break
                     run_connection(db,cid,modules)
-            except sqlite3.Error:pass # Geen hoofdserver-uitval; volgende cyclus probeert opnieuw.
+            except Exception as exc:logging.error('Achtergrondcyclus mislukt (%s); volgende cyclus probeert opnieuw.',type(exc).__name__) # Geen persoonsgegevens of secrets loggen.
             stop.wait(2)
     worker=threading.Thread(target=loop,name='roefs-automatic-sync',daemon=True);worker.start();return stop,worker
 

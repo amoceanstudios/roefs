@@ -62,6 +62,7 @@ def authenticate(c,user,supplied):
         if changed!=1:raise Problem('Herstelcode ongeldig of al gebruikt.',401)
         c.execute('DELETE FROM sessions WHERE user_id=?',(user['id'],))
         audit(c,user,'mfa_recovery_used','users',user['id'])
-        return
+        return 'recovery'
     counter=verify(user['mfa_secret'],supplied,user['mfa_counter'])
     c.execute('UPDATE users SET mfa_counter=? WHERE id=?',(counter,user['id']))
+    return 'totp'

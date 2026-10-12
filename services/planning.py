@@ -49,7 +49,9 @@ def asset_ids(work):
 def save(c,user,body,rid=None):
     require(user,'shifts',True)
     previous=record(c,'shifts',rid) if rid else {}
-    if previous:version(previous,body.get('version'))
+    if previous:
+        version(previous,body.get('version'))
+        if previous.get('workorder_id') and record(c,'workorders',previous['workorder_id'])['workflow'] in ('Voltooid','Goedgekeurd','Factureerbaar','Geannuleerd'):raise Problem('Planning van een afgesloten opdracht is vergrendeld; open eerst de opdracht voor correctie.',409)
     allowed={'object_id','employee_id','date','start_time','end_time','status','workorder_id','planner_notes','break_minutes'}
     if set(body)-allowed-{'version'}:raise Problem('Onbekend planningsveld.')
     row={k:body.get(k,previous.get(k,'')) for k in allowed}
@@ -170,3 +172,18 @@ def assess_many(c,rows):
                 if any(x['workorder_id']!=work['id'] and x['start_time']<row['end_time'] and x['end_time']>row['start_time'] for x in reserved.get((aid,row['date']),[])):reasons.append('Materieel al gereserveerd: '+asset['name'])
         if reasons:output.append({'id':row['id'],'reasons':reasons})
     return output
+
+def resize(c,user,rid,body):
+    """Wijzig een losse dienst of het gezamenlijke teamtijdvak atomair."""
+    require(user,'shifts',True);shift=record(c,'shifts',rid);version(shift,body.get('version'));end=text(body.get('end_time',''),5,True)
+    if not shift.get('workorder_id'):return {'items':[save(c,user,{'version':shift['version'],'end_time':end},rid)]}
+    require(user,'workorders',True);work=record(c,'workorders',shift['workorder_id']);version(work,body.get('work_version'))
+    if work['workflow'] not in ('Concept','Gepland','Toegewezen','In uitvoering','Correctie'):raise Problem('Opdracht is afgesloten voor planningswijzigingen.',409)
+    rows=[dict(x) for x in c.execute("SELECT * FROM shifts WHERE workorder_id=? AND status!='Geannuleerd' ORDER BY id",(work['id'],))]
+    expected=body.get('versions',{})
+    if not isinstance(expected,dict) or set(expected)!={str(x['id']) for x in rows}:raise Problem('Teamplanning gewijzigd. Vernieuw eerst alle diensten.',409)
+    for row in rows:version(row,expected[str(row['id'])])
+    interval({**work,'end_time':end});previous=work['end_time'];update(c,'workorders',work['id'],{'end_time':end})
+    result=[save(c,user,{'version':row['version'],'end_time':end},row['id']) for row in rows]
+    audit(c,user,'resize','workorders',work['id'],previous+' → '+end)
+    return {'items':result,'workorder':record(c,'workorders',work['id'])}

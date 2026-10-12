@@ -47,16 +47,22 @@ class Connector:
         data=self.request('capabilities')
         if data.get('protocol')!='roefs-sync-v1':raise RemoteError('API ondersteunt het vereiste roefs-sync-v1-protocol niet.',False)
         return data
-    def list_records(self,category):
-        cursor='';seen=set()
+    def list_records(self,category,since=None):
+        cursor='';seen=set();self.checkpoint=None
         for _ in range(100):
-            data=self.request('records/'+category+('?cursor='+urllib.parse.quote(cursor,safe='') if cursor else ''))
+            params={}
+            if cursor:params['cursor']=cursor
+            if since is not None:params['since']=since
+            data=self.request('records/'+category+('?' + urllib.parse.urlencode(params) if params else ''))
             items=data.get('items')
             if not isinstance(items,list) or len(items)>500:raise RemoteError('Ongeldige synchronisatiepagina (maximaal 500 records).',False)
             yield items
             cursor=data.get('next_cursor') or ''
             if not isinstance(cursor,str) or len(cursor)>2000:raise RemoteError('Ongeldige paginacursor.',False)
-            if not cursor:return
+            if not cursor:
+                checkpoint=data.get('checkpoint')
+                if checkpoint is not None and (not isinstance(checkpoint,str) or not 1<=len(checkpoint)<=2000):raise RemoteError('Ongeldig incrementeel controlepunt.',False)
+                self.checkpoint=checkpoint;return
             if cursor in seen:raise RemoteError('API herhaalt dezelfde paginacursor.',False)
             seen.add(cursor)
         raise RemoteError('API overschrijdt 100 pagina’s per categorie.',False)
