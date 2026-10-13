@@ -1,4 +1,10 @@
-# Basisschool De Egel — klantpresentatie
+# Basisschool De Egel — klantdossier
+
+Bijgewerkt op 13 oktober 2026: de interface, contractnaam, werkbonnen en
+planningsnotities bevatten geen presentatieaanduidingen meer. Bij opstarten
+worden de oorspronkelijk gegenereerde labels ook in bestaande databases
+bijgewerkt, zonder eigen teksten te overschrijven. Historische auditgegevens
+blijven intact. De nog te bevestigen planning blijft inhoudelijk ongewijzigd.
 
 Toegevoegd op 13 oktober 2026, na expliciete toestemming om de opgegeven
 klantnaam en het adres te gebruiken. Het eerdere fictieve schoolvoorbeeld
@@ -8,8 +14,8 @@ blijft beschikbaar; deze klantcase is een afzonderlijk dossier.
 
 Deploy de nieuwste commit van `roefs-one-enterprise-v6`. Wacht op **Live**,
 vernieuw de app en log in als beheerder. Op het oorspronkelijke Amocean-startscherm
-staat **Klantcase Basisschool De Egel**. Kies de maandag van de presentatieweek,
-bevestig de beschreven presentatieplanning en klik **Klantcase opslaan en openen**.
+staat **Basisschool De Egel**. Kies de maandag van de presentatieweek,
+bevestig de beschreven presentatieplanning en klik **Klantdossier opslaan en openen**.
 Een deployment alleen vult een bestaande database niet: dit opslaan moet eenmaal
 op de gebruikte installatie gebeuren. Opnieuw openen of opslaan maakt geen dubbelen.
 Een al aanwezige klant met dezelfde naam blokkeert de aanmaak ter controle;
@@ -37,7 +43,7 @@ geen overeengekomen tarief. De opgegeven adresgegevens zijn niet geverifieerd.
 ## Presentatieroute
 
 1. Open het klantdossier en toon klant, locatie, contract en gekoppelde opdrachten.
-2. Kies **Presentatieweek in planning**: vijf schoonmaakdiensten en het eerste
+2. Kies **Weekplanning openen**: vijf schoonmaakdiensten en het eerste
    glasbezoek verschijnen in die week. De drie andere glasbezoeken staan later.
 3. Open een werkbon en kies **Medewerkers voorstellen**. Inplannen vult de
    bestaande open dienst in, zonder er een tweede dienst naast te maken.

@@ -12,9 +12,33 @@ from . import service_plans, planning, workorders
 KEY = 'roefs_customer_presentation'
 
 
+def migrate_labels(c):
+    """Werk uitsluitend eerder gegenereerde labels bij; behoud eigen wijzigingen."""
+    marker = 'customer_case_labels_v2'
+    if c.execute('SELECT 1 FROM settings WHERE key=?', (marker,)).fetchone():
+        return
+    stored = c.execute('SELECT value FROM settings WHERE key=?', (KEY,)).fetchone()
+    if not stored:
+        return
+    ids = json.loads(stored[0]); cid = ids['contract_id']; changed = 0
+    changed += c.execute('UPDATE contracts SET name=? WHERE id=? AND name=?',
+                         ('Basisschool De Egel · schoonmaakopdracht', cid,
+                          'Basisschool De Egel · schoonmaakopdracht · presentatie')).rowcount
+    for wid in ids['workorder_ids']:
+        changed += c.execute("UPDATE workorders SET description='Basisschool De Egel · ' || service WHERE id=? AND contract_id=? AND description='PRESENTATIE · Basisschool De Egel · ' || service", (wid, cid)).rowcount
+    for sid in ids['shift_ids']:
+        changed += c.execute('UPDATE shifts SET planner_notes=? WHERE id=? AND workorder_id IN (SELECT id FROM workorders WHERE contract_id=?) AND planner_notes=?',
+                             ('Medewerker en definitieve uitvoering nog bevestigen.', sid, cid,
+                              'Presentatieafspraak; medewerker en definitieve uitvoering nog bevestigen.')).rowcount
+    c.execute('INSERT INTO settings(key,value) VALUES(?,?)', (marker, 'done'))
+    if changed:
+        audit(c, {'username': 'Systeem'}, 'case_labels_updated', 'contracts', cid,
+              f'{changed} gegenereerde omschrijvingen bijgewerkt. Planning en koppelingen behouden.')
+
+
 def allowed(user):
     if user['role'] not in ('admin', 'company_admin'):
-        raise Problem('Alleen beheer heeft toegang tot de klantpresentatie.', 403)
+        raise Problem('Alleen beheer heeft toegang tot de klantdossier.', 403)
 
 
 def detail(c, user):
@@ -35,7 +59,7 @@ def detail(c, user):
             **result, 'workorders': jobs, 'shifts': shifts,
             'hours': hours, 'invoices': invoices,
             'week_start': ids['week_start'],
-            'notice': 'Klantgegevens en urenafspraken volgens Roefs. Datums, tijdvakken en contractperiode zijn uitsluitend voor de presentatie. Medewerkers, uitgevoerd werk en tarieven zijn nog niet bevestigd.'}
+            'notice': 'Uitvoeringsdatums, tijdvakken, contractperiode en personeelsinzet nog bevestigen. Tarief en volledig schoonmaakbestek nog toevoegen.'}
 
 
 def prepare(c, user, body, modules):
@@ -44,12 +68,12 @@ def prepare(c, user, body, modules):
     if existing['ready']:
         return existing
     if body.get('confirmed') is not True:
-        raise Problem('Bevestig het opslaan van de klantcase met presentatieplanning.', 400)
+        raise Problem('Bevestig het opslaan van het klantdossier en de conceptplanning.', 400)
     first = date_value(body.get('week_start', ''))
     if first.weekday() != 0:
-        raise Problem('Kies de maandag van de presentatieweek.')
+        raise Problem('Kies de maandag van de eerste werkweek.')
     if first.year > 9998:
-        raise Problem('Kies een presentatieweek waarvoor een volledig contractjaar beschikbaar is.')
+        raise Problem('Kies een werkweek waarvoor een volledig contractjaar beschikbaar is.')
     from .routes import entity_save
     customer = entity_save(c, user, 'customers', {
         'name': 'Basisschool De Egel', 'city': 'Eindhoven', 'status': 'Actief',
@@ -60,7 +84,7 @@ def prepare(c, user, body, modules):
         'type': 'School', 'frequency': 'Ma–vr gedurende 40 lesweken; glas 4× per jaar',
         'status': 'Actief'}, modules)
     contract = entity_save(c, user, 'contracts', {
-        'name': 'Basisschool De Egel · schoonmaakopdracht · presentatie',
+        'name': 'Basisschool De Egel · schoonmaakopdracht',
         'customer_id': customer['id'], 'object_id': location['id'],
         'monthly_value': '0', 'start_date': str(first),
         'end_date': str(first + dt.timedelta(days=364)), 'status': 'Actief'}, modules)
@@ -87,7 +111,7 @@ def prepare(c, user, body, modules):
             end = ['18:00', '18:00', '19:00', '18:00', '18:30'][weekday] if service['definition']['kind'] == 'weekly' else '10:00'
             work = workorders.save(c, user, {
                 'contract_id': contract['id'], 'object_id': location['id'],
-                'description': 'PRESENTATIE · Basisschool De Egel · ' + service['name'],
+                'description': 'Basisschool De Egel · ' + service['name'],
                 'service': service['name'], 'date': day, 'start_time': start,
                 'end_time': end, 'capacity': 1})
             for task in service['definition']['tasks']:
@@ -96,11 +120,11 @@ def prepare(c, user, body, modules):
             shift = planning.save(c, user, {
                 'workorder_id': work['id'], 'object_id': location['id'],
                 'employee_id': '', 'date': day, 'start_time': start, 'end_time': end,
-                'status': 'Gepland', 'planner_notes': 'Presentatieafspraak; medewerker en definitieve uitvoering nog bevestigen.'})
+                'status': 'Gepland', 'planner_notes': 'Medewerker en definitieve uitvoering nog bevestigen.'})
             job_ids.append(work['id']); shift_ids.append(shift['id'])
     ids = {'contract_id': contract['id'], 'week_start': str(first),
            'workorder_ids': job_ids, 'shift_ids': shift_ids}
     insert(c, 'settings', {'key': KEY, 'value': json.dumps(ids)})
     audit(c, user, 'presentation_created', 'contracts', contract['id'],
-          'Opgegeven klantcase; 5 schoonmaakdiensten en 4 glasbezoeken als presentatieplanning. Geen gerealiseerde uren of facturen.')
+          'Klantdossier met 5 schoonmaakdiensten en 4 glasbezoeken voorbereid. Geen gerealiseerde uren of facturen.')
     return detail(c, user)

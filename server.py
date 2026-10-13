@@ -106,6 +106,8 @@ def init():
  security_v6.migrate(c)
  from services.audit_integrity import migrate as migrate_audit
  migrate_audit(c)
+ from services.client_case import migrate_labels
+ migrate_labels(c)
  c.commit()
 def rows(m):return [dict(r) for r in conn().execute('SELECT * FROM '+m+' ORDER BY id DESC')]
 def number(v):

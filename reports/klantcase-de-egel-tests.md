@@ -24,3 +24,17 @@ expliciet testtarief. Die testgegevens worden niet naar Render overgebracht.
 
 Het eenmalig opslaan op Render moet na deployment via de nieuwe startknop
 gebeuren. De bestaande MIGRATION-READY ZIP blijft de vorige release.
+
+## Correctie klantlabels — 13 oktober 2026
+
+Na de bovenstaande volledige run zijn de presentatieaanduidingen uit de
+gebruiksschermen en nieuw aangemaakte records verwijderd. De startmigratie
+werkt de oude gegenereerde labels eenmaal bij, behoudt eigen omschrijvingen,
+record-ID's en koppelingen en laat de historische auditketen intact.
+
+Op deze correctie zijn daadwerkelijk uitgevoerd:
+- Klantdossiertests inclusief Chromium: 5 geslaagd in 10,772 seconden.
+- Bestaande opstart-/migratietests: 4 geslaagd in 2,247 seconden.
+- JavaScript-syntaxis en whitespacecontrole: geslaagd.
+
+De volledige 157-testset is niet opnieuw uitgevoerd voor deze tekstcorrectie.

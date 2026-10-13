@@ -51,6 +51,30 @@ class ClientCase(unittest.TestCase):
         self.call({'confirmed': True, 'week_start': '2030-01-07'}, status=409)
         self.assertEqual(self.call(), {'ready': False})
 
+    def test_existing_labels_migrate_once_without_overwriting_custom_text(self):
+        case = self.call({'confirmed': True, 'week_start': '2030-01-07'})
+        self.s.stop()
+        with sqlite3.connect(self.s.db) as c:
+            c.execute('UPDATE contracts SET name=? WHERE id=?', ('Basisschool De Egel · schoonmaakopdracht · presentatie', case['contract']['id']))
+            for work in case['workorders']:
+                c.execute('UPDATE workorders SET description=? WHERE id=?', ('PRESENTATIE · Basisschool De Egel · '+work['service'], work['id']))
+            for shift in case['shifts']:
+                c.execute('UPDATE shifts SET planner_notes=? WHERE id=?', ('Presentatieafspraak; medewerker en definitieve uitvoering nog bevestigen.', shift['id']))
+            c.execute('UPDATE workorders SET description=? WHERE id=?', ('Eigen omschrijving behouden', case['workorders'][0]['id']))
+            c.execute('UPDATE shifts SET planner_notes=? WHERE id=?', ('Eigen instructie behouden', case['shifts'][0]['id']))
+        self.s.start(); updated = self.call()
+        self.assertNotIn('presentatie', updated['contract']['name'].lower())
+        self.assertEqual(updated['workorders'][0]['description'], 'Eigen omschrijving behouden')
+        self.assertEqual(updated['shifts'][0]['planner_notes'], 'Eigen instructie behouden')
+        self.assertTrue(all('presentatie' not in x['description'].lower() for x in updated['workorders']))
+        self.assertTrue(all('presentatie' not in x['planner_notes'].lower() for x in updated['shifts']))
+        self.assertEqual([x['id'] for x in updated['workorders']], [x['id'] for x in case['workorders']])
+        self.s.stop(); self.s.start()
+        self.assertEqual(self.call(), updated)
+        from services.audit_integrity import verify
+        with sqlite3.connect(self.s.db) as c:
+            self.assertTrue(verify(c)['ok'])
+
     def test_case_execution_hours_and_invoice_remain_linked(self):
         case = self.call({'confirmed': True, 'week_start': '2030-01-07'})
         work = case['workorders'][0]; shift = case['shifts'][0]
