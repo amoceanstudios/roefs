@@ -180,6 +180,9 @@ def dispatch(h,c,user,path,method,modules,db):
         else:raise Problem('Ongeldige methode.',405)
     elif parts[0]=='customers' and len(parts)==3 and parts[2]=='timeline' and method=='GET':
         require(user,'customers');rid=int(parts[1]);result={'customer':record(c,'customers',rid),'locations':[dict(x) for x in c.execute('SELECT * FROM objects WHERE customer_id=?',(str(rid),))],'contacts':[dict(x) for x in c.execute('SELECT * FROM contacts WHERE customer_id=?',(rid,))],'contracts':[dict(x) for x in c.execute('SELECT * FROM contracts WHERE customer_id=?',(str(rid),))],'workorders':[dict(x) for x in c.execute('SELECT w.* FROM workorders w JOIN objects o ON o.id=w.object_id WHERE o.customer_id=?',(str(rid),))],'communications':[dict(x) for x in c.execute('SELECT * FROM communications WHERE customer_id=? ORDER BY date DESC,id DESC',(rid,))],'audit':[dict(x) for x in c.execute("SELECT * FROM audit WHERE module='customers' AND record_id=? ORDER BY id DESC",(rid,))]}
+    elif path=='customer-presentation' and method in ('GET','POST'):
+        from . import client_case
+        result=client_case.detail(c,user) if method=='GET' else client_case.prepare(c,user,body,modules)
     elif path=='school-demo' and method=='POST':
         from .service_plans import demo
         result=demo(c,user,modules)

@@ -12,6 +12,10 @@ test_mobile_tablet_desktop_layout (test_browser.Browser.test_mobile_tablet_deskt
 test_planner_suggestion_to_saved_shift (test_browser.Browser.test_planner_suggestion_to_saved_shift) ... ok
 test_server_validation_inline (test_browser.Browser.test_server_validation_inline) ... ok
 test_tour_uses_live_screens (test_browser.Browser.test_tour_uses_live_screens) ... ok
+test_case_execution_hours_and_invoice_remain_linked (test_client_case.ClientCase.test_case_execution_hours_and_invoice_remain_linked) ... ok
+test_case_links_planning_checklists_idempotency_and_restart (test_client_case.ClientCase.test_case_links_planning_checklists_idempotency_and_restart) ... ok
+test_only_administrators_and_duplicate_customer_rollback (test_client_case.ClientCase.test_only_administrators_and_duplicate_customer_rollback) ... ok
+test_dashboard_case_save_planning_assignment_and_reload (test_client_case_browser.ClientCaseBrowser.test_dashboard_case_save_planning_assignment_and_reload) ... ok
 test_all_categories_templates_and_additive_model_relationships (test_data_migration.Migration.test_all_categories_templates_and_additive_model_relationships) ... ok
 test_checkpoint_pause_resume_and_concurrent_change (test_data_migration.Migration.test_checkpoint_pause_resume_and_concurrent_change) ... ok
 test_concurrent_confirmation_and_type_mapping (test_data_migration.Migration.test_concurrent_confirmation_and_type_mapping) ... ok
@@ -153,6 +157,6 @@ test_recovery_hashed_one_time_concurrent_and_persistent (test_v6_security.V6Secu
 test_recovery_requires_password_and_rotation_invalidates_old_codes (test_v6_security.V6Security.test_recovery_requires_password_and_rotation_invalidates_old_codes) ... ok
 
 ----------------------------------------------------------------------
-Ran 153 tests in 192.949s
+Ran 157 tests in 210.586s
 
 OK
