@@ -1,0 +1,6 @@
+test_all_admin_screens_real_backend (test_browser.Browser.test_all_admin_screens_real_backend) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 31.168s
+
+OK

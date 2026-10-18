@@ -112,7 +112,7 @@ class CinematicIntegration(unittest.TestCase):
         self.assertNotIn('ruimte=',self.page.url)
     def test_employee_denied_deep_link_and_logout_cleanup(self):
         self.page.goto(self.s.url+'/?ruimte=1#migration')
-        self.page.locator('#username').fill('Bart van Aalde');self.page.locator('#password').fill('Amocean2!');self.page.get_by_role('button',name='Veilig inloggen').click();self.page.locator('.daily-home').wait_for()
+        self.page.locator('#username').fill('Bart van Aalde');self.page.locator('#password').fill('Amocean2!');self.page.get_by_role('button',name='Veilig inloggen').click();self.page.get_by_role('button',name='Oud Portaal',exact=True).click();self.page.locator('.daily-home').wait_for()
         expect(self.page.locator('.toast')).to_contain_text('Geen toegang')
         self.assertEqual(self.page.locator('.cinema-mount').count(),0)
         self.assertEqual(self.page.evaluate("async()=> (await fetch('/api/v5/entities/customers')).status"),403)

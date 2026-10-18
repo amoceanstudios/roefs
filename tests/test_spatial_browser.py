@@ -29,6 +29,7 @@ class SpatialBrowser(unittest.TestCase):
         self.page.goto(self.s.url)
         self.page.locator('#username').fill('Roefs');self.page.locator('#password').fill('Amocean1!')
         self.page.get_by_role('button',name='Veilig inloggen').click()
+        self.page.get_by_role('button',name='Oud Portaal',exact=True).click()
         self.page.locator('.daily-home').wait_for()
         self.page.locator('.daily-actions').get_by_role('button',name='Ruimtelijke werkplek',exact=True).click()
         self.page.locator('[data-loading]').wait_for(state='detached')
@@ -102,7 +103,7 @@ class SpatialBrowser(unittest.TestCase):
     def test_employee_cannot_enter_or_read_customers(self):
         self.page.goto(self.s.url)
         self.page.locator('#username').fill('Bart van Aalde');self.page.locator('#password').fill('Amocean2!')
-        self.page.get_by_role('button',name='Veilig inloggen').click();self.page.locator('.daily-home').wait_for()
+        self.page.get_by_role('button',name='Veilig inloggen').click();self.page.get_by_role('button',name='Oud Portaal',exact=True).click();self.page.locator('.daily-home').wait_for()
         self.assertEqual(self.page.locator('.daily-actions').get_by_role('button',name='Ruimtelijke werkplek',exact=True).count(),0)
         self.page.evaluate("openPage('spatial')")
         self.assertEqual(self.page.locator('.spatial-host').count(),0)

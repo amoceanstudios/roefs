@@ -20,7 +20,7 @@ class Browser(unittest.TestCase):
   try:self.assertEqual(self.errors,[])
   finally:self.context.close();self.s.close()
  def login(self,employee=False):
-  self.page.goto(self.s.url);self.page.locator('#username').fill('Bart van Aalde' if employee else 'Roefs');self.page.locator('#password').fill('Amocean2!' if employee else 'Amocean1!');self.page.get_by_role('button',name='Veilig inloggen').click();self.page.locator('.daily-home').wait_for()
+  self.page.goto(self.s.url);self.page.locator('#username').fill('Bart van Aalde' if employee else 'Roefs');self.page.locator('#password').fill('Amocean2!' if employee else 'Amocean1!');self.page.get_by_role('button',name='Veilig inloggen').click();self.page.get_by_role('button',name='Oud Portaal',exact=True).click();self.page.locator('.daily-home').wait_for()
  def open(self,page):
   self.page.evaluate('(p)=>openPage(p)',page);self.page.wait_for_function('(p)=>page===p',arg=page)
  def test_all_admin_screens_real_backend(self):
@@ -28,7 +28,11 @@ class Browser(unittest.TestCase):
   pages=self.page.evaluate('Object.keys(NAMES)')
   for p in pages:
    with self.subTest(page=p):
-    self.open(p);self.assertTrue(self.page.locator('#content').inner_text().strip());self.assertFalse(self.page.locator('.toast').count(),self.page.locator('.toast').all_text_contents())
+    self.open(p)
+    if p=='spatial':
+     self.page.locator('[data-loading]').wait_for(state='detached');self.assertTrue(self.page.get_by_role('searchbox',name='Zoek ruimtelijke gegevens').is_visible());self.assertTrue(self.page.locator('.spatial-host').inner_text().strip())
+    else:self.assertTrue(self.page.locator('#content').inner_text().strip())
+    self.assertFalse(self.page.locator('.toast').count(),self.page.locator('.toast').all_text_contents())
   self.assertEqual(self.errors,[])
  def test_mobile_tablet_desktop_layout(self):
   self.login()

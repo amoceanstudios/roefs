@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {SECTORS, universe, related} from './model.mjs';
 import {mountWorld} from './World.jsx';
+import {PortalChoice} from './portal-choice.mjs';
 
 // The bridge is the only dependency on the original, non-module application.
 const bridge = {
@@ -238,20 +239,35 @@ export function handleSpatialPop(event){
 export function setupSpatial(entry=new URL(location.href)){
 spatialReady=true;
 let requested=null;try{if(entry.searchParams.get('ruimte')==='1')requested=decodeURIComponent(entry.hash.slice(1)||'start');}catch{}
-launchPresentation=function(options={}){if(cinema)return cinema;cinema=mountWorld({groups:GROUPS,names:NAMES,visible:canView,renderPage:renderLegacy,currentPage:()=>page,navigationEpoch:()=>navigationSerial,canRestore:()=>!cinema&&Boolean(token),initial:options.initial||null,onClose:()=>{cinema=null;}});return cinema;};
+let chooser=null,portalChosen=false;
+const choiceKey='roefsPortalChoice',account=()=>JSON.stringify([me?.id,me?.username,me?.role]);
+function remember(mode){try{sessionStorage.setItem(choiceKey,JSON.stringify({account:account(),mode}));}catch{}}
+function remembered(){try{const saved=JSON.parse(sessionStorage.getItem(choiceKey));return saved?.account===account()?saved.mode:null;}catch{return null;}}
+function dismissChoice(){chooser?.dispose();chooser=null;}
+function resetChoice(){dismissChoice();portalChosen=false;try{sessionStorage.removeItem(choiceKey);}catch{}}
+function showChoice(){
+  if(chooser||cinema||!token||!v5meta||!document.querySelector('.daily-home'))return;
+  chooser=new PortalChoice({root:document.querySelector('#root'),onOld:()=>{portalChosen=true;remember('old');dismissChoice();document.querySelector('.daily-actions button')?.focus({preventScroll:true});},onNew:()=>launchWorld(),onLogout:()=>logout()});
+}
+launchPresentation=function(options={}){if(cinema)return cinema;dismissChoice();portalChosen=true;remember('new');cinema=mountWorld({groups:GROUPS,names:NAMES,visible:canView,renderPage:renderLegacy,currentPage:()=>page,navigationEpoch:()=>navigationSerial,canRestore:()=>!cinema&&Boolean(token),initial:options.initial||null,onClose:()=>{cinema=null;remember('old');}});return cinema;};
 NAMES.spatial='Ruimtelijke werkplek';GROUPS['DAGELIJKS WERK'].splice(1,0,'spatial');
 const previousCanView=canView;
 canView=function(p){return p==='spatial'?['customers','workorders','invoices'].some(k=>v5meta?.permissions[k]?.read):previousCanView(p);};
 const previousStart=v5Start;
 function addSpatialEntries(){
   const actions=document.querySelector('.daily-actions');if(page!=='start'||!actions)return;
-  for(const [id,label,action] of [['world','3D-portaal',launchWorld],['data','Ruimtelijke werkplek',()=>openPage('spatial')]]){
+  for(const [id,label,action] of [['choice','Portaal kiezen',showChoice],['world','3D-portaal',launchWorld],['data','Ruimtelijke werkplek',()=>openPage('spatial')]]){
     if(id==='data'&&!canView('spatial')||actions.querySelector(`[data-spatial-entry="${id}"]`))continue;
     const b=document.createElement('button');b.type='button';b.className='daily-pill';b.dataset.spatialEntry=id;b.textContent=label;b.addEventListener('click',action);actions.append(b);
   }
-  if(requested&&v5meta){const initial=requested;requested=null;queueMicrotask(()=>{if(!Object.values(GROUPS).flat().includes(initial)||!canView(initial)){toast('Geen toegang tot deze module.');return;}launchWorld({initial});});}
+  if(requested&&v5meta){const initial=requested;requested=null;queueMicrotask(()=>{if(!Object.values(GROUPS).flat().includes(initial)||!canView(initial)){toast('Geen toegang tot deze module.');showChoice();return;}launchWorld({initial});});return;}
+  if(!portalChosen&&token&&v5meta&&!cinema){const mode=remembered();if(mode==='old')portalChosen=true;else if(mode==='new')queueMicrotask(()=>{if(!cinema&&token)launchWorld();});else showChoice();}
 }
-v5Start=async function(){await previousStart();addSpatialEntries();};
+v5Start=async function(){
+  // Show the decision before the dashboard's optional widgets finish loading.
+  if(!requested&&!portalChosen&&!remembered())showChoice();
+  await previousStart();addSpatialEntries();
+};
 const previousOpen=openPage;
 async function renderLegacy(p,fromHistory=false){
   active?.dispose();active=null;
@@ -267,9 +283,11 @@ openPage=async function(p,fromHistory=false){
   return renderLegacy(p,fromHistory);
 };
 const previousLogout=logout;
-logout=async function(){++navigationSerial;cinema?.dispose({restorePending:false});cinema=null;active?.dispose();active=null;return previousLogout();};
+logout=async function(){++navigationSerial;cinema?.dispose({restorePending:false});cinema=null;active?.dispose();active=null;resetChoice();return previousLogout();};
 const previousLoginScreen=loginScreen;
-loginScreen=function(){++navigationSerial;cinema?.dispose({restorePending:false});cinema=null;active?.dispose();active=null;return previousLoginScreen();};
+loginScreen=function(){++navigationSerial;cinema?.dispose({restorePending:false});cinema=null;active?.dispose();active=null;resetChoice();return previousLoginScreen();};
+const previousLogin=login;
+login=async function(event){resetChoice();return previousLogin(event);};
 // Reusable architecture for another frontend/data source; authentication remains in bridge.
 window.ROEFSSpatial={SpatialCanvas,SpatialDataSource,SpatialHtmlLayer,universe,metrics:()=>cinema?.metrics||null};
 // Cookie boot can finish while this local bundle is still downloading.

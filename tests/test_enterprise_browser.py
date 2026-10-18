@@ -14,7 +14,7 @@ class EnterpriseBrowser(unittest.TestCase):
  def tearDown(self):
   self.context.close();self.s.close();self.assertEqual(self.errors,[])
  def login(self):
-  self.page.goto(self.s.url);self.page.locator('#username').fill('Roefs');self.page.locator('#password').fill('Amocean1!');self.page.get_by_role('button',name='Veilig inloggen').click();self.page.locator('.daily-home').wait_for()
+  self.page.goto(self.s.url);self.page.locator('#username').fill('Roefs');self.page.locator('#password').fill('Amocean1!');self.page.get_by_role('button',name='Veilig inloggen').click();self.page.get_by_role('button',name='Oud Portaal',exact=True).click();self.page.locator('.daily-home').wait_for()
  def open(self,tab):
   self.page.evaluate('(tab)=>v5Select(tab)',tab);self.page.locator('#v5body').wait_for()
  def test_all_viewports_real_pages_cookie_and_reload(self):

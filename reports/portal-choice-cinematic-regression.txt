@@ -1,0 +1,14 @@
+test_all_existing_modules_inside_same_world (test_cinematic_integration.CinematicIntegration.test_all_existing_modules_inside_same_world) ... ok
+test_deep_link_cookie_reload_and_last_navigation_wins (test_cinematic_integration.CinematicIntegration.test_deep_link_cookie_reload_and_last_navigation_wins) ... ok
+test_employee_denied_deep_link_and_logout_cleanup (test_cinematic_integration.CinematicIntegration.test_employee_denied_deep_link_and_logout_cleanup) ... ok
+test_flight_original_customer_crud_modal_pointer_and_history (test_cinematic_integration.CinematicIntegration.test_flight_original_customer_crud_modal_pointer_and_history) ... ok
+test_logout_during_pending_navigation_does_not_restore_private_ui (test_cinematic_integration.CinematicIntegration.test_logout_during_pending_navigation_does_not_restore_private_ui) ... ok
+test_mobile_fallback_sound_reduced_motion_and_back (test_cinematic_integration.CinematicIntegration.test_mobile_fallback_sound_reduced_motion_and_back) ... ok
+test_mobile_webgl_panel_and_high_quality_refraction (test_cinematic_integration.CinematicIntegration.test_mobile_webgl_panel_and_high_quality_refraction) ... ok
+test_original_planning_drag_drop_and_close_during_flight (test_cinematic_integration.CinematicIntegration.test_original_planning_drag_drop_and_close_during_flight) ... ok
+test_workorder_checklist_persists_through_existing_workspace (test_cinematic_integration.CinematicIntegration.test_workorder_checklist_persists_through_existing_workspace) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 295.609s
+
+OK

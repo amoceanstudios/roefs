@@ -1,6 +1,6 @@
 # ROEFS ONE: ruimtelijk portaal, fase 2–4
 
-Open **3D-portaal** op het bestaande startscherm. De dagelijkse startpagina, Python-backend en SQLite-database blijven behouden.
+Na inloggen verschijnt **Kies je portaal**: **Oud Portaal** opent het bestaande dashboard en **Nieuw Portaal** opent de 3D-wereld. Het bestaande startscherm heeft ook **Portaal kiezen** en de snelkoppeling **3D-portaal**. De dagelijkse startpagina, Python-backend en SQLite-database blijven behouden. Het keuzescherm staat vóór de oude interface; de keuze is uitsluitend presentatie en wijzigt geen rechten. Zie `reports/portal-choice-verification.md` voor de uitgevoerde controles.
 
 ## Fase 2: navigatie en camera
 

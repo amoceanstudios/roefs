@@ -1,0 +1,6 @@
+test_choice_does_not_wait_for_dashboard_widgets (test_portal_choice.PortalChoiceBrowser.test_choice_does_not_wait_for_dashboard_widgets) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 13.187s
+
+OK

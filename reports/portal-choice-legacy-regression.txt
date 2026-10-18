@@ -1,0 +1,15 @@
+test_accounts_permissions_and_link (test_browser.Browser.test_accounts_permissions_and_link) ... ok
+test_all_admin_screens_real_backend (test_browser.Browser.test_all_admin_screens_real_backend) ... ok
+test_back_and_focus_trap (test_browser.Browser.test_back_and_focus_trap) ... ok
+test_crud_form_persists_and_no_xss (test_browser.Browser.test_crud_form_persists_and_no_xss) ... ok
+test_csv_formula_guard (test_browser.Browser.test_csv_formula_guard) ... ok
+test_employee_hours_and_availability (test_browser.Browser.test_employee_hours_and_availability) ... ok
+test_mobile_tablet_desktop_layout (test_browser.Browser.test_mobile_tablet_desktop_layout) ... ok
+test_planner_suggestion_to_saved_shift (test_browser.Browser.test_planner_suggestion_to_saved_shift) ... ok
+test_server_validation_inline (test_browser.Browser.test_server_validation_inline) ... ok
+test_tour_uses_live_screens (test_browser.Browser.test_tour_uses_live_screens) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 150.415s
+
+OK

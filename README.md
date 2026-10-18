@@ -6,7 +6,7 @@ Nieuw: native CSV/XLSX-datamigratie, 26 categorieën/52 templates, 24.050 fictie
 
 ## Behouden basis
 
-Voortgebouwd op de aangeleverde ROEFS ONE-broncode. De Python-backend, SQLite, bestaande modules, Amocean-logo en eerste scherm **‘Hoi Beheerder. Wat wil je doen?’** blijven behouden. Dit pakket gebruikt uitsluitend fictieve demonstratiegegevens.
+Voortgebouwd op de aangeleverde ROEFS ONE-broncode. De Python-backend, SQLite, bestaande modules en het Amocean-logo blijven behouden. Na inloggen kies je **Oud Portaal** of **Nieuw Portaal**. Het vertrouwde scherm **‘Hoi Beheerder. Wat wil je doen?’** blijft beschikbaar via Oud Portaal. Dit pakket gebruikt demonstratiegegevens.
 
 ```bash
 python3 start.py
@@ -41,7 +41,9 @@ Er wordt niets automatisch gefactureerd, betaald, gemaild of publiek gepubliceer
 
 ## 3D-portaal starten en bijwerken
 
-Start de app zoals hierboven, log in en kies **3D-portaal** op het oorspronkelijke Amocean-startscherm. Alle toegankelijke modules gebruiken hun bestaande schermen en server-API's. **Sluiten** brengt je terug naar de gewone interface. Zonder WebGL2 blijft de modulelijst bruikbaar; **Beweging uit** schakelt de camera-animatie en de doorlopende renderlus uit.
+Start de app zoals hierboven en log in. Kies **Oud Portaal** voor het vertrouwde Amocean-dashboard of **Nieuw Portaal** voor de 3D-wereld. Alle toegankelijke modules gebruiken hun bestaande schermen en server-API's. **Sluiten** in de 3D-wereld brengt je terug naar het oude portaal. Via **Portaal kiezen** op dat startscherm kun je opnieuw kiezen. Zonder WebGL2 blijft de modulelijst bruikbaar; **Beweging uit** schakelt de camera-animatie en de doorlopende renderlus uit.
+
+Bij opnieuw inloggen verschijnt de keuze opnieuw. Herladen binnen dezelfde browsertab behoudt de gekozen omgeving; directe links naar een 3D-module openen die bestemming. De keuze wijzigt geen bedrijfsgegevens of rechten. Zie [de controles van het keuzescherm](reports/portal-choice-verification.md).
 
 `spatial.js` is meegebouwd en opgenomen in de Docker-image. Voor normaal starten en Render via Docker is geen npm-installatie nodig. Na wijzigingen in `spatial/` bouw je met Node.js 24 en de gepinde lockfile opnieuw:
 

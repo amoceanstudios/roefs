@@ -17,9 +17,11 @@ class WorldBrowser(unittest.TestCase):
         self.page=self.context.new_page();self.errors=[];self.page.on('pageerror',lambda e:self.errors.append(str(e)))
         self.page.on('console',lambda m:self.errors.append(m.text) if m.type=='error' and ('WebGLProgram' in m.text or 'Shader Error' in m.text) else None)
     def tearDown(self):self.context.close();self.s.close();self.assertEqual(self.errors,[])
-    def login(self,employee=False):
+    def login(self,employee=False,portal='old'):
         self.page.goto(self.s.url);self.page.locator('#username').fill('Bart van Aalde' if employee else 'Roefs');self.page.locator('#password').fill('Amocean2!' if employee else 'Amocean1!')
-        self.page.get_by_role('button',name='Veilig inloggen').click();self.page.locator('.daily-home').wait_for()
+        self.page.get_by_role('button',name='Veilig inloggen').click()
+        if portal:self.page.get_by_role('button',name='Oud Portaal' if portal=='old' else 'Nieuw Portaal',exact=True).click()
+        if portal=='old':self.page.locator('.daily-home').wait_for()
     def enter(self):
         self.page.locator('.daily-actions').get_by_role('button',name='3D-portaal',exact=True).click()
         self.page.locator('.world-ready').wait_for(timeout=30000)
