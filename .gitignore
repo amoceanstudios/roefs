@@ -7,4 +7,5 @@ data/
 *.db-shm
 .demo_gate
 .env
+node_modules/
 *.zip

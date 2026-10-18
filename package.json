@@ -1,0 +1,10 @@
+{
+  "name": "roefs-one-spatial",
+  "private": true,
+  "scripts": {
+    "build": "esbuild spatial/index.js --bundle --minify --format=iife --target=es2022 --outfile=spatial.js --legal-comments=eof",
+    "test:spatial": "node --test spatial/model.test.mjs"
+  },
+  "dependencies": { "three": "0.180.0" },
+  "devDependencies": { "esbuild": "0.25.10" }
+}

@@ -1,5 +1,6 @@
 # Alleen nodig voor de echte browsertests; de applicatie heeft geen pip-pakketten nodig.
 playwright==1.62.0
+Pillow==12.3.0
 
 # Hersteltests oefenen optionele backupencryptie daadwerkelijk uit.
 -r requirements-security.txt

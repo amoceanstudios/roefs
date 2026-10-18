@@ -225,7 +225,7 @@ class Handler(BaseHTTPRequestHandler):
     return
    self._gate_cookie=valid_basic
   path=urllib.parse.urlsplit(self.path).path
-  if path in ('/app.js','/ui.js','/styles.css','/ui.css','/enterprise.js','/enterprise.css','/nl.js','/integrations.js','/events.js') and method=='GET':
+  if path in ('/app.js','/ui.js','/styles.css','/ui.css','/enterprise.js','/enterprise.css','/nl.js','/integrations.js','/events.js','/spatial.js','/spatial.css') and method=='GET':
    data=(ROOT/path[1:]).read_bytes();self.send_response(200);self.send_header('Content-Type','text/javascript; charset=utf-8' if path.endswith('.js') else 'text/css; charset=utf-8');self.send_header('Content-Length',str(len(data)));self.send_header('Cache-Control','no-cache');self.end_headers();self.wfile.write(data);return
   if path=='/assets/amocean-mark.png':
    data=(ROOT/'assets'/'amocean-mark.png').read_bytes();self.send_response(200);self.send_header('Content-Type','image/png');self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data);return

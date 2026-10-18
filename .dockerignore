@@ -11,3 +11,5 @@ data
 .venv
 reports
 tests
+node_modules
+spatial

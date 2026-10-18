@@ -1,0 +1,10 @@
+test_all_viewports_real_pages_cookie_and_reload (test_enterprise_browser.EnterpriseBrowser.test_all_viewports_real_pages_cookie_and_reload) ... ok
+test_customer_form_persistence_validation_and_timeline (test_enterprise_browser.EnterpriseBrowser.test_customer_form_persistence_validation_and_timeline) ... ok
+test_inactive_integration_saved_and_visible (test_enterprise_browser.EnterpriseBrowser.test_inactive_integration_saved_and_visible) ... ok
+test_planning_copy_and_conflict_keyboard_alternative (test_enterprise_browser.EnterpriseBrowser.test_planning_copy_and_conflict_keyboard_alternative) ... ok
+test_workorder_checklist_and_file_upload_real_storage (test_enterprise_browser.EnterpriseBrowser.test_workorder_checklist_and_file_upload_real_storage) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 31.502s
+
+OK

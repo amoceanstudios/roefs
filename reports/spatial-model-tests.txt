@@ -1,0 +1,20 @@
+
+> test:spatial
+> node --test spatial/model.test.mjs
+
+✔ 800 customers occupy distinct finite positions with stable record identity (16.737119ms)
+✔ connections use persisted customer and location references, never names (3.697343ms)
+✔ urgency and financial height reflect data without changing records (1.839837ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 227.006024
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
