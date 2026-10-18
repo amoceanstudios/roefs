@@ -1,0 +1,6 @@
+test_export_and_new_authenticator_setup_use_current_product_name (test_intel_brand.IntelBrandBrowser.test_export_and_new_authenticator_setup_use_current_product_name) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 5.874s
+
+OK

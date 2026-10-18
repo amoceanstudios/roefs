@@ -1,4 +1,4 @@
-# ROEFS ONE — V6 migratiepakket
+# AMOCEAN INTEL — bedrijfsportaal
 
 Voortzetting van de bestaande applicatie. Begin bij [ROEFS-MIGRATIEHANDLEIDING.md](ROEFS-MIGRATIEHANDLEIDING.md). De [migratierapportage](V6-MIGRATION-REPORT.md), [finale functiematrix](V6-FINAL-FUNCTIEMATRIX.md), [tests](V6-FINAL-TESTRAPPORT.md), [beveiligingscontrole](V6-FINAL-SECURITY.md) en [metingen](V6-FINAL-PERFORMANCE.md) beschrijven wat werkelijk is getest en wat nog klantacceptatie vereist. **Geen productiegeschiktheidsclaim.**
 
@@ -6,7 +6,7 @@ Nieuw: native CSV/XLSX-datamigratie, 26 categorieën/52 templates, 24.050 fictie
 
 ## Behouden basis
 
-Voortgebouwd op de aangeleverde ROEFS ONE-broncode. De Python-backend, SQLite, bestaande modules en het Amocean-logo blijven behouden. Na inloggen kies je **Oud Portaal** of **Nieuw Portaal**. Het vertrouwde scherm **‘Hoi Beheerder. Wat wil je doen?’** blijft beschikbaar via Oud Portaal. Dit pakket gebruikt demonstratiegegevens.
+Voortgebouwd op de aangeleverde AMOCEAN INTEL-broncode. De Python-backend, SQLite, bestaande modules en het Amocean-logo blijven behouden. Na inloggen kies je **Oud Portaal** of **Nieuw Portaal**. Het vertrouwde scherm **‘Hoi Beheerder. Wat wil je doen?’** blijft beschikbaar via Oud Portaal. Dit pakket gebruikt demonstratiegegevens.
 
 ```bash
 python3 start.py
@@ -38,6 +38,12 @@ python3 run_tests.py --load
 ```
 
 Er wordt niets automatisch gefactureerd, betaald, gemaild of publiek gepubliceerd. Externe synchronisatie staat standaard uit en vereist expliciete configuratie. Deze versie is niet als productiegeschikt vastgesteld. De masteropdracht is breder dan de geverifieerde dekking; zie de functiematrix voor PARTIAL/BLOCKED/NOT TESTED.
+
+## Filmische vormgeving en 3D-portaal
+
+De interface gebruikt een nachtelijk oceaanbeeld met hard flitslicht, filmkorrel, nachtblauwe panelen en een jaren-90-titellettertype. Het beeld en lettertype worden vanaf dezelfde server geladen. Er zijn geen externe font- of afbeeldingsdiensten nodig. Formulieren houden een rustig, leesbaar lettertype. Zie [de merk- en ontwerpcontroles](reports/intel-brand-verification.md) en [assetcredits](assets/README.md).
+
+Bestaande accounts, gegevens, route-identiteiten en configuratievariabelen blijven behouden. Interne namen zoals `ROEFS_DB` veranderen niet mee met de zichtbare productnaam.
 
 ## 3D-portaal starten en bijwerken
 

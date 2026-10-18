@@ -1,0 +1,18 @@
+test_automatic_worker_without_manual_run_and_restart (test_sync.Sync.test_automatic_worker_without_manual_run_and_restart) ... ok
+test_bidirectional_and_simultaneous_changes_conflict (test_sync.Sync.test_bidirectional_and_simultaneous_changes_conflict) ... ok
+test_conditional_update_refuses_external_overwrite (test_sync.Sync.test_conditional_update_refuses_external_overwrite) ... ok
+test_dead_letter_preserves_key_and_manual_retry (test_sync.Sync.test_dead_letter_preserves_key_and_manual_retry) ... ok
+test_deleted_and_duplicate_records_preserved (test_sync.Sync.test_deleted_and_duplicate_records_preserved) ... ok
+test_dependency_order_external_ids_and_hours_materials_invoice (test_sync.Sync.test_dependency_order_external_ids_and_hours_materials_invoice) ... ok
+test_durable_outbox_retry_after_remote_commit_no_duplicate (test_sync.Sync.test_durable_outbox_retry_after_remote_commit_no_duplicate) ... ok
+test_import_repeat_and_updates_no_duplicates (test_sync.Sync.test_import_repeat_and_updates_no_duplicates) ... ok
+test_incremental_cursor_committed_only_after_successful_pull (test_sync.Sync.test_incremental_cursor_committed_only_after_successful_pull) ... ok
+test_invalid_credentials_pause_connection (test_sync.Sync.test_invalid_credentials_pause_connection) ... ok
+test_lease_only_one_worker_and_recovery (test_sync.Sync.test_lease_only_one_worker_and_recovery) ... ok
+test_outage_history_backoff_and_conflict_resolution (test_sync.Sync.test_outage_history_backoff_and_conflict_resolution) ... ok
+test_prepared_connector_inactive_missing_api_and_ssrf (test_sync.Sync.test_prepared_connector_inactive_missing_api_and_ssrf) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 24.277s
+
+OK

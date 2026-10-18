@@ -218,7 +218,7 @@ class Handler(BaseHTTPRequestHandler):
    valid_basic=hmac.compare_digest(supplied,'demo:'+gate)
    if not (valid_cookie or valid_basic):
     self.send_response(401)
-    self.send_header('WWW-Authenticate','Basic realm="ROEFS ONE prive demo"')
+    self.send_header('WWW-Authenticate','Basic realm="AMOCEAN INTEL prive demo"')
     self.send_header('Cache-Control','no-store')
     self.send_header('Content-Length','0')
     self.end_headers()
@@ -227,8 +227,9 @@ class Handler(BaseHTTPRequestHandler):
   path=urllib.parse.urlsplit(self.path).path
   if path in ('/app.js','/ui.js','/styles.css','/ui.css','/enterprise.js','/enterprise.css','/nl.js','/integrations.js','/events.js','/spatial.js','/spatial.css') and method=='GET':
    data=(ROOT/path[1:]).read_bytes();self.send_response(200);self.send_header('Content-Type','text/javascript; charset=utf-8' if path.endswith('.js') else 'text/css; charset=utf-8');self.send_header('Content-Length',str(len(data)));self.send_header('Cache-Control','no-cache');self.end_headers();self.wfile.write(data);return
-  if path=='/assets/amocean-mark.png':
-   data=(ROOT/'assets'/'amocean-mark.png').read_bytes();self.send_response(200);self.send_header('Content-Type','image/png');self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data);return
+  static_assets={'/assets/amocean-mark.png':'image/png','/assets/amocean-night.webp':'image/webp','/assets/amocean-display.ttf':'font/ttf'}
+  if path in static_assets and method=='GET':
+   data=(ROOT/path[1:]).read_bytes();self.send_response(200);self.send_header('Content-Type',static_assets[path]);self.send_header('Content-Length',str(len(data)));self.send_header('Cache-Control','no-cache');self.send_header('X-Content-Type-Options','nosniff');self.end_headers();self.wfile.write(data);return
   if path=='/' or path=='/index.html':
    data=(ROOT/'index.html').read_bytes();self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8');self.send_header('Cache-Control','no-store');self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data);return
   if path=='/api/health':
@@ -731,4 +732,4 @@ class Handler(BaseHTTPRequestHandler):
     CONN.db.close();del CONN.db
  def log_message(self,*args):pass
 if __name__=='__main__':
- init();synchronization.start_worker(DB,MODULES);print(f'ROEFS ONE: http://localhost:{PORT}');BoundedHTTPServer((os.environ.get('ROEFS_HOST','127.0.0.1'),PORT),Handler).serve_forever()
+ init();synchronization.start_worker(DB,MODULES);print(f'AMOCEAN INTEL: http://localhost:{PORT}');BoundedHTTPServer((os.environ.get('ROEFS_HOST','127.0.0.1'),PORT),Handler).serve_forever()

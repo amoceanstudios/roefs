@@ -1,0 +1,6 @@
+test_new_world_brand_font_and_photographic_texture_load (test_intel_brand.IntelBrandBrowser.test_new_world_brand_font_and_photographic_texture_load) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 14.542s
+
+OK

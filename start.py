@@ -61,7 +61,7 @@ def main():
                 if status.get('ok') and status.get('instance')!=env['ROEFS_INSTANCE_ID']:
                     raise RuntimeError('Poort is bezet door een andere server. Kies een andere PORT.')
                 if status.get('ok'):
-                    with urllib.request.urlopen(urllib.request.Request(url+'/',headers=headers),timeout=1) as r:assert b'ROEFS ONE' in r.read()
+                    with urllib.request.urlopen(urllib.request.Request(url+'/',headers=headers),timeout=1) as r:assert b'AMOCEAN INTEL' in r.read()
                     # Ook bevestigen dat onze eigen server nog draait.
                     time.sleep(.1)
                     if server.poll() is not None:raise RuntimeError('Poort al in gebruik.')

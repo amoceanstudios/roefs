@@ -26,7 +26,7 @@ def route(c,user,action,body):
     if not hmac.compare_digest(expected,row['password_hash']):raise Problem('Huidig wachtwoord onjuist.',403)
     if action=='setup':
         if row['mfa_secret']:raise Problem('Verificatie in twee stappen is al ingeschakeld.',409)
-        secret=base64.b32encode(secrets.token_bytes(20)).decode().rstrip('=');c.execute('UPDATE users SET mfa_pending=? WHERE id=?',(secret,user['id']));audit(c,user,'mfa_setup','users',user['id']);return {'secret':secret,'uri':'otpauth://totp/'+urllib.parse.quote('ROEFS ONE:'+user['username'])+'?secret='+secret+'&issuer=ROEFS%20ONE&algorithm=SHA1&digits=6&period=30'}
+        secret=base64.b32encode(secrets.token_bytes(20)).decode().rstrip('=');c.execute('UPDATE users SET mfa_pending=? WHERE id=?',(secret,user['id']));audit(c,user,'mfa_setup','users',user['id']);return {'secret':secret,'uri':'otpauth://totp/'+urllib.parse.quote('AMOCEAN INTEL:'+user['username'])+'?secret='+secret+'&issuer=AMOCEAN%20INTEL&algorithm=SHA1&digits=6&period=30'}
     if action=='enable':
         if not row['mfa_pending']:raise Problem('Start eerst de configuratie.')
         counter=verify(row['mfa_pending'],body.get('code',''));c.execute('UPDATE users SET mfa_secret=mfa_pending,mfa_pending=NULL,mfa_counter=? WHERE id=?',(counter,user['id']))

@@ -1,0 +1,6 @@
+test_mobile_webgl_panel_and_high_quality_refraction (test_cinematic_integration.CinematicIntegration.test_mobile_webgl_panel_and_high_quality_refraction) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 39.343s
+
+OK

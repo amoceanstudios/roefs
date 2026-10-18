@@ -1,0 +1,9 @@
+test_occupied_port_fails_without_stopping_existing_server (test_startup.Startup.test_occupied_port_fails_without_stopping_existing_server) ... ok
+test_original_database_migration (test_startup.Startup.test_original_database_migration) ... ok
+test_repeatable_start_and_backup (test_startup.Startup.test_repeatable_start_and_backup) ... ok
+test_tunnel_start_check_reuses_existing_gate (test_startup.Startup.test_tunnel_start_check_reuses_existing_gate) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 6.600s
+
+OK

@@ -8,7 +8,7 @@ from .common import record,insert,update,audit,text,notify
 from .connectors.generic import Connector,RemoteError,validate_url
 CATEGORIES={'customers':'Klantgegevens','employees':'Medewerkersgegevens','articles':'Artikelen en materialen','objects':'Werklocaties','contracts':'Contracten','workorders':'Opdrachten','shifts':'Diensten','hours':'Urenregistratie','invoices':'Factuurgegevens'}
 PROVIDERS={'generic':{'name':'Generieke JSON-connector','prepared':True,'notice':'Vereist roefs-sync-v1 API-contract; daadwerkelijke doelsystemen afzonderlijk valideren.'},'afas':{'name':'AFAS','prepared':False,'notice':'Niet actief: omgevings-URL, token en Get/UpdateConnector-schema ontbreken.'},'exact':{'name':'Exact Online','prepared':False,'notice':'Niet actief: OAuth-app, administratie-ID, veldmapping en API-toegang ontbreken.'},'dynamics':{'name':'Microsoft Dynamics 365','prepared':False,'notice':'Niet actief: tenant, OAuth-app, entiteiten en API-toegang ontbreken.'}}
-POLICIES={'roefs':'ROEFS ONE leidend (export)','external':'Extern systeem leidend (import)','both':'Beide systemen; gelijktijdige wijzigingen handmatig beoordelen','off':'Niet synchroniseren'}
+POLICIES={'roefs':'AMOCEAN INTEL leidend (export)','external':'Extern systeem leidend (import)','both':'Beide systemen; gelijktijdige wijzigingen handmatig beoordelen','off':'Niet synchroniseren'}
 REFERENCES={'customer_id':'customers','employee_id':'employees','object_id':'objects','contract_id':'contracts','shift_id':'shifts'}
 ART_FIELDS=['code','name','unit','rate','vat_rate','status']
 SYSTEM={'id':0,'username':'Automatische synchronisatie','role':'admin'}
@@ -62,7 +62,7 @@ def save_import(c,cid,category,fields,modules,local=None):
         if data['vat_rate'] not in ('0','9','21'):raise Problem('Ongeldig btw-percentage.')
         if local:data['version']=local['version']+1
     else:
-        if local and (local.get('workflow') or local.get('workorder_id')):raise Problem('Gekoppelde procesgegevens vereisen beoordeling in ROEFS ONE; geen externe overschrijving.')
+        if local and (local.get('workflow') or local.get('workorder_id')):raise Problem('Gekoppelde procesgegevens vereisen beoordeling in AMOCEAN INTEL; geen externe overschrijving.')
         data=validate(c,category,data,modules[category][1],local)
     # Semantische duplicaten worden niet automatisch gekoppeld: voorleggen aan beheer.
     if not local:
@@ -90,7 +90,7 @@ def pull_item(c,cid,run,category,policy,item,modules):
         elif link:
             local_changed=local['version']!=link['local_version'];remote_changed=digest(fields)!=link['remote_hash']
             if local_changed and remote_changed:result=conflict(c,cid,run,category,item,local,'Beide systemen hebben het record gewijzigd; geen automatische overschrijving.')
-            elif remote_changed and policy=='roefs':result=conflict(c,cid,run,category,item,local,'Extern gewijzigd terwijl ROEFS ONE leidend is.')
+            elif remote_changed and policy=='roefs':result=conflict(c,cid,run,category,item,local,'Extern gewijzigd terwijl AMOCEAN INTEL leidend is.')
             elif local_changed and policy=='external':result=conflict(c,cid,run,category,item,local,'Lokaal gewijzigd terwijl het externe systeem leidend is.')
             elif remote_changed:
                 try:local=save_import(c,cid,category,fields,modules,local)
@@ -98,7 +98,7 @@ def pull_item(c,cid,run,category,policy,item,modules):
                 else:link_state(c,cid,category,eid,local,revision,fields);event(c,cid,run,category,'Import','Bestaand record bijgewerkt.',local['id'],eid);result='imported'
             else:
                 c.execute('UPDATE sync_links SET remote_revision=? WHERE id=?',(revision,link['id']));result=None
-        elif policy=='roefs':result=conflict(c,cid,run,category,item,None,'Extern record is nog niet gekoppeld; ROEFS ONE is leidend. Koppel het bestaande record expliciet.')
+        elif policy=='roefs':result=conflict(c,cid,run,category,item,None,'Extern record is nog niet gekoppeld; AMOCEAN INTEL is leidend. Koppel het bestaande record expliciet.')
         else:
             try:local=save_import(c,cid,category,fields,modules)
             except Problem as exc:result=conflict(c,cid,run,category,item,None,str(exc))

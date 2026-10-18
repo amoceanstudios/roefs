@@ -6,7 +6,7 @@ export class PortalChoice {
     this.host=document.createElement('section');this.host.className='portal-choice-screen';
     this.host.setAttribute('role','dialog');this.host.setAttribute('aria-modal','true');this.host.setAttribute('aria-labelledby','portal-choice-title');
     this.host.innerHTML=`<div class="portal-choice-content">
-      <header class="portal-choice-brand"><img src="/assets/amocean-mark.png?v=2" alt="Amocean"><span>ROEFS ONE</span></header>
+      <header class="portal-choice-brand"><img src="/assets/amocean-mark.png?v=2" alt="Amocean"><span>AMOCEAN INTEL</span></header>
       <p class="portal-choice-eyebrow">Jouw werk. Jouw omgeving.</p><h1 id="portal-choice-title">Kies je portaal</h1>
       <p class="portal-choice-intro">Dezelfde gegevens en mogelijkheden, in de omgeving die bij je past.</p>
       <div class="portal-choice-options">

@@ -1,0 +1,8 @@
+test_assets_are_local_decodable_and_only_explicit_files_are_exposed (test_intel_brand.IntelBrandBrowser.test_assets_are_local_decodable_and_only_explicit_files_are_exposed) ... ok
+test_login_choice_and_old_portal_identity_with_loaded_title_font (test_intel_brand.IntelBrandBrowser.test_login_choice_and_old_portal_identity_with_loaded_title_font) ... ok
+test_new_world_brand_font_and_photographic_texture_load (test_intel_brand.IntelBrandBrowser.test_new_world_brand_font_and_photographic_texture_load) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 30.547s
+
+OK

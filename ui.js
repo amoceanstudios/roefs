@@ -34,7 +34,7 @@ async function openPage(p,fromHistory=false){
   if(serial!==navigationSerial)return;
   if(!fromHistory&&p!==page)history.pushState({roefsPage:p},'','#'+encodeURIComponent(p));
   page=p;filter='';analysis=null;smart=nextSmart;records=nextRecords;stats=nextStats;planner=nextPlanner;lookups=nextLookups;
-  shell();renderContent();document.title=NAMES[p]+' | ROEFS ONE';window.scrollTo(0,0);
+  shell();renderContent();document.title=NAMES[p]+' | AMOCEAN INTEL';window.scrollTo(0,0);
  }catch(e){toast(e.message)}
 }
 function toggleMobileMenu(){const d=$('sidebar');if(!d)return;if(d.classList.contains('mobile-open')){closeMobileMenu();return}d.classList.add('mobile-open');$('drawerBackdrop').classList.add('visible');document.querySelector('.mobile-menu').setAttribute('aria-expanded','true');document.body.classList.add('drawer-locked');document.querySelector('.main').inert=true;d.querySelector('.drawer-close')?.focus()}
@@ -96,7 +96,7 @@ guideItems.splice(0,guideItems.length,
  ['users','Toegang beheren','Maak het medewerkersdossier aan en koppel het account eraan. Extra inzage geeft geen beheerdersrechten.'],
  ['invoices','Facturen controleren','Beheer concepten, vervaldata en factuurstatussen. Er wordt niets automatisch verzonden, betaald of naar een boekhoudpakket geboekt.']);
 function tourItems(){return guideItems.filter(x=>canView(x[0]))}
-function guideScreen(){const items=tourItems();return head('Interactieve rondleiding','Loop stap voor stap door de echte schermen. Je houdt zelf de controle over wijzigingen.')+`<div class="card"><h2>Zo werkt ROEFS ONE</h2><p>De rondleiding blijft zichtbaar terwijl je een onderdeel bekijkt. Opslaan gebeurt uitsluitend wanneer je zelf een formulier bevestigt.</p><ol>${items.map(x=>`<li><b>${esc(x[1])}</b> — ${esc(x[2])}</li>`).join('')}</ol><button class="btn yellow" data-roefs-click="startTour()">Start interactieve rondleiding</button></div>`}
+function guideScreen(){const items=tourItems();return head('Interactieve rondleiding','Loop stap voor stap door de echte schermen. Je houdt zelf de controle over wijzigingen.')+`<div class="card"><h2>Zo werkt AMOCEAN INTEL</h2><p>De rondleiding blijft zichtbaar terwijl je een onderdeel bekijkt. Opslaan gebeurt uitsluitend wanneer je zelf een formulier bevestigt.</p><ol>${items.map(x=>`<li><b>${esc(x[1])}</b> — ${esc(x[2])}</li>`).join('')}</ol><button class="btn yellow" data-roefs-click="startTour()">Start interactieve rondleiding</button></div>`}
 async function startTour(){tourActive=true;guideStep=0;await openPage(tourItems()[0][0])}
 async function tourMove(delta){const items=tourItems();guideStep=Math.max(0,Math.min(items.length-1,guideStep+delta));await openPage(items[guideStep][0])}
 function endTour(){tourActive=false;document.querySelector('.tour-banner')?.remove();toast('Rondleiding afgerond. Je kunt deze later opnieuw starten.')}

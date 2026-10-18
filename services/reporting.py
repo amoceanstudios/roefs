@@ -17,7 +17,7 @@ def csv_bytes(rows,fields,labels=None):
 def pdf(title,lines):
     """A4 PDF 1.4, Helvetica/WinAnsi. Geen actieve inhoud of externe verwijzingen."""
     import textwrap
-    lines=[title,'ROEFS ONE — fictieve demonstratiegegevens','']+[str(x) for x in lines]
+    lines=[title,'AMOCEAN INTEL — fictieve demonstratiegegevens','']+[str(x) for x in lines]
     wrapped=[part for line in lines for part in (textwrap.wrap(line,95) or [''])]
     pages=[wrapped[i:i+48] for i in range(0,len(wrapped),48)]
     objs=[b'',b'',b'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>']

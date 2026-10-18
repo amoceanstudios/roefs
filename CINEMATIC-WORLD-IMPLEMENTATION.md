@@ -1,4 +1,4 @@
-# ROEFS ONE: ruimtelijk portaal, fase 2–4
+# AMOCEAN INTEL: ruimtelijk portaal, fase 2–4
 
 Na inloggen verschijnt **Kies je portaal**: **Oud Portaal** opent het bestaande dashboard en **Nieuw Portaal** opent de 3D-wereld. Het bestaande startscherm heeft ook **Portaal kiezen** en de snelkoppeling **3D-portaal**. De dagelijkse startpagina, Python-backend en SQLite-database blijven behouden. Het keuzescherm staat vóór de oude interface; de keuze is uitsluitend presentatie en wijzigt geen rechten. Zie `reports/portal-choice-verification.md` voor de uitgevoerde controles.
 
@@ -65,4 +65,4 @@ Runtime blijft de bestaande Python-server. Docker neemt de gebouwde browserbesta
 
 De prestaties op fysieke iPhone-, Android- en middelgrote laptop-GPU's zijn nog niet bewezen. Cloudmetingen gebruiken Chromium met software-WebGL; 60/30 fps zijn geen gevalideerde garanties. Safari, duurbelasting en onafhankelijke beveiligingsbeoordeling zijn niet opnieuw uitgevoerd.
 
-Er zijn geen fotografische/video-assets of GLB-modellen aangeleverd. De wereld gebruikt procedurele geometrie, een atlas en de bestaande merkafbeelding. KTX2/Basis- en Draco-bestanden/decoders en een bijbehorende assetbibliotheek zijn niet toegevoegd of als actief voorgesteld. Een echte gecomprimeerde foto/video/GLB-pipeline vraagt passende bronbestanden en afzonderlijke validatie. Dit is een resterend onderdeel van de oorspronkelijke visuele ambitie.
+De wereld gebruikt procedurele geometrie, een atlas, de bestaande merkafbeelding en nu ook een gegenereerd nachtelijk oceaanbeeld als echt textuurvlak in de 3D-scène. Login en portaalkeuze delen hetzelfde WebP-beeld. Het lokaal meegeleverde Alfa Slab One geeft filmtitels hun jaren-90-karakter; bediening en formulieren blijven leesbaar. Zie `reports/intel-brand-verification.md` en `assets/README.md`. Video, GLB, KTX2/Basis en Draco zijn nog niet toegevoegd of als actief voorgesteld. De nieuwe statische assetroutes zijn expliciet opgesomd; de CSP is niet verruimd.

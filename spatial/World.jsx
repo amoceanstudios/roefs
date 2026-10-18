@@ -26,7 +26,7 @@ function surfaceTexture() {
 }
 function signTexture(module) {
   const c=document.createElement('canvas');c.width=512;c.height=256;const ctx=c.getContext('2d');
-  ctx.fillStyle='#101111';ctx.fillRect(0,0,512,256);ctx.fillStyle='#d7ceba';ctx.font='18px monospace';ctx.fillText(`ROEFS / ${String(module.district+1).padStart(2,'0')}.${String(module.index+1).padStart(2,'0')}`,28,39);
+  ctx.fillStyle='#101111';ctx.fillRect(0,0,512,256);ctx.fillStyle='#d7ceba';ctx.font='18px monospace';ctx.fillText(`AMOCEAN / ${String(module.district+1).padStart(2,'0')}.${String(module.index+1).padStart(2,'0')}`,28,39);
   ctx.fillStyle='#faf5e9';ctx.font='500 36px sans-serif';
   const words=module.label.split(' ');let line='',y=110;
   for(const word of words){if(ctx.measureText(line+word).width>455&&line){ctx.fillText(line,28,y);y+=42;line='';}line+=word+' ';}ctx.fillText(line,28,y);
@@ -35,6 +35,11 @@ function signTexture(module) {
 function BrandPlane(){
   const source=useTexture('/assets/amocean-mark.png?v=2'),map=useMemo(()=>{const t=source.clone();t.colorSpace=THREE.SRGBColorSpace;return t;},[source]);useEffect(()=>()=>map.dispose(),[map]);
   return <mesh position={[0,6,-32.04]}><planeGeometry args={[7,7]}/><meshBasicMaterial map={map} transparent toneMapped={false}/></mesh>;
+}
+function NightBackdrop(){
+  const source=useTexture('/assets/amocean-night.webp'),map=useMemo(()=>{const t=source.clone();t.colorSpace=THREE.SRGBColorSpace;return t;},[source]);
+  useEffect(()=>()=>map.dispose(),[map]);
+  return <mesh position={[0,22,-62]}><planeGeometry args={[160,90]}/><meshBasicMaterial map={map} transparent opacity={.55} toneMapped={false} fog={false} depthWrite={false}/></mesh>;
 }
 
 function Monolith({module,store,onOpen,materialMap}) {
@@ -126,7 +131,7 @@ function CameraRig({store,bounds,onReady,session}) {
       frames.current.count=0;frames.current.time=performance.now();
     }
   });
-  return <><spotLight ref={light} intensity={3600} distance={105} decay={2} angle={.64} penumbra={.06} color="#fff0d4"/><primitive object={light.current?.target||new THREE.Object3D()}/></>;
+  return <><spotLight ref={light} intensity={3600} distance={105} decay={2} angle={.64} penumbra={.06} color="#e5f2ff"/><primitive object={light.current?.target||new THREE.Object3D()}/></>;
 }
 
 function WorldScene({catalogue,store,onOpen,onReady,session}) {
@@ -136,10 +141,11 @@ function WorldScene({catalogue,store,onOpen,onReady,session}) {
   const map=useMemo(surfaceTexture,[]);useEffect(()=>()=>map.dispose(),[map]);
   const tier=QUALITY[quality];
   return <>
-    <color attach="background" args={['#080a09']}/><fog attach="fog" args={['#080a09',35,110]}/>
-    <ambientLight intensity={.12} color="#bec9ce"/><directionalLight position={[-20,12,-20]} intensity={1.8} color="#8b9a9d"/>
+    <color attach="background" args={['#030917']}/><fog attach="fog" args={['#081222',35,110]}/>
+    <NightBackdrop/>
+    <ambientLight intensity={.12} color="#b8d2f5"/><directionalLight position={[-20,12,-20]} intensity={1.8} color="#789ac9"/>
     <CameraRig store={store} bounds={all} onReady={onReady} session={session}/>
-    <mesh rotation={[-Math.PI/2,0,0]} position={[0,-.16,0]}><planeGeometry args={[240,240]}/>{quality==='low'?<meshPhongMaterial color="#151b15" specular="#484b40" shininess={40}/>:<meshStandardMaterial color="#101511" metalness={.65} roughness={.38} bumpMap={map} bumpScale={.08}/>}</mesh>
+    <mesh rotation={[-Math.PI/2,0,0]} position={[0,-.16,0]}><planeGeometry args={[240,240]}/>{quality==='low'?<meshPhongMaterial color="#111d2d" specular="#718db4" shininess={85}/>:<meshStandardMaterial color="#0b1526" metalness={.65} roughness={.3} bumpMap={map} bumpScale={.08}/>}</mesh>
     <gridHelper args={[100,50,'#393b30','#1c221c']} position={[0,-.145,-5]}/>
     {quality==='low'&&<LowMonoliths all={all} store={store} onOpen={onOpen} signTexture={signTexture} colours={COLOURS}/>}
     {catalogue.map(group=><group key={group.label}>
@@ -232,11 +238,11 @@ function World({session,onClose}) {
     {['flying-in','flying-out'].includes(stage)&&<div className="world-flight-status" role="status">{stage==='flying-in'?'Onderweg naar '+selected?.label:'Terug naar het overzicht'}</div>}
     {error&&<div className="world-error" role="alert">{error}<button onClick={()=>selected?session.navigate(selected.id):session.overview()}>Opnieuw proberen</button><button onClick={()=>session.overview()}>Naar overzicht</button></div>}
     {supported===false&&['mounting','inside','exiting','flying-out'].includes(stage)&&<section className="world-module-panel world-fallback-panel" aria-label={'Werkruimte '+selected?.label}><LegacySlot session={session}/></section>}
-    {!ready&&<div className="world-preloader" role="status"><span>AMOCEAN / ROEFS ONE</span><strong>Ruimte maken<br/>voor jouw werk.</strong><div className="world-load-line"/><small>De modulewereld wordt opgebouwd</small></div>}
-    <header className="world-header"><div className="world-brand"><img src="/assets/amocean-mark.png?v=2" alt="Amocean"/><span>ROEFS ONE<small>SPATIAL OPERATING SPACE</small></span></div><div className="world-toolbar"><button onClick={()=>setList(!list)} aria-expanded={list} aria-controls="world-directory">Modules <span>{String(modules.length).padStart(2,'0')}</span></button><button onClick={onClose} autoFocus aria-label="Sluit 3D-portaal">Sluiten <span>×</span></button></div></header>
+    {!ready&&<div className="world-preloader" role="status"><span>AMOCEAN / AMOCEAN INTEL</span><strong>Ruimte maken<br/>voor jouw werk.</strong><div className="world-load-line"/><small>De modulewereld wordt opgebouwd</small></div>}
+    <header className="world-header"><div className="world-brand"><img src="/assets/amocean-mark.png?v=2" alt="Amocean"/><span>AMOCEAN INTEL<small>JOUW WERELD. IN BEELD.</small></span></div><div className="world-toolbar"><button onClick={()=>setList(!list)} aria-expanded={list} aria-controls="world-directory">Modules <span>{String(modules.length).padStart(2,'0')}</span></button><button onClick={onClose} autoFocus aria-label="Sluit 3D-portaal">Sluiten <span>×</span></button></div></header>
     <section className="world-intro"><p><i/> JOUW BEDRIJF, IN ÉÉN WERELD</p><h1>Alles verbonden.<br/><em>Alle ruimte.</em></h1><span>{supported===false?'3D is niet beschikbaar op dit apparaat. Alle modules blijven hieronder bereikbaar.':'Elke ruimte is een onderdeel van je werk. Kies waar je begint.'}</span></section>
     <nav id="world-directory" className={`world-directory ${list?'is-open':''}`} aria-label="Alle beschikbare modules" hidden={!list}><label>Zoek een module<input value={query} onChange={e=>setQuery(e.target.value)} type="search" placeholder="Bijvoorbeeld planning"/></label>{catalogue.map(group=><section key={group.label}><h2>{group.label}</h2>{group.modules.filter(m=>m.label.toLocaleLowerCase('nl').includes(query.toLocaleLowerCase('nl'))).map(m=><button key={m.id} onMouseEnter={()=>store.setState({hovered:m.id})} onMouseLeave={()=>store.setState({hovered:null})} onFocus={()=>store.setState({hovered:m.id})} onBlur={()=>store.setState({hovered:null})} onClick={()=>open(m.id)} data-world-module={m.id}><small>{String(m.district+1).padStart(2,'0')}.{String(m.index+1).padStart(2,'0')}</small>{m.label}<span>↗</span></button>)}</section>)}</nav>
-    <footer className="world-footer"><div className="world-coordinates"><span>ROEFS / CONTROL ROOM</span><small>{supported===false?'TOEGANKELIJKE MODULELIJST':`REALTIME 3D · ${quality==='high'?'HOOG':quality==='medium'?'GEBALANCEERD':'LICHT'}`}</small></div><div className="world-hover" aria-live="polite">{current?<><small>RUIMTE {String(current.district+1).padStart(2,'0')}.{String(current.index+1).padStart(2,'0')}</small><strong>{current.label}</strong><span>Klik om te openen ↗</span></>:<><small>VERKEN DE WERELD</small><strong>Kies je volgende stap.</strong><span>Beweeg over een object of open de modulelijst.</span></>}</div><div className="world-motion"><select aria-label="Weergavekwaliteit" value={quality} onChange={e=>store.setState({quality:e.target.value})}><option value="high">Hoog</option><option value="medium">Gebalanceerd</option><option value="low">Licht</option></select><button onClick={()=>store.setState({reduced:!reduced})} aria-pressed={reduced}>{reduced?'Beweging uit':'Beweging aan'}</button><button onClick={tilt==='on'?()=>setTilt('off'):enableTilt} disabled={reduced||tilt==='unavailable'} aria-pressed={tilt==='on'}>Kantelen {tilt==='on'?'aan':tilt==='denied'?'geweigerd':tilt==='unavailable'?'niet beschikbaar':'uit'}</button></div></footer>
+    <footer className="world-footer"><div className="world-coordinates"><span>AMOCEAN / CONTROL ROOM</span><small>{supported===false?'TOEGANKELIJKE MODULELIJST':`REALTIME 3D · ${quality==='high'?'HOOG':quality==='medium'?'GEBALANCEERD':'LICHT'}`}</small></div><div className="world-hover" aria-live="polite">{current?<><small>RUIMTE {String(current.district+1).padStart(2,'0')}.{String(current.index+1).padStart(2,'0')}</small><strong>{current.label}</strong><span>Klik om te openen ↗</span></>:<><small>VERKEN DE WERELD</small><strong>Kies je volgende stap.</strong><span>Beweeg over een object of open de modulelijst.</span></>}</div><div className="world-motion"><select aria-label="Weergavekwaliteit" value={quality} onChange={e=>store.setState({quality:e.target.value})}><option value="high">Hoog</option><option value="medium">Gebalanceerd</option><option value="low">Licht</option></select><button onClick={()=>store.setState({reduced:!reduced})} aria-pressed={reduced}>{reduced?'Beweging uit':'Beweging aan'}</button><button onClick={tilt==='on'?()=>setTilt('off'):enableTilt} disabled={reduced||tilt==='unavailable'} aria-pressed={tilt==='on'}>Kantelen {tilt==='on'?'aan':tilt==='denied'?'geweigerd':tilt==='unavailable'?'niet beschikbaar':'uit'}</button></div></footer>
   </div>;
 }
 

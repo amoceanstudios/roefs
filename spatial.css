@@ -63,3 +63,57 @@
 .portal-choice-content>footer button{border:1px solid #656c5d;border-radius:8px;background:transparent;color:#f5f1e6;padding:10px 16px;cursor:pointer;font:inherit}
 @media(max-width:600px){.portal-choice-screen{padding:24px 18px;align-items:start}.portal-choice-brand{margin-bottom:28px}.portal-choice-options{grid-template-columns:1fr;gap:16px}.portal-choice-card{padding:16px;display:grid;grid-template-columns:64px 1fr;column-gap:14px}.portal-choice-preview{height:72px;grid-column:1;grid-row:1/span 3;align-self:center}.portal-choice-card>small{grid-column:2;margin:0 0 4px}.portal-choice-card>strong{grid-column:2;font-size:24px;margin:0 0 6px}.portal-choice-card>span:not(.portal-choice-preview){grid-column:2;font-size:14px;line-height:1.4;margin:0}.portal-choice-card>em{grid-column:1/-1;margin-top:16px}.portal-preview-old{padding:8px;gap:5px}.portal-preview-new{gap:4px;padding:8px}.portal-preview-new i{width:8px;height:38px}.portal-preview-new i:nth-child(2n){height:26px;transform:translateY(-8px) rotateY(-25deg)}.portal-preview-new i:nth-child(3){height:48px}.portal-choice-content>footer{align-items:flex-start}.portal-choice-intro{margin-bottom:22px}}
 @media(prefers-reduced-motion:reduce){.portal-choice-card{transition:none}.portal-choice-card:hover{transform:none}}
+
+@media(max-width:700px){.cinema-world[data-stage=overview] .world-extras{top:66px;bottom:auto;left:20px}}
+
+/* AMOCEAN INTEL: midnight ocean, direct flash and 1990s film-title typography. */
+@font-face{font-family:AmoceanScreen;src:url('/assets/amocean-display.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+:root{--intel-title:AmoceanScreen,Georgia,serif;--intel-ink:#030915;--intel-yellow:#ffd352;--intel-paper:#f6ecda;--intel-red:#a42d24}
+.portal-choice-screen{background:linear-gradient(90deg,#02060ddd,#030a1466),linear-gradient(0deg,#02060d22,#02060d88),url('/assets/amocean-night.webp') center/cover no-repeat;color:var(--intel-paper)}
+.portal-choice-brand{font-family:var(--intel-title);font-weight:400;font-size:17px;letter-spacing:.04em;gap:14px}
+.portal-choice-brand img{filter:grayscale(1) contrast(1.2);box-shadow:3px 3px 0 #0008}
+.portal-choice-eyebrow{font:11px 'Courier New',monospace;letter-spacing:.2em;color:#f5dab0}
+.portal-choice-screen h1{font-family:var(--intel-title);font-weight:400;font-size:clamp(32px,5.2vw,66px);letter-spacing:-.025em;text-transform:uppercase;color:var(--intel-yellow);text-shadow:3px 3px 0 #8e271f;line-height:1.13}
+.portal-choice-intro{color:#d4deeb;max-width:650px;text-shadow:0 2px 8px #000}
+.portal-choice-card{border-radius:2px;border-color:#7392b366;background:linear-gradient(145deg,#111e30ed,#040b16ed);box-shadow:7px 9px 0 #0006;backdrop-filter:blur(5px);transition:transform .18s,border-color .18s}
+.portal-choice-card:hover{border-color:var(--intel-yellow);transform:translateY(-3px) rotate(-.3deg)}
+.portal-choice-new{border-color:#ffd352aa;background:linear-gradient(145deg,#14273be6,#040b16f2)}
+.portal-choice-card>strong{font-family:var(--intel-title);font-weight:400;font-size:29px;text-transform:uppercase;color:var(--intel-paper);line-height:1.18}
+.portal-choice-card>small{font-family:'Courier New',monospace;font-size:11px;color:#f1cd88;letter-spacing:.025em}
+.portal-choice-card>span:not(.portal-choice-preview){color:#cfdae8}
+.portal-choice-card>em{color:var(--intel-yellow);font-family:'Courier New',monospace;font-size:13px;font-weight:700}
+.portal-choice-preview{border-radius:0}
+.portal-preview-old{background:#eee6d1;transform:rotate(-1deg)}
+.portal-preview-old>i{background:#11243a}.portal-preview-old b{background:#d5ab47}.portal-preview-old em{background:#d1cbbd}
+.portal-preview-new{background:linear-gradient(0deg,#02081233,#02081255),url('/assets/amocean-night.webp') center 65%/cover}
+.portal-preview-new i{background:linear-gradient(90deg,#405573,#f5f3dd 55%,#71839c);border-color:#fff;box-shadow:10px 12px 15px #000b}
+.portal-choice-content>footer{color:#c2d0df;font-family:'Courier New',monospace;font-size:12px;text-shadow:0 1px 4px #000}
+.portal-choice-content>footer button{border-radius:0;background:#061022d9;border-color:#9caec5;color:var(--intel-paper)}
+.portal-choice-screen button:focus-visible{outline-color:var(--intel-yellow)}
+.cinema-world{background:#030915;color:var(--intel-paper)}
+.world-brand>span{font-family:var(--intel-title);font-size:16px;font-weight:400;letter-spacing:0;color:var(--intel-yellow)}
+.world-brand small{font:8px 'Courier New',monospace;letter-spacing:1px;color:#c8d8e9}
+.world-intro h1,.world-preloader strong{font-family:var(--intel-title);font-weight:400;text-transform:uppercase;line-height:1.13;color:var(--intel-yellow);letter-spacing:-.025em;text-shadow:2px 3px 0 #78261f}
+.world-intro h1{font-size:clamp(30px,3.3vw,51px)}
+.world-intro h1 em{font:inherit;color:var(--intel-paper)}
+.world-intro p,.world-intro>span,.world-hover span{color:#d0dcec}
+.world-intro i{background:#e7f4ff;box-shadow:0 0 12px #b0d6ff}
+.world-lens{background:linear-gradient(180deg,#03091677,transparent 35%,transparent 68%,#030916cc);box-shadow:inset 0 0 130px #01040bbb;pointer-events:none}
+.world-still .world-lens{background:linear-gradient(180deg,#03091677,transparent 35%,transparent 68%,#030916cc)}
+.world-directory{background:#06101ef5;border-color:#7897b85c}.world-directory input{background:#020812}
+.world-workbar button,.world-toolbar button,.world-extras button{background:#06101edb;border-color:#8ca6bf66}
+.world-hover strong{font-family:var(--intel-title);font-weight:400;font-size:20px;color:var(--intel-paper)}
+.world-preloader{background:linear-gradient(#030916aa,#030916cc),url('/assets/amocean-night.webp') center/cover}
+.world-coordinates,.world-footer small{color:#bdcede}
+.login{background:linear-gradient(90deg,#03091699,#03091666),url('/assets/amocean-night.webp') center/cover no-repeat!important}
+.loginbox{background:#071221ed!important;border:1px solid #a9bfd170!important;border-radius:2px!important;color:var(--intel-paper);box-shadow:12px 16px 0 #0006!important;backdrop-filter:blur(7px)}
+.loginbox h1{font-family:var(--intel-title);font-weight:400;font-size:clamp(30px,4vw,40px);line-height:1.2;color:var(--intel-paper);text-shadow:2px 3px 0 #75271f}
+.loginbox h1 span{color:var(--intel-yellow)!important}.loginbox .login-kicker{font-family:'Courier New',monospace;color:#f1ce91}
+.loginbox .sub,.loginbox .hint,.loginbox label{color:#d0dcec}.loginbox input:not([type=checkbox]){background:#030b17;color:#fff0dc;border-color:#7b94b3}
+.loginbox .role-option{background:#071627;color:#e2e9ed;border-color:#7b94b3}.loginbox .role-option.active{background:var(--intel-yellow);color:#13110c}
+.loginbox .btn{background:var(--intel-yellow);color:#14110d;border-radius:2px}.loginbox .error{color:#ffb2a4}
+.splash{background:linear-gradient(#03091688,#030916cc),url('/assets/amocean-night.webp') center/cover!important}
+.splash .amocean-name{font-family:var(--intel-title);font-weight:400;letter-spacing:0;color:var(--intel-yellow);text-shadow:2px 3px 0 #75271f}
+.side .brand{font-family:var(--intel-title);font-weight:400;font-size:16px}.side .brand small{font-family:'Courier New',monospace;font-size:9px}
+@media(max-width:600px){.portal-choice-screen h1{font-size:clamp(28px,8.2vw,38px)}.portal-choice-brand{font-size:14px}.portal-choice-card>strong{font-size:clamp(19px,5.7vw,24px)}.portal-choice-card>small{font-size:10px}.portal-choice-intro{font-size:14px}.portal-choice-screen{background-position:65% center}.portal-choice-card>span:not(.portal-choice-preview){font-size:13px}.world-brand>span{font-size:11px}.world-brand small{font-size:6px}.world-intro h1{font-size:30px}.loginbox{padding:22px!important}}
+@media(prefers-reduced-motion:reduce){.portal-choice-card{transition:none}.portal-choice-card:hover{transform:none}}
