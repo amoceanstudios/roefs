@@ -1,0 +1,9 @@
+test_desktop_canvas_raycast_customer_storage_conflict_and_cleanup (test_spatial_browser.SpatialBrowser.test_desktop_canvas_raycast_customer_storage_conflict_and_cleanup) ... ok
+test_employee_cannot_enter_or_read_customers (test_spatial_browser.SpatialBrowser.test_employee_cannot_enter_or_read_customers) ... ok
+test_mobile_tasks_drag_drop_and_touch_alternative (test_spatial_browser.SpatialBrowser.test_mobile_tasks_drag_drop_and_touch_alternative) ... ok
+test_webgl_unavailable_still_edits_real_records (test_spatial_browser.SpatialBrowser.test_webgl_unavailable_still_edits_real_records) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 43.775s
+
+OK

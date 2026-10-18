@@ -1,0 +1,8 @@
+test_deep_link_cookie_reload_and_last_navigation_wins (test_cinematic_integration.CinematicIntegration.test_deep_link_cookie_reload_and_last_navigation_wins) ... ok
+test_flight_original_customer_crud_modal_pointer_and_history (test_cinematic_integration.CinematicIntegration.test_flight_original_customer_crud_modal_pointer_and_history) ... ok
+test_original_planning_drag_drop_and_close_during_flight (test_cinematic_integration.CinematicIntegration.test_original_planning_drag_drop_and_close_during_flight) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 63.377s
+
+OK

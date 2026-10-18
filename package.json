@@ -2,9 +2,21 @@
   "name": "roefs-one-spatial",
   "private": true,
   "scripts": {
-    "build": "esbuild spatial/index.js --bundle --minify --format=iife --target=es2022 --outfile=spatial.js --legal-comments=eof",
-    "test:spatial": "node --test spatial/model.test.mjs"
+    "build": "esbuild spatial/boot.js --bundle --minify --format=iife --target=es2022 --outfile=spatial.js --legal-comments=eof",
+    "test:spatial": "node --test spatial/model.test.mjs spatial/world-model.test.mjs"
   },
-  "dependencies": { "three": "0.180.0" },
-  "devDependencies": { "esbuild": "0.25.10" }
+  "dependencies": {
+    "@react-three/drei": "10.7.6",
+    "@react-three/fiber": "9.4.0",
+    "@react-three/postprocessing": "3.0.4",
+    "gsap": "3.13.0",
+    "postprocessing": "6.38.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "three": "0.180.0",
+    "zustand": "5.0.8"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10"
+  }
 }

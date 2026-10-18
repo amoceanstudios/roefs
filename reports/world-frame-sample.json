@@ -1,0 +1,6 @@
+{
+  "renderer": "Chromium software WebGL",
+  "quality": "low",
+  "medianFrameMs": 133.29999999999927,
+  "p95FrameMs": 250
+}

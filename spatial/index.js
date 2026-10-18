@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {SECTORS, universe, related} from './model.mjs';
+import {mountWorld} from './World.jsx';
 
 // The bridge is the only dependency on the original, non-module application.
 const bridge = {
@@ -208,6 +209,7 @@ export class SpatialCanvas {
     const task=e.target.closest('[data-task]');if(task){const t=this.workDetail?.checklist.find(x=>x.id===Number(task.dataset.task));if(t)this.changeTask(t.id,!t.done);return;}
     const n=e.target.closest('[data-node]');if(n){const node=this.nodes.find(x=>x.key===n.dataset.node);if(node)await this.select(node);return;}
     const action=e.target.closest('[data-spatial]')?.dataset.spatial;
+    if(action==='world')return launchWorld();
     if(action==='exit')return this.actions.home();
     if(action==='refresh')return this.refresh();
     if(action==='overview'||action==='close-panel')return this.overview();
@@ -222,24 +224,54 @@ export class SpatialCanvas {
 }
 
 // Extend existing navigation without replacing the original start screen.
-let active=null;
+let active=null,cinema=null,launchPresentation=null;
+let spatialReady=false;
+function launchWorld(options){return launchPresentation?.(options);}
+export function handleSpatialPop(event){
+  if(!spatialReady)return;
+  const url=new URL(location.href);if(url.searchParams.get('ruimte')!=='1')return;
+  let id;try{id=decodeURIComponent(url.hash.slice(1)||'start');}catch{return;}
+  if(!Object.values(GROUPS).flat().includes(id)||!canView(id))return;
+  const overview=event.state?.spatialWorld&&event.state.roefsPage===id?event.state.spatialOverview:id==='start';
+  event.stopImmediatePropagation();history.replaceState({roefsPage:id,spatialWorld:true,spatialOverview:overview},'',url);openPage(id,true);
+}
+export function setupSpatial(entry=new URL(location.href)){
+spatialReady=true;
+let requested=null;try{if(entry.searchParams.get('ruimte')==='1')requested=decodeURIComponent(entry.hash.slice(1)||'start');}catch{}
+launchPresentation=function(options={}){if(cinema)return cinema;cinema=mountWorld({groups:GROUPS,names:NAMES,visible:canView,renderPage:renderLegacy,currentPage:()=>page,navigationEpoch:()=>navigationSerial,canRestore:()=>!cinema&&Boolean(token),initial:options.initial||null,onClose:()=>{cinema=null;}});return cinema;};
 NAMES.spatial='Ruimtelijke werkplek';GROUPS['DAGELIJKS WERK'].splice(1,0,'spatial');
 const previousCanView=canView;
 canView=function(p){return p==='spatial'?['customers','workorders','invoices'].some(k=>v5meta?.permissions[k]?.read):previousCanView(p);};
 const previousStart=v5Start;
-v5Start=async function(){await previousStart();if(page==='start'&&canView('spatial')){const b=document.createElement('button');b.type='button';b.className='daily-pill';b.textContent='Ruimtelijke werkplek';b.addEventListener('click',()=>openPage('spatial'));document.querySelector('.daily-actions')?.append(b);}};
+function addSpatialEntries(){
+  const actions=document.querySelector('.daily-actions');if(page!=='start'||!actions)return;
+  for(const [id,label,action] of [['world','3D-portaal',launchWorld],['data','Ruimtelijke werkplek',()=>openPage('spatial')]]){
+    if(id==='data'&&!canView('spatial')||actions.querySelector(`[data-spatial-entry="${id}"]`))continue;
+    const b=document.createElement('button');b.type='button';b.className='daily-pill';b.dataset.spatialEntry=id;b.textContent=label;b.addEventListener('click',action);actions.append(b);
+  }
+  if(requested&&v5meta){const initial=requested;requested=null;queueMicrotask(()=>{if(!Object.values(GROUPS).flat().includes(initial)||!canView(initial)){toast('Geen toegang tot deze module.');return;}launchWorld({initial});});}
+}
+v5Start=async function(){await previousStart();addSpatialEntries();};
 const previousOpen=openPage;
-openPage=async function(p,fromHistory=false){
+async function renderLegacy(p,fromHistory=false){
   active?.dispose();active=null;
   if(p!=='spatial')return previousOpen(p,fromHistory);
   if(!canView(p))return toast('Geen toegang tot deze werkplek.');
   closeMobileMenu();closeModal();if(!fromHistory&&page!==p)history.pushState({roefsPage:p},'','#'+p);page=p;++navigationSerial;
   const host=document.createElement('div');host.className='spatial-host';document.querySelector('#root').replaceChildren(host);document.title='Ruimtelijke werkplek | ROEFS ONE';
   active=new SpatialCanvas(host,{source:new SpatialDataSource(bridge.request,bridge.metadata)});
+}
+openPage=async function(p,fromHistory=false){
+  if(cinema)return cinema.navigate(p,fromHistory);
+  if(fromHistory&&history.state?.spatialWorld){const initial=history.state.spatialOverview?'start':p;launchWorld({initial});return;}
+  return renderLegacy(p,fromHistory);
 };
 const previousLogout=logout;
-logout=async function(){active?.dispose();active=null;return previousLogout();};
+logout=async function(){++navigationSerial;cinema?.dispose({restorePending:false});cinema=null;active?.dispose();active=null;return previousLogout();};
 const previousLoginScreen=loginScreen;
-loginScreen=function(){active?.dispose();active=null;return previousLoginScreen();};
+loginScreen=function(){++navigationSerial;cinema?.dispose({restorePending:false});cinema=null;active?.dispose();active=null;return previousLoginScreen();};
 // Reusable architecture for another frontend/data source; authentication remains in bridge.
-window.ROEFSSpatial={SpatialCanvas,SpatialDataSource,SpatialHtmlLayer,universe};
+window.ROEFSSpatial={SpatialCanvas,SpatialDataSource,SpatialHtmlLayer,universe,metrics:()=>cinema?.metrics||null};
+// Cookie boot can finish while this local bundle is still downloading.
+addSpatialEntries();
+}

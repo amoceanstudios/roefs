@@ -1,0 +1,7 @@
+test_canvas_module_opens_original_screen (test_world_browser.WorldBrowser.test_canvas_module_opens_original_screen) ... ok
+test_slow_bundle_cookie_reload_adds_entries_once (test_world_browser.WorldBrowser.test_slow_bundle_cookie_reload_adds_entries_once) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 14.027s
+
+OK

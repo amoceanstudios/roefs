@@ -20,6 +20,8 @@ De **Werkruimte** voegt een gekoppelde procesketen toe: klant met locaties → c
 
 ## Documentatie
 
+- [CINEMATIC-WORLD-IMPLEMENTATION.md](CINEMATIC-WORLD-IMPLEMENTATION.md): het 3D-portaal, cameravluchten, bestaande modules in ruimtelijke panelen en terugnavigatie.
+- [Rendering- en regressiecontroles](reports/world-render-budget-verification.md): 25 geselecteerde tests van de laatste vervolgstap; grenzen van apparaat- en prestatiedekking.
 - [INSTALLATIE.md](INSTALLATIE.md): starten, upgrade, Docker, gratis Cloudflare en tests.
 - [GEBRUIKERSHANDLEIDING.md](GEBRUIKERSHANDLEIDING.md): dagelijkse bediening en procesketen.
 - [PLANNING.md](PLANNING.md): controles, suggesties en beperkingen.
@@ -36,3 +38,18 @@ python3 run_tests.py --load
 ```
 
 Er wordt niets automatisch gefactureerd, betaald, gemaild of publiek gepubliceerd. Externe synchronisatie staat standaard uit en vereist expliciete configuratie. Deze versie is niet als productiegeschikt vastgesteld. De masteropdracht is breder dan de geverifieerde dekking; zie de functiematrix voor PARTIAL/BLOCKED/NOT TESTED.
+
+## 3D-portaal starten en bijwerken
+
+Start de app zoals hierboven, log in en kies **3D-portaal** op het oorspronkelijke Amocean-startscherm. Alle toegankelijke modules gebruiken hun bestaande schermen en server-API's. **Sluiten** brengt je terug naar de gewone interface. Zonder WebGL2 blijft de modulelijst bruikbaar; **Beweging uit** schakelt de camera-animatie en de doorlopende renderlus uit.
+
+`spatial.js` is meegebouwd en opgenomen in de Docker-image. Voor normaal starten en Render via Docker is geen npm-installatie nodig. Na wijzigingen in `spatial/` bouw je met Node.js 24 en de gepinde lockfile opnieuw:
+
+```bash
+npm ci
+node tools/frontend_notices.mjs
+npm run build
+npm run test:spatial
+```
+
+De geteste deploymentbranch is `roefs-one-enterprise-v6`. Controleer in Render of die branch is geselecteerd en vergelijk het commitnummer van de deployment met GitHub. Een GitHub-push bevestigt op zichzelf geen geslaagde Render-deployment. Op een gratis Render-instance is de SQLite-opslag niet blijvend bij herstart of redeploy; zie de installatiehandleiding voor opslag en backups.

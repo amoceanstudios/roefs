@@ -1,0 +1,27 @@
+[
+  {
+    "suite": "test_cinematic_integration.py",
+    "tests": 8,
+    "exit_code": 0
+  },
+  {
+    "suite": "test_world_browser.py",
+    "tests": 6,
+    "exit_code": 0
+  },
+  {
+    "suite": "test_spatial_browser.py",
+    "tests": 4,
+    "exit_code": 0
+  },
+  {
+    "suite": "test_enterprise_browser.py",
+    "tests": 5,
+    "exit_code": 0
+  },
+  {
+    "suite": "test_client_case*.py",
+    "tests": 5,
+    "exit_code": 0
+  }
+]

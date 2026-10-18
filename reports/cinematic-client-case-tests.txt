@@ -1,0 +1,10 @@
+test_case_execution_hours_and_invoice_remain_linked (test_client_case.ClientCase.test_case_execution_hours_and_invoice_remain_linked) ... ok
+test_case_links_planning_checklists_idempotency_and_restart (test_client_case.ClientCase.test_case_links_planning_checklists_idempotency_and_restart) ... ok
+test_existing_labels_migrate_once_without_overwriting_custom_text (test_client_case.ClientCase.test_existing_labels_migrate_once_without_overwriting_custom_text) ... ok
+test_only_administrators_and_duplicate_customer_rollback (test_client_case.ClientCase.test_only_administrators_and_duplicate_customer_rollback) ... ok
+test_dashboard_case_save_planning_assignment_and_reload (test_client_case_browser.ClientCaseBrowser.test_dashboard_case_save_planning_assignment_and_reload) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 17.115s
+
+OK

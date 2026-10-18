@@ -1,0 +1,64 @@
+{
+  "environment": "Chromium software WebGL; no physical GPU benchmark",
+  "overview": {
+    "before": {
+      "drawCalls": 8,
+      "triangles": 2194,
+      "dpr": 0.75,
+      "quality": "low",
+      "fps": null,
+      "renderMode": "on-demand",
+      "renderedFrames": 4
+    },
+    "after": {
+      "drawCalls": 8,
+      "triangles": 2194,
+      "dpr": 0.75,
+      "quality": "low",
+      "fps": null,
+      "renderMode": "on-demand",
+      "renderedFrames": 4
+    }
+  },
+  "inside": {
+    "before": {
+      "drawCalls": 8,
+      "triangles": 2194,
+      "dpr": 0.75,
+      "quality": "low",
+      "fps": null,
+      "renderMode": "on-demand",
+      "renderedFrames": 12
+    },
+    "after": {
+      "drawCalls": 8,
+      "triangles": 2194,
+      "dpr": 0.75,
+      "quality": "low",
+      "fps": null,
+      "renderMode": "on-demand",
+      "renderedFrames": 12
+    }
+  },
+  "returned": {
+    "before": {
+      "drawCalls": 9,
+      "triangles": 2206,
+      "dpr": 0.75,
+      "quality": "low",
+      "fps": null,
+      "renderMode": "on-demand",
+      "renderedFrames": 8
+    },
+    "after": {
+      "drawCalls": 9,
+      "triangles": 2206,
+      "dpr": 0.75,
+      "quality": "low",
+      "fps": null,
+      "renderMode": "on-demand",
+      "renderedFrames": 8
+    }
+  },
+  "customerPersistedAfterReload": true
+}

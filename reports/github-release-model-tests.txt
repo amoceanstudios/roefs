@@ -1,0 +1,25 @@
+
+> test:spatial
+> node --test spatial/model.test.mjs spatial/world-model.test.mjs
+
+✔ 800 customers occupy distinct finite positions with stable record identity (7.035598ms)
+✔ connections use persisted customer and location references, never names (3.810144ms)
+✔ urgency and financial height reflect data without changing records (2.076321ms)
+✔ every permitted module maps to exactly one object with its existing route and label (4.858732ms)
+✔ empty or completely unauthorized groups produce no objects (3.611537ms)
+✔ quality lowers cost for software rendering, mobile and constrained memory (3.814599ms)
+✔ handheld noise is bounded, continuous at integer times and deterministic (18.469263ms)
+✔ authored entry paths have a lateral arc and settle at the module workspace (2.893071ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 276.773275
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

@@ -1,0 +1,11 @@
+test_canvas_module_opens_original_screen (test_world_browser.WorldBrowser.test_canvas_module_opens_original_screen) ... ok
+test_desktop_all_modules_live_scene_and_unchanged_route (test_world_browser.WorldBrowser.test_desktop_all_modules_live_scene_and_unchanged_route) ... ok
+test_full_effect_stack_compiles_and_draws (test_world_browser.WorldBrowser.test_full_effect_stack_compiles_and_draws) ... ok
+test_mobile_reduced_motion_touch_and_cleanup (test_world_browser.WorldBrowser.test_mobile_reduced_motion_touch_and_cleanup) ... ok
+test_no_webgl_and_employee_catalogue_keep_original_access (test_world_browser.WorldBrowser.test_no_webgl_and_employee_catalogue_keep_original_access) ... ok
+test_slow_bundle_cookie_reload_adds_entries_once (test_world_browser.WorldBrowser.test_slow_bundle_cookie_reload_adds_entries_once) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 72.492s
+
+OK

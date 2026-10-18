@@ -1,5 +1,7 @@
 # Ruimtelijke werkplek
 
+Deze handleiding beschrijft de bestaande gegevensruimte. Het aanvullende moduleportaal met React Three Fiber, cameravluchten en de oorspronkelijke werkende schermen wordt beschreven in `CINEMATIC-WORLD-IMPLEMENTATION.md`.
+
 Open na inloggen **Ruimtelijke werkplek** op het startscherm of in het zijmenu.
 Het bestaande Amocean-startscherm en de overige modules blijven beschikbaar.
 

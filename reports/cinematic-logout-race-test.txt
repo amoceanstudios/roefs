@@ -1,0 +1,6 @@
+test_logout_during_pending_navigation_does_not_restore_private_ui (test_cinematic_integration.CinematicIntegration.test_logout_during_pending_navigation_does_not_restore_private_ui) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 8.903s
+
+OK

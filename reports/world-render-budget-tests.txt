@@ -1,0 +1,7 @@
+test_motion_toggle_restarts_and_stops_actual_frames (test_world_render_budget.WorldRenderBudget.test_motion_toggle_restarts_and_stops_actual_frames) ... ok
+test_stationary_scene_sleeps_and_real_customer_form_still_saves (test_world_render_budget.WorldRenderBudget.test_stationary_scene_sleeps_and_real_customer_form_still_saves) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 53.030s
+
+OK
